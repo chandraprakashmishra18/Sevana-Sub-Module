@@ -1,0 +1,24 @@
+.ngo-verification-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--color-primary-light);
+  border: 1px solid rgba(15, 118, 110, 0.25);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.ngo-verification-badge__icon {
+  font-size: 24px;
+}
+
+.ngo-verification-badge__title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.ngo-verification-badge__reg {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,77 @@
+.ngo-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.ngo-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.ngo-card__logo-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto var(--space-4);
+  border: 2px solid var(--color-primary-light);
+}
+
+.ngo-card__logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ngo-card__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.ngo-card__title-row h3 {
+  font-size: 17px;
+}
+
+.ngo-card__focus {
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.ngo-card__location {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.ngo-card__stats {
+  display: flex;
+  justify-content: space-around;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-4);
+}
+
+.ngo-card__stats div {
+  display: flex;
+  flex-direction: column;
+}
+
+.ngo-card__stats strong {
+  font-size: 15px;
+  color: var(--color-primary-dark);
+}
+
+.ngo-card__stats span {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}

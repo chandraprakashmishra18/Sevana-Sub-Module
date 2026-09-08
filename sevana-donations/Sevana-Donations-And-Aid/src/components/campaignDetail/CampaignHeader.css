@@ -1,0 +1,52 @@
+.campaign-header__image-wrap {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  height: 360px;
+  background: var(--color-border);
+  margin-bottom: var(--space-4);
+}
+
+.campaign-header__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.campaign-header__badges {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.campaign-header__title {
+  font-size: 28px;
+  margin-bottom: var(--space-3);
+}
+
+.campaign-header__meta {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+}
+
+.campaign-header__verified {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.campaign-header__story h2 {
+  font-size: 18px;
+  margin-bottom: var(--space-3);
+}
+
+.campaign-header__story p {
+  font-size: 15px;
+  color: var(--color-text);
+  line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+  .campaign-header__image-wrap {
+    height: 220px;
+  }
+}

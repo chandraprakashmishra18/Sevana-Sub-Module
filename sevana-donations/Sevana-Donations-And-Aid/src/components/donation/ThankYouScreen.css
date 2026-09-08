@@ -1,0 +1,27 @@
+.thank-you-screen {
+  text-align: center;
+}
+
+.thank-you-screen__icon {
+  font-size: 48px;
+  margin-bottom: var(--space-3);
+}
+
+.thank-you-screen h2 {
+  font-size: 22px;
+  margin-bottom: var(--space-3);
+}
+
+.thank-you-screen p {
+  font-size: 14.5px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.thank-you-screen__actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  flex-wrap: wrap;
+}
