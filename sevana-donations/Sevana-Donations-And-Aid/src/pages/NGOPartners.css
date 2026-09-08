@@ -1,0 +1,44 @@
+.ngo-partners-page {
+  padding: var(--space-7) 0 var(--space-8);
+}
+
+.ngo-partners-page__header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto var(--space-7);
+}
+
+.ngo-partners-page__header h1 {
+  font-size: 30px;
+  margin-bottom: var(--space-3);
+}
+
+.ngo-partners-page__header p {
+  color: var(--color-text-muted);
+  font-size: 14.5px;
+}
+
+.ngo-partners-page__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+@media (max-width: 860px) {
+  .ngo-partners-page__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .ngo-partners-page__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ngo-partners-page__loading {
+  text-align: center;
+  padding: var(--space-8) 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}

@@ -1,0 +1,30 @@
+.campaign-detail {
+  padding: var(--space-6) 0 var(--space-8);
+}
+
+.campaign-detail__grid {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.campaign-detail__not-found {
+  padding: var(--space-8) 0;
+  text-align: center;
+}
+
+.campaign-detail__not-found h2 {
+  margin-bottom: var(--space-3);
+}
+
+.campaign-detail__not-found a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .campaign-detail__grid {
+    grid-template-columns: 1fr;
+  }
+}
