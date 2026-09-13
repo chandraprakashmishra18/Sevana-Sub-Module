@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDonation } from "../../context/useDonation";
+import { submitDonation } from "../../services/donationService";
 import Button from "../common/Button";
 import "./PaymentMethodStep.css";
 
@@ -12,19 +13,35 @@ const paymentMethods = [
 function PaymentMethodStep() {
   const { donation, updateDonation, nextStep, prevStep } = useDonation();
   const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState("");
 
-  const handlePayClick = () => {
+  const handlePayClick = async () => {
     setProcessing(true);
-    // Simulated payment delay — in the real app, your teammate's backend
-    // would call Razorpay here and wait for a real success callback.
-    setTimeout(() => {
-      const receiptId = `SEV-${Date.now().toString().slice(-8)}`;
-      const receiptDate = new Date().toISOString();
-      updateDonation({ receiptId, receiptDate });
+    setError("");
+
+    try {
+      // TEAMMATE: this currently resolves instantly with mock data.
+      // Replace the inside of submitDonation() in donationService.js
+      // with a real Razorpay checkout + backend call — this component
+      // doesn't need to change when you do that.
+      const result = await submitDonation(donation);
+
+      if (result.success) {
+        updateDonation({
+          receiptId: result.receiptId,
+          receiptDate: new Date().toISOString(),
+        });
+        nextStep();
+      } else {
+        setError("Payment could not be processed. Please try again.");
+      }
+    } catch {
+      setError("Something went wrong. Please check your connection and try again.");
+    } finally {
       setProcessing(false);
-      nextStep();
-    }, 1800);
+    }
   };
+
   return (
     <div className="donation-step">
       <h2>Step 3 of 4 — Payment</h2>
@@ -51,6 +68,8 @@ function PaymentMethodStep() {
           </button>
         ))}
       </div>
+
+      {error && <p className="payment-error">{error}</p>}
 
       <p className="payment-note">
         🔒 This is a demo checkout for academic evaluation — no real payment

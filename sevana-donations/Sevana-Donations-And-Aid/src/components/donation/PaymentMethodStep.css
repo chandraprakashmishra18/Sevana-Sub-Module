@@ -56,3 +56,12 @@
   padding: var(--space-3);
   margin-bottom: var(--space-5);
 }
+
+.payment-error {
+  background: #FEE2E2;
+  color: var(--color-danger);
+  font-size: 13px;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-4);
+}
