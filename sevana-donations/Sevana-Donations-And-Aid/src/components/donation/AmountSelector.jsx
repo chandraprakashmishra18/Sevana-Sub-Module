@@ -1,8 +1,7 @@
 import { useDonation } from "../../context/useDonation";
 import Button from "../common/Button";
 import "./AmountSelector.css";
-
-const presetAmounts = [100, 500, 1000, 2500, 5000];
+import { DONATION_PRESET_AMOUNTS } from "../../utils/constants";
 
 function AmountSelector({ campaign }) {
   const { donation, updateDonation, nextStep } = useDonation();
@@ -23,7 +22,7 @@ function AmountSelector({ campaign }) {
 
       <p className="donation-step__label">Select amount</p>
       <div className="amount-selector__presets">
-        {presetAmounts.map((amt) => (
+        {DONATION_PRESET_AMOUNTS.map((amt) => (
           <button
             key={amt}
             className={`amount-pill ${donation.amount === amt ? "amount-pill--active" : ""}`}

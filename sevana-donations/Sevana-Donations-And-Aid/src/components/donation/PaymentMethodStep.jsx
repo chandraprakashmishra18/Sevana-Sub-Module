@@ -3,12 +3,7 @@ import { useDonation } from "../../context/useDonation";
 import { submitDonation } from "../../services/donationService";
 import Button from "../common/Button";
 import "./PaymentMethodStep.css";
-
-const paymentMethods = [
-  { id: "upi", label: "UPI", icon: "📱" },
-  { id: "card", label: "Credit / Debit Card", icon: "💳" },
-  { id: "netbanking", label: "Net Banking", icon: "🏦" },
-];
+import { PAYMENT_METHODS } from "../../utils/constants";
 
 function PaymentMethodStep() {
   const { donation, updateDonation, nextStep, prevStep } = useDonation();
@@ -54,7 +49,7 @@ function PaymentMethodStep() {
       <p className="donation-step__label">Choose payment method</p>
 
       <div className="payment-methods">
-        {paymentMethods.map((method) => (
+        {PAYMENT_METHODS.map((method) => (
           <button
             key={method.id}
             className={`payment-method ${

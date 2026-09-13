@@ -1,11 +1,5 @@
 import "./CampaignFilters.css";
-
-const categories = [
-  "All",
-  "Student Sponsorship",
-  "Family Aid",
-  "In-Kind Giving",
-];
+import { CAMPAIGN_CATEGORIES } from "../../utils/constants";
 
 function CampaignFilters({ activeCategory, onCategoryChange, searchTerm, onSearchChange }) {
   return (
@@ -19,7 +13,7 @@ function CampaignFilters({ activeCategory, onCategoryChange, searchTerm, onSearc
       />
 
       <div className="campaign-filters__pills">
-        {categories.map((cat) => (
+        {CAMPAIGN_CATEGORIES.map((cat) => (
           <button
             key={cat}
             className={`filter-pill ${activeCategory === cat ? "filter-pill--active" : ""}`}

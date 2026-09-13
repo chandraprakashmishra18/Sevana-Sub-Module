@@ -4,7 +4,7 @@ import Button from "../common/Button";
 import ProgressBar from "../common/ProgressBar";
 import "./DonationWidget.css";
 
-const presetAmounts = [100, 500, 1000, 2500];
+import { DONATION_PRESET_AMOUNTS } from "../../utils/constants";
 
 function DonationWidget({ campaign }) {
   const [selectedAmount, setSelectedAmount] = useState(500);
@@ -41,7 +41,7 @@ function DonationWidget({ campaign }) {
       <p className="donation-widget__label">Choose an amount</p>
 
       <div className="donation-widget__presets">
-        {presetAmounts.map((amount) => (
+        {DONATION_PRESET_AMOUNTS.map((amount) => (
           <button
             key={amount}
             className={`amount-pill ${selectedAmount === amount ? "amount-pill--active" : ""}`}
