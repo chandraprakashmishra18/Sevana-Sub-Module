@@ -1,0 +1,38 @@
+.join-page {
+  padding: var(--space-7) 0 var(--space-8);
+  min-height: 60vh;
+}
+
+.join-page__container {
+  display: flex;
+  justify-content: center;
+}
+
+.join-page__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 560px;
+  box-shadow: var(--shadow-sm);
+}
+
+.join-page__progress {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.join-page__dot {
+  width: 32px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-border);
+  transition: background 0.2s ease;
+}
+
+.join-page__dot--active {
+  background: var(--color-primary);
+}
