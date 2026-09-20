@@ -1,0 +1,46 @@
+.organize-step h2 {
+  font-size: 18px;
+  margin-bottom: var(--space-5);
+}
+
+.organize-step__field {
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+.organize-step__field span {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+.organize-step__field input,
+.organize-step__field select,
+.organize-step__field textarea {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.organize-step__field input:focus,
+.organize-step__field select:focus,
+.organize-step__field textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.organize-step__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 500px) {
+  .organize-step__row {
+    grid-template-columns: 1fr;
+  }
+}
