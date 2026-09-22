@@ -1,0 +1,51 @@
+.featured-camps {
+  padding: var(--space-8) 0;
+}
+
+.featured-camps__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--space-6);
+  gap: var(--space-4);
+}
+
+.featured-camps__header h2 {
+  font-size: 28px;
+  margin-bottom: var(--space-2);
+}
+
+.featured-camps__header p {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.featured-camps__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+.featured-camps__loading {
+  text-align: center;
+  padding: var(--space-7) 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .featured-camps__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .featured-camps__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .featured-camps__grid {
+    grid-template-columns: 1fr;
+  }
+}
