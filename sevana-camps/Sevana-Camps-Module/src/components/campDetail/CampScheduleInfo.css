@@ -1,0 +1,66 @@
+.camp-schedule {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin: var(--space-6) 0;
+}
+
+.camp-schedule h2 {
+  font-size: 18px;
+  margin-bottom: var(--space-4);
+}
+
+.camp-schedule__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.camp-schedule__item {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.camp-schedule__icon {
+  font-size: 20px;
+}
+
+.camp-schedule__label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+}
+
+.camp-schedule__value {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.camp-schedule__roles {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.camp-schedule__role-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.camp-schedule__role-tag {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+@media (max-width: 700px) {
+  .camp-schedule__grid {
+    grid-template-columns: 1fr;
+  }
+}
