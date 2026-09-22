@@ -1,0 +1,44 @@
+.organizer-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-top: var(--space-5);
+  transition: box-shadow 0.15s ease;
+}
+
+.organizer-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.organizer-card__logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.organizer-card__label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.organizer-card__name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.organizer-card__type {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.organizer-card__arrow {
+  margin-left: auto;
+  color: var(--color-primary);
+  font-size: 18px;
+}
