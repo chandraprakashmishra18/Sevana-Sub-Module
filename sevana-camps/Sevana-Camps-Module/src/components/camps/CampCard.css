@@ -1,0 +1,71 @@
+.camp-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.camp-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.camp-card__image-wrap {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+  background: var(--color-border);
+}
+
+.camp-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camp-card__badges {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  display: flex;
+  gap: var(--space-2);
+}
+
+.camp-card__body {
+  padding: var(--space-4);
+}
+
+.camp-card__organizer {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.camp-card__verified {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.camp-card__title {
+  font-size: 16px;
+  margin-bottom: var(--space-2);
+  min-height: 44px;
+}
+
+.camp-card__meta {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.camp-card__attendee-progress {
+  margin-top: var(--space-3);
+}
+
+.camp-card__footer {
+  margin-top: var(--space-4);
+}
