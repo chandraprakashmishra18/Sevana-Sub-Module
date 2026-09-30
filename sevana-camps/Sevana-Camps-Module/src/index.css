@@ -1,23 +1,16 @@
 /* ===== Design Tokens (shared with Sevana Donations module) ===== */
 :root {
-  /* Brand colors */
-  --color-primary: #0F766E;
-  --color-primary-dark: #0B5D57;
-  --color-primary-light: #E6F4F3;
-
-  --color-accent: #F97316;
-  --color-accent-dark: #EA580C;
-  --color-accent-light: #FFF1E6;
-
-  --color-success: #16A34A;
-  --color-danger: #DC2626;
+    /* Brand colors */
+  --color-primary: #357ABD;
+  --color-primary-dark: #2A6099;
+  --color-primary-light: #E8F1FA;
 
   /* Neutrals */
-  --color-bg: #FAFAF9;
+  --color-bg: #F6FAFD;
   --color-surface: #FFFFFF;
   --color-text: #1F2937;
-  --color-text-muted: #6B7280;
-  --color-border: #E5E7EB;
+  --color-text-muted: #64748B;
+  --color-border: #DCE8F3;
 
   /* Spacing scale */
   --space-1: 4px;
@@ -87,3 +80,4 @@ h1, h2, h3, h4 {
   line-height: 1.25;
   font-weight: 700;
 }
+
