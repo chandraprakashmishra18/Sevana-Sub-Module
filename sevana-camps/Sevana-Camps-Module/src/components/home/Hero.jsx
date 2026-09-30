@@ -35,7 +35,7 @@ function Hero() {
 
         <div className="hero__image">
           <img
-            src="https://picsum.photos/seed/camps-hero/700/500"
+            src="https://images.pexels.com/photos/33127869/pexels-photo-33127869.jpeg"
             alt="Volunteers and doctors at a community medical camp"
           />
         </div>
