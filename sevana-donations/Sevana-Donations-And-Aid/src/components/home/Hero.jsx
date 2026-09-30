@@ -9,7 +9,7 @@ function Hero() {
         <div className="hero__content">
           <span className="hero__eyebrow">सेवना — Devoted Service</span>
           <h1 className="hero__title">
-            Verified giving. <span>Real impact.</span> No middlemen.
+            Verified giving. <span>Real Impact.</span> No Middlemen.
           </h1>
           <p className="hero__subtitle">
             Every rupee you donate is tracked from your pocket to a
