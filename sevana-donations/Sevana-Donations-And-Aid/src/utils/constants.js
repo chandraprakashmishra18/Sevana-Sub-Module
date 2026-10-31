@@ -5,6 +5,15 @@ export const CAMPAIGN_CATEGORIES = [
   "Student Sponsorship",
   "Family Aid",
   "In-Kind Giving",
+  "Medical Aid",
+];
+
+export const CAMPAIGN_BENEFICIARIES = [
+  "All",
+  "Orphanage",
+  "Old Age Home",
+  "NGO",
+  "General",
 ];
 
 export const PAYMENT_METHODS = [
