@@ -20,22 +20,32 @@ function JoinConfirmation({ camp }) {
   };
 
   if (submitted) {
+    const isWorker = joinData.role === "worker";
+    const xpReward = isWorker ? 150 : 30;
+
     return (
       <div className="join-confirmation join-confirmation--success">
         <div className="join-confirmation__icon">🎉</div>
         <h2>You're in, {joinData.fullName.split(" ")[0]}!</h2>
+        
+        <div className="join-confirmation__xp-badge">
+          🌟 <strong>+{xpReward} Community XP</strong> {isWorker ? "reserved for your service" : "for attending"}!
+        </div>
+
         <p>
           You've successfully joined <strong>{camp.title}</strong> as{" "}
-          {joinData.role === "worker" ? "a worker" : "an attendee"}. A confirmation
+          {isWorker ? "a volunteer worker" : "an attendee"}. A confirmation
           has been sent to {joinData.email}.
         </p>
-        {joinData.role === "worker" && (
-          <p className="join-confirmation__xp-note">
-            You'll earn XP once the camp is marked complete by the organizer.
-          </p>
-        )}
+
+        <p className="join-confirmation__xp-note">
+          {isWorker
+            ? "Your contribution supports the community and will advance your tier on the Volunteer Leaderboard!"
+            : "We look forward to welcoming you at the camp!"}
+        </p>
+
         <div className="join-confirmation__actions">
-          <Link to="/camps"><Button variant="outline">Browse More Camps</Button></Link>
+          <Link to="/leaderboard"><Button variant="outline">View Leaderboard</Button></Link>
           <Link to={`/camps/${camp.id}`}><Button variant="primary">Back to Camp</Button></Link>
         </div>
       </div>
@@ -44,7 +54,7 @@ function JoinConfirmation({ camp }) {
 
   return (
     <div className="join-step">
-      <h2>Step 3 of 3 — Review & Confirm</h2>
+      <h2>Step 3 of 3 — Review &amp; Confirm</h2>
 
       <div className="join-confirmation__review">
         <div className="join-confirmation__row">
@@ -52,8 +62,12 @@ function JoinConfirmation({ camp }) {
           <strong>{camp.title}</strong>
         </div>
         <div className="join-confirmation__row">
+          <span>Target Beneficiary</span>
+          <strong>{camp.targetBeneficiary || "General Community"}</strong>
+        </div>
+        <div className="join-confirmation__row">
           <span>Joining as</span>
-          <strong>{joinData.role === "worker" ? "Worker" : "Attendee"}</strong>
+          <strong>{joinData.role === "worker" ? "Volunteer Worker" : "Attendee"}</strong>
         </div>
         <div className="join-confirmation__row">
           <span>Name</span>
@@ -70,26 +84,36 @@ function JoinConfirmation({ camp }) {
         {joinData.role === "worker" ? (
           <>
             <div className="join-confirmation__row">
-              <span>Role</span>
+              <span>Role / Skill</span>
               <strong>{joinData.skillOrProfession}</strong>
             </div>
             <div className="join-confirmation__row">
               <span>Availability</span>
               <strong>{joinData.availability}</strong>
             </div>
+            <div className="join-confirmation__row">
+              <span>XP Reward</span>
+              <strong style={{ color: "#d97706" }}>+150 XP upon completion</strong>
+            </div>
           </>
         ) : (
-          <div className="join-confirmation__row">
-            <span>Age Group</span>
-            <strong>{joinData.ageGroup}</strong>
-          </div>
+          <>
+            <div className="join-confirmation__row">
+              <span>Age Group</span>
+              <strong>{joinData.ageGroup}</strong>
+            </div>
+            <div className="join-confirmation__row">
+              <span>XP Reward</span>
+              <strong style={{ color: "#d97706" }}>+30 XP for participation</strong>
+            </div>
+          </>
         )}
       </div>
 
       <div className="join-step__actions">
         <Button variant="ghost" onClick={prevStep} disabled={submitting}>← Back</Button>
         <Button variant="accent" size="lg" onClick={handleSubmit} disabled={submitting}>
-          {submitting ? "Submitting..." : "Confirm & Join"}
+          {submitting ? "Submitting..." : "Confirm & Join Camp"}
         </Button>
       </div>
     </div>
