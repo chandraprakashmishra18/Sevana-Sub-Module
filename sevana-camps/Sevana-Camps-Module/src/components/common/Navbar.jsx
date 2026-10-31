@@ -12,6 +12,7 @@ function Navbar() {
     { name: "Organizers", path: "/organizers" },
     { name: "Past Camps", path: "/past-camps" },
     { name: "Leaderboard", path: "/leaderboard" },
+    { name: "🔔 Invitations", path: "/invitations" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
