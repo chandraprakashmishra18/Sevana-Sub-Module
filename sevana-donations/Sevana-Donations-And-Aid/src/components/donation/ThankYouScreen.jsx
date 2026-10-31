@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useDonation } from "../../context/useDonation";
 import ReceiptPreview from "./ReceiptPreview";
+import XPRewardBanner from "./XPRewardBanner";
 import Button from "../common/Button";
 import mockCampaigns from "../../data/mockCampaigns";
 import "./ThankYouScreen.css";
@@ -19,6 +20,8 @@ function ThankYouScreen() {
       </p>
 
       <ReceiptPreview donation={donation} campaign={campaign} />
+
+      <XPRewardBanner amount={donation.amount} />
 
       <div className="thank-you-screen__actions">
         <Link to="/campaigns">

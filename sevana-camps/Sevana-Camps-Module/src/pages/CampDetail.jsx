@@ -5,6 +5,7 @@ import CampScheduleInfo from "../components/campDetail/CampScheduleInfo";
 import RoleSelector from "../components/campDetail/RoleSelector";
 import OrganizerCard from "../components/campDetail/OrganizerCard";
 import FeedbackList from "../components/campDetail/FeedbackList";
+import InvitePanel from "../components/campDetail/InvitePanel";
 import { getCampById } from "../services/campService";
 import { getAllOrganizers } from "../services/organizerService";
 import { getFeedbackByCamp } from "../services/feedbackService";
@@ -75,6 +76,9 @@ function CampDetail() {
         <div className="camp-detail__sidebar">
           <RoleSelector camp={camp} />
           <OrganizerCard organizer={organizer} />
+          {camp.status === "upcoming" && (
+            <InvitePanel campId={camp.id} campTitle={camp.title} />
+          )}
         </div>
       </div>
     </section>
