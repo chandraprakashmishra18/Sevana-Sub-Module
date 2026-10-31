@@ -77,7 +77,11 @@ function CampDetail() {
           <RoleSelector camp={camp} />
           <OrganizerCard organizer={organizer} />
           {camp.status === "upcoming" && (
-            <InvitePanel campId={camp.id} campTitle={camp.title} />
+            <InvitePanel
+              campId={camp.id}
+              campTitle={camp.title}
+              targetBeneficiary={camp.targetBeneficiary}
+            />
           )}
         </div>
       </div>
