@@ -45,9 +45,24 @@
   flex: 1;
 }
 
+.donor-list__name-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .donor-list__name {
   font-size: 13.5px;
   font-weight: 600;
+}
+
+.donor-list__xp {
+  font-size: 11px;
+  font-weight: 700;
+  color: #b45309;
+  background: #fef3c7;
+  padding: 1px 6px;
+  border-radius: 999px;
 }
 
 .donor-list__date {
