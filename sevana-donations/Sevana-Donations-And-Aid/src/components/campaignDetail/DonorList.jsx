@@ -18,7 +18,12 @@ function DonorList({ donors }) {
           <li key={index} className="donor-list__item">
             <div className="donor-list__avatar">{donor.name.charAt(0)}</div>
             <div className="donor-list__info">
-              <p className="donor-list__name">{donor.name}</p>
+              <div className="donor-list__name-row">
+                <p className="donor-list__name">{donor.name}</p>
+                {donor.xpEarned && (
+                  <span className="donor-list__xp">+{donor.xpEarned} XP</span>
+                )}
+              </div>
               <p className="donor-list__date">{donor.date}</p>
             </div>
             <p className="donor-list__amount">₹{donor.amount.toLocaleString("en-IN")}</p>
