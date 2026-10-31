@@ -3,12 +3,14 @@ import { sendInvitation } from "../../services/invitationService";
 import "./InvitePanel.css";
 
 const ROLES = [
-  { value: "organizer", label: "Organizer Co-Lead" },
-  { value: "worker", label: "Worker / Volunteer" },
-  { value: "attendee", label: "Attendee" },
+  { value: "organizer", label: "Co-Organizer (Arranging & Logistics)" },
+  { value: "medical", label: "Medical Specialist / Doctor" },
+  { value: "teacher", label: "Teacher / Educational Lead" },
+  { value: "worker", label: "Volunteer / Field Worker" },
+  { value: "attendee", label: "Attendee / Participant" },
 ];
 
-function InvitePanel({ campId, campTitle }) {
+function InvitePanel({ campId, campTitle, targetBeneficiary }) {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("worker");
   const [message, setMessage] = useState("");
@@ -20,19 +22,29 @@ function InvitePanel({ campId, campTitle }) {
   const handleSend = async () => {
     if (!isValid) return;
     setSending(true);
-    await sendInvitation({ campId, campTitle, toEmail: email.trim(), role, message });
+    await sendInvitation({
+      campId,
+      campTitle,
+      targetBeneficiary,
+      toEmail: email.trim(),
+      role,
+      message,
+    });
     setSending(false);
     setSuccess(true);
     setEmail("");
     setMessage("");
-    setTimeout(() => setSuccess(false), 4000);
+    setTimeout(() => setSuccess(false), 5000);
   };
 
   return (
     <div className="invite-panel">
       <p className="invite-panel__heading">
         <span className="invite-panel__heading-icon">✉️</span>
-        Invite a Volunteer
+        Invite Others to Arrange &amp; Join
+      </p>
+      <p className="invite-panel__subtitle">
+        Invite friends, doctors, teachers, or NGOs to co-organize or volunteer for this community camp.
       </p>
 
       <div className="invite-panel__field">
@@ -47,7 +59,7 @@ function InvitePanel({ campId, campTitle }) {
       </div>
 
       <div className="invite-panel__field">
-        <label htmlFor="invite-role">Role</label>
+        <label htmlFor="invite-role">Role in Camp</label>
         <select
           id="invite-role"
           value={role}
@@ -65,7 +77,7 @@ function InvitePanel({ campId, campTitle }) {
         <label htmlFor="invite-message">Personal Message (optional)</label>
         <textarea
           id="invite-message"
-          placeholder="Add a personal note to your invitation..."
+          placeholder="Add a note (e.g. 'Hey, let's arrange the supplies together for the kids!')..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           rows={3}
@@ -77,17 +89,17 @@ function InvitePanel({ campId, campTitle }) {
         disabled={!isValid || sending}
         onClick={handleSend}
       >
-        {sending ? "Sending..." : "Send Invite"}
+        {sending ? "Sending..." : "Send Invitation"}
       </button>
 
       {success && (
         <div className="invite-panel__success">
-          ✅ Invitation sent successfully!
+          ✅ Invitation sent! You earn XP when others join and participate.
         </div>
       )}
 
       <p className="invite-panel__note">
-        They'll receive an invitation to join this camp.
+        Invitations show in their profile with role details and XP milestones.
       </p>
     </div>
   );
