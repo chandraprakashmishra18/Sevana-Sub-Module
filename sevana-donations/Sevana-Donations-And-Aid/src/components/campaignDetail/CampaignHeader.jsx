@@ -2,7 +2,17 @@ import Badge from "../common/Badge";
 import "./CampaignHeader.css";
 
 function CampaignHeader({ campaign }) {
-  const { title, category, ngo, ngoVerified, image, location, urgent, description } = campaign;
+  const {
+    title,
+    category,
+    targetBeneficiary,
+    ngo,
+    ngoVerified,
+    image,
+    location,
+    urgent,
+    description,
+  } = campaign;
 
   return (
     <div className="campaign-header">
@@ -13,6 +23,17 @@ function CampaignHeader({ campaign }) {
       <div className="campaign-header__badges">
         {urgent && <Badge tone="urgent">Urgent</Badge>}
         <Badge tone="info">{category}</Badge>
+        {targetBeneficiary && (
+          <Badge tone="verified">
+            {targetBeneficiary === "Orphanage"
+              ? "🏠 Orphanage"
+              : targetBeneficiary === "Old Age Home"
+              ? "👴 Old Age Home"
+              : targetBeneficiary === "NGO"
+              ? "🤝 NGO"
+              : "🌍 Community"}
+          </Badge>
+        )}
       </div>
 
       <h1 className="campaign-header__title">{title}</h1>

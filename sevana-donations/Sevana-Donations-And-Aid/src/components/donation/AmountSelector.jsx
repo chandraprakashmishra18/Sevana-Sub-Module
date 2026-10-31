@@ -1,10 +1,12 @@
 import { useDonation } from "../../context/useDonation";
 import Button from "../common/Button";
-import "./AmountSelector.css";
 import { DONATION_PRESET_AMOUNTS } from "../../utils/constants";
+import { getXPForDonation } from "../../data/mockDonorXP";
+import "./AmountSelector.css";
 
 function AmountSelector({ campaign }) {
   const { donation, updateDonation, nextStep } = useDonation();
+  const estimatedXP = getXPForDonation(donation.amount || 0);
 
   return (
     <div className="donation-step">
@@ -41,6 +43,12 @@ function AmountSelector({ campaign }) {
         onChange={(e) => updateDonation({ amount: Number(e.target.value) })}
         min="1"
       />
+
+      {estimatedXP > 0 && (
+        <div className="amount-selector__xp-tag">
+          🌟 You will earn <strong>+{estimatedXP} Community XP</strong> with this donation!
+        </div>
+      )}
 
       <Button
         variant="accent"
