@@ -1,0 +1,106 @@
+.invite-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-top: var(--space-5);
+}
+
+.invite-panel__heading {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.invite-panel__heading-icon {
+  font-size: 18px;
+}
+
+.invite-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.invite-panel__field label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.invite-panel__field input,
+.invite-panel__field select,
+.invite-panel__field textarea {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: border-color 0.15s;
+}
+
+.invite-panel__field input:focus,
+.invite-panel__field select:focus,
+.invite-panel__field textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.invite-panel__field textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+.invite-panel__send-btn {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: var(--space-2);
+}
+
+.invite-panel__send-btn:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.invite-panel__send-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.invite-panel__success {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-top: var(--space-3);
+  font-size: 13.5px;
+  color: #166534;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.invite-panel__note {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: var(--space-3);
+  text-align: center;
+  font-style: italic;
+}
