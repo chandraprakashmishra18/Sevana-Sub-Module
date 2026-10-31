@@ -12,6 +12,7 @@ function CampaignCard({ campaign }) {
     id,
     title,
     category,
+    targetBeneficiary,
     ngo,
     ngoVerified,
     image,
@@ -37,6 +38,17 @@ function CampaignCard({ campaign }) {
         <div className="campaign-card__badges">
           {urgent && <Badge tone="urgent">Urgent</Badge>}
           <Badge tone="info">{category}</Badge>
+          {targetBeneficiary && (
+            <Badge tone="verified">
+              {targetBeneficiary === "Orphanage"
+                ? "🏠 Orphanage"
+                : targetBeneficiary === "Old Age Home"
+                ? "👵 Old Age Home"
+                : targetBeneficiary === "NGO"
+                ? "🤝 NGO"
+                : "🌍 Community"}
+            </Badge>
+          )}
         </div>
       </div>
 
@@ -54,7 +66,7 @@ function CampaignCard({ campaign }) {
         <div className="campaign-card__footer">
           <span className="campaign-card__donors">{donorCount} donors</span>
           <Link to={`/campaigns/${id}`}>
-            <Button variant="primary" size="sm">Donate</Button>
+            <Button variant="primary" size="sm">Donate &amp; Earn XP</Button>
           </Link>
         </div>
       </div>
