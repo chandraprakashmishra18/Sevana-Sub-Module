@@ -11,6 +11,7 @@ function CampCard({ camp }) {
     id,
     title,
     type,
+    targetBeneficiary,
     organizer,
     organizerVerified,
     image,
@@ -44,6 +45,17 @@ function CampCard({ camp }) {
         <div className="camp-card__badges">
           {status === "past" && <Badge tone="neutral">Completed</Badge>}
           <Badge tone={type === "Medical" ? "medical" : "educational"}>{type}</Badge>
+          {targetBeneficiary && (
+            <Badge tone="info">
+              {targetBeneficiary === "Orphanage"
+                ? "🏠 Orphanage"
+                : targetBeneficiary === "Old Age Home"
+                ? "👴 Old Age Home"
+                : targetBeneficiary === "NGO"
+                ? "🤝 NGO"
+                : "🌍 Community"}
+            </Badge>
+          )}
         </div>
       </div>
 

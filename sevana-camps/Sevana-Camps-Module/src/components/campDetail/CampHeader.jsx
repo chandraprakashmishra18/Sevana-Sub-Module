@@ -2,7 +2,16 @@ import Badge from "../common/Badge";
 import "./CampHeader.css";
 
 function CampHeader({ camp }) {
-  const { title, type, organizer, organizerVerified, image, status, description } = camp;
+  const {
+    title,
+    type,
+    targetBeneficiary,
+    organizer,
+    organizerVerified,
+    image,
+    status,
+    description,
+  } = camp;
 
   return (
     <div className="camp-header">
@@ -13,6 +22,17 @@ function CampHeader({ camp }) {
       <div className="camp-header__badges">
         {status === "past" && <Badge tone="neutral">Completed</Badge>}
         <Badge tone={type === "Medical" ? "medical" : "educational"}>{type}</Badge>
+        {targetBeneficiary && (
+          <Badge tone="info">
+            {targetBeneficiary === "Orphanage"
+              ? "🏠 Orphanage"
+              : targetBeneficiary === "Old Age Home"
+              ? "👴 Old Age Home"
+              : targetBeneficiary === "NGO"
+              ? "🤝 NGO"
+              : "🌍 Community"}
+          </Badge>
+        )}
       </div>
 
       <h1 className="camp-header__title">{title}</h1>
