@@ -21,14 +21,17 @@ function OrganizerReview({ formData, onBack }) {
     return (
       <div className="organizer-review organizer-review--success">
         <div className="organizer-review__icon">🎉</div>
-        <h2>Camp Submitted!</h2>
+        <h2>Camp Submitted Successfully!</h2>
+        <div className="organizer-review__xp-award">
+          🌟 <strong>+300 XP Earned!</strong> You've received organizer community karma.
+        </div>
         <p>
           <strong>{formData.title}</strong> has been submitted for review.
-          Once approved, it will appear in the Camps listing for workers and attendees to join.
+          Once approved, it will appear in the Camps directory where volunteers and attendees can join or be invited.
         </p>
         <div className="organizer-review__actions">
           <Link to="/camps"><Button variant="outline">Browse Camps</Button></Link>
-          <Link to="/"><Button variant="primary">Back to Home</Button></Link>
+          <Link to="/leaderboard"><Button variant="primary">View Leaderboard</Button></Link>
         </div>
       </div>
     );
@@ -36,7 +39,7 @@ function OrganizerReview({ formData, onBack }) {
 
   return (
     <div className="organize-step">
-      <h2>Step 3 of 3 — Review & Submit</h2>
+      <h2>Step 3 of 3 — Review &amp; Submit</h2>
 
       <div className="organizer-review__box">
         <div className="organizer-review__row">
@@ -45,7 +48,11 @@ function OrganizerReview({ formData, onBack }) {
         </div>
         <div className="organizer-review__row">
           <span>Type</span>
-          <strong>{formData.type}</strong>
+          <strong>{formData.type} Camp</strong>
+        </div>
+        <div className="organizer-review__row">
+          <span>Target Beneficiary</span>
+          <strong>{formData.targetBeneficiary || "General Community"}</strong>
         </div>
         <div className="organizer-review__row">
           <span>Date</span>
@@ -61,12 +68,18 @@ function OrganizerReview({ formData, onBack }) {
         </div>
         <div className="organizer-review__row">
           <span>Roles Needed</span>
-          <strong>{formData.workerRolesNeeded || "Not specified"}</strong>
+          <strong>{formData.workerRolesNeeded || "General Volunteers"}</strong>
         </div>
         <div className="organizer-review__row">
-          <span>Media Attached</span>
-          <strong>{formData.media.length} file(s)</strong>
+          <span>Community XP Reward</span>
+          <strong style={{ color: "#d97706" }}>+300 XP for Organizer</strong>
         </div>
+        {formData.media && formData.media.length > 0 && (
+          <div className="organizer-review__row">
+            <span>Media Attached</span>
+            <strong>{formData.media.length} file(s)</strong>
+          </div>
+        )}
       </div>
 
       <p className="organizer-review__description">{formData.description}</p>
@@ -74,7 +87,7 @@ function OrganizerReview({ formData, onBack }) {
       <div className="organize-step__actions">
         <Button variant="ghost" onClick={onBack} disabled={submitting}>← Back</Button>
         <Button variant="accent" size="lg" onClick={handleSubmit} disabled={submitting}>
-          {submitting ? "Submitting..." : "Submit Camp"}
+          {submitting ? "Submitting..." : "Submit Camp (+300 XP)"}
         </Button>
       </div>
     </div>
