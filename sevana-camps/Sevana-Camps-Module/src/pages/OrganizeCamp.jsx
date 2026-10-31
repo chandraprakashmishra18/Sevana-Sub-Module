@@ -7,6 +7,7 @@ import "./OrganizeCamp.css";
 const initialFormData = {
   title: "",
   type: "",
+  targetBeneficiary: "",
   date: "",
   time: "",
   location: "",
