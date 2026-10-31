@@ -11,6 +11,7 @@ function Navbar() {
     { name: "Campaigns", path: "/campaigns" },
     { name: "NGO Partners", path: "/ngo-partners" },
     { name: "Impact & Transparency", path: "/impact" },
+    { name: "Leaderboard", path: "/leaderboard" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];

@@ -6,6 +6,7 @@ import Donate from "../pages/Donate";
 import NGOPartners from "../pages/NGOPartners";
 import NGOProfilePage from "../pages/NGOProfilePage";
 import ImpactTransparency from "../pages/ImpactTransparency";
+import DonorLeaderboardPage from "../pages/DonorLeaderboardPage";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
@@ -20,6 +21,7 @@ function AppRoutes() {
       <Route path="/ngo-partners" element={<NGOPartners />} />
       <Route path="/ngo-partners/:id" element={<NGOProfilePage />} />
       <Route path="/impact" element={<ImpactTransparency />} />
+      <Route path="/leaderboard" element={<DonorLeaderboardPage />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="*" element={<NotFound />} />
