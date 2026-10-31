@@ -2,12 +2,15 @@ import "./CampFilters.css";
 
 const campTypes = ["All", "Medical", "Educational"];
 const campStatuses = ["Upcoming", "Past"];
+const campBeneficiaries = ["All", "General", "Orphanage", "Old Age Home", "NGO"];
 
 function CampFilters({
   activeType,
   onTypeChange,
   activeStatus,
   onStatusChange,
+  activeBeneficiary,
+  onBeneficiaryChange,
   searchTerm,
   onSearchChange,
 }) {
@@ -44,6 +47,19 @@ function CampFilters({
               onClick={() => onStatusChange(status)}
             >
               {status}
+            </button>
+          ))}
+        </div>
+
+        <div className="camp-filters__group">
+          <span className="camp-filters__label">Beneficiary:</span>
+          {campBeneficiaries.map((b) => (
+            <button
+              key={b}
+              className={`filter-pill ${activeBeneficiary === b ? "filter-pill--active" : ""}`}
+              onClick={() => onBeneficiaryChange(b)}
+            >
+              {b}
             </button>
           ))}
         </div>

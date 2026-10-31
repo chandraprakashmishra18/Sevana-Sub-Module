@@ -9,6 +9,7 @@ function Camps() {
   const [loading, setLoading] = useState(true);
   const [activeType, setActiveType] = useState("All");
   const [activeStatus, setActiveStatus] = useState("Upcoming");
+  const [activeBeneficiary, setActiveBeneficiary] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -30,13 +31,15 @@ function Camps() {
     return camps.filter((camp) => {
       const matchesType = activeType === "All" || camp.type === activeType;
       const matchesStatus = camp.status === activeStatus.toLowerCase();
+      const matchesBeneficiary =
+        activeBeneficiary === "All" || camp.targetBeneficiary === activeBeneficiary;
       const matchesSearch =
         camp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         camp.location.toLowerCase().includes(searchTerm.toLowerCase());
 
-      return matchesType && matchesStatus && matchesSearch;
+      return matchesType && matchesStatus && matchesBeneficiary && matchesSearch;
     });
-  }, [camps, activeType, activeStatus, searchTerm]);
+  }, [camps, activeType, activeStatus, activeBeneficiary, searchTerm]);
 
   return (
     <section className="camps-page">
@@ -51,6 +54,8 @@ function Camps() {
           onTypeChange={setActiveType}
           activeStatus={activeStatus}
           onStatusChange={setActiveStatus}
+          activeBeneficiary={activeBeneficiary}
+          onBeneficiaryChange={setActiveBeneficiary}
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
         />
