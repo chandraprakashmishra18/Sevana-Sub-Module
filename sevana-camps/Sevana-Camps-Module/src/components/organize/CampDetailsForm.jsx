@@ -33,6 +33,21 @@ function CampDetailsForm({ formData, updateFormData, onNext }) {
         </select>
       </label>
 
+      <label className="organize-step__field">
+        <span>Target Beneficiary</span>
+        <select
+          value={formData.targetBeneficiary}
+          onChange={(e) => updateFormData({ targetBeneficiary: e.target.value })}
+        >
+          <option value="">Select beneficiary</option>
+          <option value="General">General Community</option>
+          <option value="Orphanage">Orphanage</option>
+          <option value="Old Age Home">Old Age Home</option>
+          <option value="NGO">NGO</option>
+          <option value="School/College">School / College</option>
+        </select>
+      </label>
+
       <div className="organize-step__row">
         <label className="organize-step__field">
           <span>Date *</span>
