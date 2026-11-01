@@ -6,7 +6,7 @@ Built for **CS002 — Community Service** (K.R. Mangalam University, SOET).
 
 ## What this is
 
-This is the **frontend only** (React + Vite, plain CSS). It currently runs entirely on mock data (`src/data/*.js`) so every feature works and can be demoed without a backend.
+This is a frontend demo (React + Vite, plain CSS). Seed content comes from `src/data/*.js`; submitted donation receipts and XP are saved in browser storage.
 
 ## Tech Stack
 
@@ -34,7 +34,7 @@ cp .env.example .env
 - `src/pages/` — one file per route
 - `src/components/` — organized by feature area (home, campaigns, campaignDetail, donation, ngo, trust, common)
 - `src/data/` — mock data (campaigns, NGOs, donors, disbursements)
-- `src/services/` — **this is what the backend team should edit.** Each function currently returns mock data wrapped in a Promise. Replace the body with a real `fetch()` call to the backend, keeping the same function name and return shape — no component code needs to change.
+- `src/services/` — demo data and browser persistence; replace with API calls when a backend is available
 - `src/context/` — donation flow state (amount, donor details, payment step)
 - `src/routes/AppRoutes.jsx` — all route definitions
 
@@ -51,8 +51,8 @@ cp .env.example .env
 
 ## Not Yet Implemented (backend/future work)
 
-- Real payment gateway (Razorpay) — currently mocked in `src/services/donationService.js`
-- Login/authentication
+- Real payment gateway (Razorpay) and server-side donation receipts — current checkout is a demo and does not transfer money
+- Login/authentication and XP synchronization with the Camps module
 - NGO admin dashboard (for NGOs to create/manage their own campaigns)
 - Real image upload (currently using Picsum placeholder URLs)
 

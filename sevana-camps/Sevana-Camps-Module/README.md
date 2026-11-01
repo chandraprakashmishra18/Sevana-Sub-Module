@@ -6,7 +6,7 @@ Built for **CS002 — Community Service** (K.R. Mangalam University, SOET).
 
 ## What this is
 
-**Frontend only** (React + Vite, plain CSS). Runs entirely on mock data (`src/data/*.js`) so every feature works and can be demoed without a backend.
+Frontend demo (React + Vite, plain CSS). Seed content comes from `src/data/*.js`; camp submissions, joins, invitations, and XP are saved in browser storage.
 
 ## Tech Stack
 
@@ -27,7 +27,7 @@ npm run dev
 - `src/pages/` — one file per route
 - `src/components/` — organized by feature (home, camps, campDetail, join, organize, organizers, profile)
 - `src/data/` — mock data (camps, organizers, workers, feedback); `mockWorkers.js` also holds the tier calculation logic
-- `src/services/` — **backend team edits these only.** Each function returns mock data wrapped in a Promise; replace the body with a real fetch() call, keeping the same name and return shape
+- `src/services/` — demo data and browser persistence; replace with API calls when a backend is available
 - `src/context/` — Join Camp flow state (role, contact details, role-specific fields)
 
 ## Features Implemented
@@ -44,12 +44,13 @@ npm run dev
 - About & Contact
 - Fully responsive
 
-## Not Yet Implemented (backend/future work)
+## Backend work still needed
 
 - Login/authentication (worker/attendee/organizer identity is currently accessed by direct URL, not tied to a logged-in user)
 - Real media upload/storage (currently browser-local preview only — see the note on the Organize page)
 - Camp approval workflow for organizers (submitted camps don't yet appear in the live listing)
-- Real XP awarding (currently hardcoded in mock data, not calculated from actual attendance)
+- Server-backed accounts, activity synchronization, attendance verification, and final XP settlement
+- NGO verification and review/approval before camp listings are trusted
 
 ## Team SEVANA
 - Chandra Prakash Mishra (leader)

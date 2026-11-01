@@ -24,6 +24,7 @@ function PaymentMethodStep() {
       if (result.success) {
         updateDonation({
           receiptId: result.receiptId,
+          xpEarned: result.xp,
           receiptDate: new Date().toISOString(),
         });
         nextStep();

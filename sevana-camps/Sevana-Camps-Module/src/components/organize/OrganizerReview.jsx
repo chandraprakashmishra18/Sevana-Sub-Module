@@ -26,8 +26,7 @@ function OrganizerReview({ formData, onBack }) {
           🌟 <strong>+300 XP Earned!</strong> You've received organizer community karma.
         </div>
         <p>
-          <strong>{formData.title}</strong> has been submitted for review.
-          Once approved, it will appear in the Camps directory where volunteers and attendees can join or be invited.
+          <strong>{formData.title}</strong> is now listed in the Camps directory as a community-submitted camp. NGO verification and moderator approval are not connected in this demo.
         </p>
         <div className="organizer-review__actions">
           <Link to="/camps"><Button variant="outline">Browse Camps</Button></Link>

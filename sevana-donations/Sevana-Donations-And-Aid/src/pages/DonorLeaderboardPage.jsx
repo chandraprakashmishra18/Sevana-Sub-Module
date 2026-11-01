@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import mockDonorXPProfiles, { getTierForDonorXP } from "../data/mockDonorXP";
+import { getDonationHistory } from "../services/donationService";
 import "./DonorLeaderboardPage.css";
 
 const rankIcons = { 1: "🥇", 2: "🥈", 3: "🥉" };
@@ -11,7 +12,18 @@ function DonorLeaderboardPage() {
 
   useEffect(() => {
     // Simulate async fetch
-    const sorted = [...mockDonorXPProfiles].sort((a, b) => b.totalXP - a.totalXP)
+    const history = getDonationHistory();
+    const byEmail = history.reduce((groups, donation) => {
+      const email = donation.donorEmail?.toLowerCase();
+      if (!email) return groups;
+      groups[email] ||= { id: `local-${email}`, name: donation.donorName || "Community Donor", totalXP: 0, totalDonated: 0, donationCount: 0, avatar: "https://picsum.photos/seed/community-donor/150/150" };
+      groups[email].totalXP += donation.xp || 0;
+      groups[email].totalDonated += Number(donation.amount) || 0;
+      groups[email].donationCount += 1;
+      return groups;
+    }, {});
+    const locals = Object.values(byEmail).filter((local) => !mockDonorXPProfiles.some((donor) => donor.name === local.name));
+    const sorted = [...mockDonorXPProfiles, ...locals].sort((a, b) => b.totalXP - a.totalXP)
       .map((d, i) => ({ ...d, rank: i + 1 }));
     setDonors(sorted);
     setLoading(false);
@@ -24,7 +36,7 @@ function DonorLeaderboardPage() {
           <h1>🏆 Top Donors</h1>
           <p>
             Donors ranked by XP earned across all campaigns. Every contribution
-            earns you XP that carries over to your camp volunteer profile.
+            Donations earn XP in this demo. Camp activity is tracked separately in the Camps module.
           </p>
         </div>
 

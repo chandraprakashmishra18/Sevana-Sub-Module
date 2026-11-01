@@ -38,6 +38,7 @@ function Navbar() {
               {link.name}
             </NavLink>
           ))}
+          <a className="navbar__link" href="http://localhost:5173/">Donations &amp; Aid ↗</a>
           <Link to="/organize" onClick={() => setMenuOpen(false)}>
             <Button variant="accent" size="sm">Organize a Camp</Button>
           </Link>

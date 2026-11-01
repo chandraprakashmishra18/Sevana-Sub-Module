@@ -302,3 +302,25 @@
   color: var(--color-text-muted);
   font-size: 14px;
 }
+.invitations-page__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 360px;
+  margin-top: 16px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.invitations-page__identity input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.invitations-page__xp-total {
+  margin-top: 12px;
+}

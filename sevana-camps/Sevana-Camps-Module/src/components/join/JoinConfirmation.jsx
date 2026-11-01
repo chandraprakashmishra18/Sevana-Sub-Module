@@ -9,11 +9,13 @@ function JoinConfirmation({ camp }) {
   const { joinData, prevStep } = useJoinCamp();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [alreadyJoined, setAlreadyJoined] = useState(false);
 
   const handleSubmit = async () => {
     setSubmitting(true);
     const result = await submitJoinCamp(joinData);
     if (result.success) {
+      setAlreadyJoined(Boolean(result.duplicate));
       setSubmitted(true);
     }
     setSubmitting(false);
@@ -29,7 +31,7 @@ function JoinConfirmation({ camp }) {
         <h2>You're in, {joinData.fullName.split(" ")[0]}!</h2>
         
         <div className="join-confirmation__xp-badge">
-          🌟 <strong>+{xpReward} Community XP</strong> {isWorker ? "reserved for your service" : "for attending"}!
+          🌟 <strong>{alreadyJoined ? "Already registered" : `+${xpReward} Community XP`}</strong> {alreadyJoined ? "for this email and camp." : "awarded for registering to serve"}!
         </div>
 
         <p>
@@ -39,9 +41,9 @@ function JoinConfirmation({ camp }) {
         </p>
 
         <p className="join-confirmation__xp-note">
-          {isWorker
-            ? "Your contribution supports the community and will advance your tier on the Volunteer Leaderboard!"
-            : "We look forward to welcoming you at the camp!"}
+          {alreadyJoined
+            ? "This email already has a registration for this camp."
+            : "Your XP is saved in this browser and recorded once for this camp registration."}
         </p>
 
         <div className="join-confirmation__actions">

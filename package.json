@@ -1,0 +1,12 @@
+{
+  "name": "sevana-community-platform",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev:donations",
+    "dev:donations": "npm --prefix sevana-donations/Sevana-Donations-And-Aid run dev -- --host 0.0.0.0 --port 5173",
+    "dev:camps": "npm --prefix sevana-camps/Sevana-Camps-Module run dev -- --host 0.0.0.0 --port 5174",
+    "build": "npm run build:donations && npm run build:camps",
+    "build:donations": "npm --prefix sevana-donations/Sevana-Donations-And-Aid run build",
+    "build:camps": "npm --prefix sevana-camps/Sevana-Camps-Module run build"
+  }
+}

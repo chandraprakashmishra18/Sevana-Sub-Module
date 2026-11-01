@@ -1,4 +1,5 @@
 import mockInvitations from "../data/mockInvitations";
+import { awardCommunityXP } from "./communityService";
 
 const STORAGE_KEY = "sevana_camps_invitations";
 
@@ -32,10 +33,10 @@ let _invitations = loadInvitations();
  * Returns all invitations relevant to a user —
  * both received (toEmail matches) and sent (fromUserId matches).
  */
-export async function getInvitationsByUser(userId = "currentUser") {
+export async function getInvitationsByUser(userId = "currentUser", email = "volunteer@example.com") {
   _invitations = loadInvitations();
   const received = _invitations.filter(
-    (inv) => inv.toEmail === "volunteer@example.com"
+    (inv) => inv.toEmail?.toLowerCase() === email.toLowerCase()
   );
   const sent = _invitations.filter((inv) => inv.fromUserId === userId);
   return Promise.resolve({ received, sent });
@@ -75,5 +76,14 @@ export async function updateInvitationStatus(id, status) {
   );
   saveInvitations(_invitations);
   const updated = _invitations.find((inv) => inv.id === id);
+  if (updated && status === "accepted") {
+    awardCommunityXP({
+      eventId: `invitation:${id}`,
+      kind: "invitation",
+      xp: updated.xpReward || 150,
+      description: `Accepted ${updated.campTitle}`,
+      email: updated.toEmail,
+    });
+  }
   return Promise.resolve(updated);
 }

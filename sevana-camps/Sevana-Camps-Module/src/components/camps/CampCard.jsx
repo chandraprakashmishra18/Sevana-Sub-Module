@@ -20,6 +20,7 @@ function CampCard({ camp }) {
     workerSlots,
     attendeeSlots,
     status,
+    approvalStatus,
   } = camp;
 
   const formattedDate = new Date(date).toLocaleDateString("en-IN", {
@@ -44,6 +45,7 @@ function CampCard({ camp }) {
         />
         <div className="camp-card__badges">
           {status === "past" && <Badge tone="neutral">Completed</Badge>}
+          {approvalStatus === "pending" && <Badge tone="neutral">Community submitted</Badge>}
           <Badge tone={type === "Medical" ? "medical" : "educational"}>{type}</Badge>
           {targetBeneficiary && (
             <Badge tone="info">

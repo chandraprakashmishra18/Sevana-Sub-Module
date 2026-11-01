@@ -7,6 +7,7 @@ import {
 import Badge from "../components/common/Badge";
 import Button from "../components/common/Button";
 import "./InvitationsPage.css";
+import { getCommunityActivity } from "../services/communityService";
 
 const STATUS_LABELS = {
   pending: "Pending",
@@ -76,7 +77,7 @@ function ReceivedCard({ invitation, onAccept, onDecline }) {
         </div>
       ) : invitation.status === "accepted" ? (
         <div className="invitation-card__accepted-info">
-          <span>✅ You have accepted this invitation. Your participation will earn you Community Service XP!</span>
+          <span>✅ Invitation accepted. Your Community Service XP has been recorded for this response.</span>
           {invitation.campId && (
             <Link to={`/camps/${invitation.campId}`}>
               <Button variant="outline" size="sm">Go to Camp</Button>
@@ -136,10 +137,12 @@ function InvitationsPage() {
   const [sent, setSent] = useState([]);
   const [loading, setLoading] = useState(true);
   const [xpNotice, setXpNotice] = useState(null);
+  const [userEmail, setUserEmail] = useState(() => localStorage.getItem("sevana_demo_user_email") || "volunteer@example.com");
+  const [communityXP, setCommunityXP] = useState(() => getCommunityActivity(userEmail).totalXP);
 
   useEffect(() => {
     let isMounted = true;
-    getInvitationsByUser("currentUser").then(({ received: r, sent: s }) => {
+    getInvitationsByUser("currentUser", userEmail).then(({ received: r, sent: s }) => {
       if (isMounted) {
         setReceived(r);
         setSent(s);
@@ -147,16 +150,23 @@ function InvitationsPage() {
       }
     });
     return () => { isMounted = false; };
-  }, []);
+  }, [userEmail]);
+
+  const handleIdentityChange = (value) => {
+    setUserEmail(value);
+    localStorage.setItem("sevana_demo_user_email", value);
+    setCommunityXP(getCommunityActivity(value).totalXP);
+  };
 
   const handleAccept = async (invitation) => {
     await updateInvitationStatus(invitation.id, "accepted");
+    setCommunityXP(getCommunityActivity(userEmail).totalXP);
     setReceived((prev) =>
       prev.map((inv) => (inv.id === invitation.id ? { ...inv, status: "accepted" } : inv))
     );
     const xp = invitation.xpReward || 150;
     setXpNotice(
-      `🎉 Invitation accepted for "${invitation.campTitle}"! You've registered to help and will earn +${xp} Community Service XP points.`
+      `🎉 Invitation accepted for "${invitation.campTitle}"! +${xp} Community Service XP recorded.`
     );
     setTimeout(() => setXpNotice(null), 6000);
   };
@@ -180,6 +190,11 @@ function InvitationsPage() {
               <p>
                 Collaborate with others to arrange and organize medical and educational camps for NGOs, Orphanages, and Old Age Homes. Earn XP points for every community contribution!
               </p>
+              <label className="invitations-page__identity" htmlFor="invitations-email">
+                Demo inbox email
+                <input id="invitations-email" type="email" value={userEmail} onChange={(event) => handleIdentityChange(event.target.value)} />
+              </label>
+              <p className="invitations-page__xp-total">Your recorded community XP: <strong>{communityXP}</strong></p>
             </div>
             <div className="invitations-page__header-actions">
               <Link to="/camps">

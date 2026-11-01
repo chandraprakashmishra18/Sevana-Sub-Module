@@ -15,13 +15,13 @@ function ThankYouScreen() {
       <div className="thank-you-screen__icon">🎉</div>
       <h2>Thank you, {donation.anonymous ? "Friend" : donation.donorName.split(" ")[0]}!</h2>
       <p>
-        Your donation of <strong>₹{donation.amount.toLocaleString("en-IN")}</strong> has
-        been received. You'll get photo-verified proof once the funds are used.
+        Your demo contribution of <strong>₹{donation.amount.toLocaleString("en-IN")}</strong> was recorded in this browser. This checkout does not transfer money or provide disbursement proof.
       </p>
 
       <ReceiptPreview donation={donation} campaign={campaign} />
 
       <XPRewardBanner amount={donation.amount} />
+      {donation.receiptId && <p className="thank-you-screen__receipt-id">Receipt {donation.receiptId} · {donation.xpEarned || 0} XP recorded in this browser</p>}
 
       <div className="thank-you-screen__actions">
         <Link to="/campaigns">
