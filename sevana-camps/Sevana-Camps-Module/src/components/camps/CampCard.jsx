@@ -4,7 +4,7 @@ import ProgressBar from "../common/ProgressBar";
 import Button from "../common/Button";
 import "./CampCard.css";
 
-const FALLBACK_IMAGE = "https://picsum.photos/seed/camp-fallback/600/400";
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop";
 
 function CampCard({ camp }) {
   const {
@@ -20,7 +20,6 @@ function CampCard({ camp }) {
     workerSlots,
     attendeeSlots,
     status,
-    approvalStatus,
   } = camp;
 
   const formattedDate = new Date(date).toLocaleDateString("en-IN", {
@@ -45,14 +44,13 @@ function CampCard({ camp }) {
         />
         <div className="camp-card__badges">
           {status === "past" && <Badge tone="neutral">Completed</Badge>}
-          {approvalStatus === "pending" && <Badge tone="neutral">Community submitted</Badge>}
           <Badge tone={type === "Medical" ? "medical" : "educational"}>{type}</Badge>
           {targetBeneficiary && (
             <Badge tone="info">
               {targetBeneficiary === "Orphanage"
                 ? "🏠 Orphanage"
                 : targetBeneficiary === "Old Age Home"
-                ? "👴 Old Age Home"
+                ? "👵 Old Age Home"
                 : targetBeneficiary === "NGO"
                 ? "🤝 NGO"
                 : "🌍 Community"}

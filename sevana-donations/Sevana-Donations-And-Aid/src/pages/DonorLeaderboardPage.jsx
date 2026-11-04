@@ -16,7 +16,14 @@ function DonorLeaderboardPage() {
     const byEmail = history.reduce((groups, donation) => {
       const email = donation.donorEmail?.toLowerCase();
       if (!email) return groups;
-      groups[email] ||= { id: `local-${email}`, name: donation.donorName || "Community Donor", totalXP: 0, totalDonated: 0, donationCount: 0, avatar: "https://picsum.photos/seed/community-donor/150/150" };
+      groups[email] ||= {
+        id: `local-${email}`,
+        name: donation.donorName || "Community Donor",
+        totalXP: 0,
+        totalDonated: 0,
+        donationCount: 0,
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop",
+      };
       groups[email].totalXP += donation.xp || 0;
       groups[email].totalDonated += Number(donation.amount) || 0;
       groups[email].donationCount += 1;
@@ -33,10 +40,9 @@ function DonorLeaderboardPage() {
     <section className="donor-leaderboard-page">
       <div className="container">
         <div className="donor-leaderboard-page__header">
-          <h1>🏆 Top Donors</h1>
+          <h1>🏆 Top Donors Leaderboard</h1>
           <p>
-            Donors ranked by XP earned across all campaigns. Every contribution
-            Donations earn XP in this demo. Camp activity is tracked separately in the Camps module.
+            Recognizing community members who support verified causes for Orphanages, Old Age Homes, NGOs, and student education. Every donation earns XP points!
           </p>
         </div>
 
@@ -83,7 +89,7 @@ function DonorLeaderboardPage() {
             </div>
 
             <div className="donor-leaderboard-page__link">
-              <Link to="/campaigns">View your donation history</Link>
+              <Link to="/campaigns">Browse Campaigns to Support &amp; Earn XP</Link>
             </div>
           </>
         )}

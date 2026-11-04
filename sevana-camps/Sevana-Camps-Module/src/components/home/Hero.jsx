@@ -7,36 +7,34 @@ function Hero() {
     <section className="hero">
       <div className="container hero__inner">
         <div className="hero__content">
-          <span className="hero__eyebrow">सेवना — Devoted Service</span>
+          <span className="hero__eyebrow">सेवना — Devoted Community Service</span>
           <h1 className="hero__title">
-            Medical care. <span>Real education.</span> Real people, showing up.
+            Medical care. <span>Real education.</span> For NGOs, Orphanages &amp; Seniors.
           </h1>
           <p className="hero__subtitle">
-            Join a camp as a doctor, teacher, or volunteer — or attend one for
-            a checkup or a class. Every camp is organized by a verified NGO,
-            school, or NSS/NCC unit, with real-time feedback and full impact tracking.
+            Organize or join medical and educational camps for orphanages, old age homes, and underprivileged communities. Invite doctors, educators, and volunteers, collaborate seamlessly, and earn community service XP!
           </p>
 
           <div className="hero__actions">
             <Link to="/camps">
-              <Button variant="accent" size="lg">Browse Camps</Button>
+              <Button variant="accent" size="lg">Explore Camps</Button>
             </Link>
             <Link to="/organize">
-              <Button variant="outline" size="lg">Organize a Camp</Button>
+              <Button variant="outline" size="lg">Organize a Camp (+300 XP)</Button>
             </Link>
           </div>
 
           <div className="hero__trustrow">
-            <span>✔ NSS/NCC Onboarded</span>
-            <span>✔ Verified Organizers</span>
-            <span>✔ Earn XP While Helping</span>
+            <span>✔ Medical &amp; Educational Camps</span>
+            <span>✔ Orphanages &amp; Old Age Homes</span>
+            <span>✔ Earn Community XP</span>
           </div>
         </div>
 
         <div className="hero__image">
           <img
-            src="https://images.pexels.com/photos/33127869/pexels-photo-33127869.jpeg"
-            alt="Volunteers and doctors at a community medical camp"
+            src="https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&auto=format&fit=crop"
+            alt="Volunteers and medical professionals organizing a community service camp"
           />
         </div>
       </div>
