@@ -1,0 +1,59 @@
+import { Routes, Route } from "react-router-dom";
+import Home from "../pages/Home";
+import Camps from "../pages/Camps";
+import CampDetail from "../pages/CampDetail";
+import JoinCamp from "../pages/JoinCamp";
+import OrganizeCamp from "../pages/OrganizeCamp";
+import Organizers from "../pages/Organizers";
+import OrganizerProfilePage from "../pages/OrganizerProfilePage";
+import PastCamps from "../pages/PastCamps";
+import WorkerProfile from "../pages/WorkerProfile";
+import LeaderboardPage from "../pages/LeaderboardPage";
+import InvitationsPage from "../pages/InvitationsPage";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import About from "../pages/About";
+import Contact from "../pages/Contact";
+import NotFound from "../pages/NotFound";
+import CrossModuleBridge from "../components/common/CrossModuleBridge";
+import Dashboard from "../pages/Dashboard";
+import CampManager from "../pages/CampManager";
+import Notifications from "../pages/Notifications";
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/camps" element={<Camps />} />
+      <Route path="/camps/:id" element={<CampDetail />} />
+      <Route path="/camps/:id/join" element={<JoinCamp />} />
+      <Route path="/organize" element={<OrganizeCamp />} />
+      <Route path="/organizers" element={<Organizers />} />
+      <Route path="/organizers/:id" element={<OrganizerProfilePage />} />
+      <Route path="/past-camps" element={<PastCamps />} />
+      <Route path="/profile" element={<WorkerProfile />} />
+      <Route path="/profile/:id" element={<WorkerProfile />} />
+      <Route path="/leaderboard" element={<LeaderboardPage />} />
+      <Route path="/invitations" element={<InvitationsPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/manage-camps" element={<CampManager />} />
+      <Route path="/notifications" element={<Notifications />} />
+
+      {/* Cross-module redirects from Camps (5174) to Donations (5173) */}
+      <Route path="/campaigns" element={<CrossModuleBridge targetPort={5173} targetTitle="Sevana Donations & Aid" />} />
+      <Route path="/campaigns/:id" element={<CrossModuleBridge targetPort={5173} targetTitle="Sevana Donations & Aid" />} />
+      <Route path="/donate" element={<CrossModuleBridge targetPort={5173} targetTitle="Sevana Donations & Aid" />} />
+      <Route path="/ngo-partners" element={<CrossModuleBridge targetPort={5173} targetTitle="Sevana Donations & Aid" />} />
+      <Route path="/ngo-partners/:id" element={<CrossModuleBridge targetPort={5173} targetTitle="Sevana Donations & Aid" />} />
+      <Route path="/impact" element={<CrossModuleBridge targetPort={5173} targetTitle="Sevana Donations & Aid" />} />
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+
+export default AppRoutes;

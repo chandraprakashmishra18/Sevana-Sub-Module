@@ -1,0 +1,36 @@
+.badge-grid h3 {
+  font-size: 16px;
+  margin-bottom: var(--space-4);
+}
+
+.badge-grid__empty {
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+}
+
+.badge-grid__items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: var(--space-3);
+}
+
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-primary-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-2);
+  text-align: center;
+}
+
+.badge-item__icon {
+  font-size: 28px;
+}
+
+.badge-item__name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}

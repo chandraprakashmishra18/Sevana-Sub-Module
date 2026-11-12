@@ -1,0 +1,29 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge--verified {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.badge--urgent {
+  background: #FEE2E2;
+  color: var(--color-danger);
+}
+
+.badge--info {
+  background: var(--color-accent-light);
+  color: var(--color-accent-dark);
+}
+
+.badge--neutral {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+}

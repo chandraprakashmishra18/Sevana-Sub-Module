@@ -1,0 +1,53 @@
+.organize-page {
+  padding: var(--space-7) 0 var(--space-8);
+  min-height: 60vh;
+}
+
+.organize-page__container {
+  display: flex;
+  justify-content: center;
+}
+
+.organize-page__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 600px;
+  box-shadow: var(--shadow-sm);
+}
+
+.organize-page__header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.organize-page__header h1 {
+  font-size: 24px;
+  margin-bottom: var(--space-2);
+}
+
+.organize-page__header p {
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+}
+
+.organize-page__progress {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.organize-page__dot {
+  width: 32px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-border);
+  transition: background 0.2s ease;
+}
+
+.organize-page__dot--active {
+  background: var(--color-primary);
+}

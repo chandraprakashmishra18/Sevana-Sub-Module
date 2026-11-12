@@ -1,0 +1,35 @@
+.progress-bar__track {
+  width: 100%;
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.progress-bar__fill--full {
+  background: var(--color-danger);
+}
+
+.progress-bar__meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-2);
+  font-size: 13px;
+}
+
+.progress-bar__raised {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.progress-bar__percentage {
+  color: var(--color-primary);
+  font-weight: 600;
+}

@@ -1,0 +1,30 @@
+.impact-stats {
+  background: var(--color-primary-dark);
+  padding: var(--space-7) 0;
+}
+
+.impact-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+  text-align: center;
+}
+
+.stat-card__value {
+  font-size: 34px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.stat-card__label {
+  font-size: 14px;
+  color: #CFEDE9;
+  margin-top: var(--space-1);
+}
+
+@media (max-width: 860px) {
+  .impact-stats__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+}

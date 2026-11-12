@@ -1,0 +1,61 @@
+.worker-profile-page {
+  padding: var(--space-7) 0 var(--space-8);
+}
+
+.worker-profile__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.worker-profile__avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-primary-light);
+}
+
+.worker-profile__identity h1 {
+  font-size: 24px;
+  margin-bottom: var(--space-1);
+}
+
+.worker-profile__role {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.worker-profile__xp-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.worker-profile__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.worker-profile__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+@media (max-width: 768px) {
+  .worker-profile__header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .worker-profile__grid {
+    grid-template-columns: 1fr;
+  }
+}

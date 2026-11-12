@@ -1,0 +1,83 @@
+/* ===== Design Tokens (shared with Sevana Donations module) ===== */
+:root {
+    /* Brand colors */
+  --color-primary: #357ABD;
+  --color-primary-dark: #2A6099;
+  --color-primary-light: #E8F1FA;
+
+  /* Neutrals */
+  --color-bg: #F6FAFD;
+  --color-surface: #FFFFFF;
+  --color-text: #1F2937;
+  --color-text-muted: #64748B;
+  --color-border: #DCE8F3;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Radius & shadow */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+
+  /* Tier colors (XP gamification) */
+  --tier-seedling: #84CC16;
+  --tier-sprout: #22C55E;
+  --tier-sapling: #14B8A6;
+  --tier-tree: #0EA5E9;
+  --tier-legend: #A855F7;
+
+  /* Font */
+  --font-base: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-base);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+h1, h2, h3, h4 {
+  line-height: 1.25;
+  font-weight: 700;
+}
+

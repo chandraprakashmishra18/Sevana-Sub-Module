@@ -1,0 +1,101 @@
+.ngo-profile__cover {
+  height: 220px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: -48px;
+}
+
+.ngo-profile__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ngo-profile__header {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.ngo-profile__logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--color-surface);
+  background: var(--color-surface);
+}
+
+.ngo-profile__header h1 {
+  font-size: 24px;
+}
+
+.ngo-profile__meta {
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+}
+
+.ngo-profile__description {
+  font-size: 15px;
+  line-height: 1.8;
+  margin: var(--space-5) 0;
+}
+
+.ngo-profile__stats {
+  display: flex;
+  gap: var(--space-6);
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-7);
+}
+
+.ngo-profile__stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.ngo-profile__stat strong {
+  font-size: 22px;
+  color: var(--color-primary-dark);
+}
+
+.ngo-profile__stat span {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+
+.ngo-profile__campaigns h2 {
+  font-size: 19px;
+  margin-bottom: var(--space-5);
+}
+
+.ngo-profile__campaigns-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+.ngo-profile__no-campaigns {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+@media (max-width: 860px) {
+  .ngo-profile__campaigns-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ngo-profile__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .ngo-profile__campaigns-grid {
+    grid-template-columns: 1fr;
+  }
+}

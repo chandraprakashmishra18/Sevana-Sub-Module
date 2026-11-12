@@ -1,0 +1,24 @@
+.camps-page {
+  padding: var(--space-7) 0 var(--space-8);
+}
+
+.camps-page__header {
+  margin-bottom: var(--space-6);
+}
+
+.camps-page__header h1 {
+  font-size: 30px;
+  margin-bottom: var(--space-2);
+}
+
+.camps-page__header p {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.camps-page__loading {
+  text-align: center;
+  padding: var(--space-8) 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
