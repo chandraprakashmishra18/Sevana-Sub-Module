@@ -98,6 +98,7 @@ function Navbar() {
 
                   <div className="navbar__dropdown-links">
                     <Link to="/dashboard" className="dropdown-link" onClick={() => setUserDropdownOpen(false)}>📊 My Dashboard</Link>
+                    <Link to="/notifications" className="dropdown-link" onClick={() => setUserDropdownOpen(false)}>🔔 Notifications</Link>
                     <Link
                       to="/leaderboard"
                       className="dropdown-link"
