@@ -12,6 +12,7 @@ import Register from "../pages/Register";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
+import CrossModuleBridge from "../components/common/CrossModuleBridge";
 
 function AppRoutes() {
   return (
@@ -28,6 +29,16 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
+
+      {/* Cross-module redirects from Donations (5173) to Camps (5174) */}
+      <Route path="/camps" element={<CrossModuleBridge targetPort={5174} targetTitle="Sevana Camps & Community Service" />} />
+      <Route path="/camps/:id" element={<CrossModuleBridge targetPort={5174} targetTitle="Sevana Camps & Community Service" />} />
+      <Route path="/camps/:id/join" element={<CrossModuleBridge targetPort={5174} targetTitle="Sevana Camps & Community Service" />} />
+      <Route path="/organize" element={<CrossModuleBridge targetPort={5174} targetTitle="Sevana Camps & Community Service" />} />
+      <Route path="/organizers" element={<CrossModuleBridge targetPort={5174} targetTitle="Sevana Camps & Community Service" />} />
+      <Route path="/past-camps" element={<CrossModuleBridge targetPort={5174} targetTitle="Sevana Camps & Community Service" />} />
+      <Route path="/invitations" element={<CrossModuleBridge targetPort={5174} targetTitle="Sevana Camps & Community Service" />} />
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
