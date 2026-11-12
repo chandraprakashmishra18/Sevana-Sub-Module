@@ -1,50 +1,32 @@
 # Sevana Community Services Platform
 
-Sevana is a frontend prototype split into two Vite applications: Donations & Aid and Camps & Community Service. Both use local mock data and browser storage. Prototype login, role views, donation records, camp registrations, and moderation examples are not real authentication, transactions, or verified platform records.
+Sevana now launches as one React + Vite application that combines Donations & Aid with Educational & Medical Camps. The original project folders remain intact as recovery copies. The unified application source is in [`sevana-platform`](./sevana-platform).
 
-## Run the prototype
+## Run one application
 
-From this folder, install each module and run both dev servers:
+From this workspace:
 
 ```powershell
-npm install --prefix .\sevana-donations\Sevana-Donations-And-Aid
-npm install --prefix .\sevana-camps\Sevana-Camps-Module
-npm run dev:donations
-npm run dev:camps
+npm install --prefix .\sevana-platform
+npm run dev
 ```
 
-Open [Donations & Aid](http://localhost:5173) and [Camps](http://localhost:5174). Root `package.json` also provides `npm run build` to build both apps. Each application has its own `.env.example`; copy it to `.env.local` and set `VITE_API_URL` only when a backend is available. Blank means demo mode.
+The unified frontend runs at `http://localhost:5173`. Build it with `npm run build` and lint it with `npm run lint`. The root dev/build scripts use the unified app dependencies when installed; in this workspace, where the package registry was unavailable, they fall back to the already installed Donations Vite toolchain while still serving/building only the unified app. Set `VITE_API_URL` in `sevana-platform/.env.local` only when an API server is available.
 
-## Routes
+## Shared application
 
-| Module | Routes |
-| --- | --- |
-| Donations | `/`, `/about`, `/contact`, `/campaigns`, `/campaigns/:id`, `/donate`, `/ngo-partners`, `/ngo-partners/:id`, `/impact`, `/leaderboard`, `/login`, `/register`, `/dashboard`, `/manage-campaigns`, `/register-organization`, `/admin`, `/notifications` |
-| Camps | `/`, `/about`, `/contact`, `/camps`, `/camps/:id`, `/camps/:id/join`, `/organize`, `/organizers`, `/organizers/:id`, `/past-camps`, `/profile`, `/profile/:id`, `/leaderboard`, `/invitations`, `/login`, `/register`, `/dashboard`, `/manage-camps`, `/notifications` |
+- One landing page, navigation, footer, React Router, auth provider, login/register flow, and profile storage.
+- Donations routes: `/campaigns`, `/campaigns/:id`, `/donate`, `/manage-campaigns`, `/ngo-partners`, `/impact`.
+- Camps routes: `/camps`, `/camps/:id`, `/camps/:id/join`, `/organize`, `/manage-camps`, `/organizers`, `/invitations`.
+- Shared role workspaces: `/dashboard`, `/organization`, `/admin`, `/admin/moderation`.
+- Cross-module features: `/notifications`, `/analytics`, `/beneficiaries`, `/profile`.
 
-The dashboards provide a persisted demo role switcher (individual, volunteer, organization, platform admin) so the corresponding views can be reviewed without pretending the role switch is authorization. Organizations can save campaign drafts and edit campaigns; the separate admin console can change their demo moderation state. Camp organizers can review locally saved registrations, approve/reject them, record attendance, and update camp status. Organization verification submissions and notifications are also stored in the browser. These actions are simulated. Cross-module navigation expects both dev servers to be running.
+Navigation between modules stays inside this frontend. Dashboard role choices and all records/actions remain demo-only; no real payment, secure authorization, or legal organization verification is performed.
 
-## Backend integration boundary
+## Preserved projects
 
-Each module has `src/api/client.js` for shared REST requests and `src/services/apiResources.js` for resource operations. Current screens still use the established local mock services; the API resource exports are a clean integration seam and intentionally fail with a clear message if used while `VITE_API_URL` is blank. Keep real authorization, validation, payment processing, and beneficiary privacy enforcement on the backend.
+`sevana-donations/Sevana-Donations-And-Aid` and `sevana-camps/Sevana-Camps-Module` have not been deleted or overwritten. Their existing source, styles, mock data, service logic, and individual project manifests are retained. Their source was copied into `sevana-platform/src/modules/{donations,camps}` and the unified routes now compose those pages under one router. A Vite adapter was added to the preserved Donations project so the unified app can be built and started here without registry access. The workspace default starts one server only.
 
-Suggested REST resources:
+## Backend phase
 
-| Resource | Example endpoints |
-| --- | --- |
-| Authentication | `POST /auth/login`, `POST /auth/register`, `POST /auth/logout`, `GET /auth/me` |
-| Users | `GET/POST /users`, `GET/PATCH /users/:id` |
-| Organizations | `GET/POST /organizations`, `GET/PATCH /organizations/:id`, `POST /organizations/:id/verification` |
-| Campaigns | `GET/POST /campaigns`, `GET/PATCH /campaigns/:id`, `POST /campaigns/:id/moderation` |
-| Donations | `GET/POST /donations`, `GET /donations/:id/receipt`, `POST /donations/:id/distributions` |
-| Camps | `GET/POST /camps`, `GET/PATCH /camps/:id`, `POST /camps/:id/moderation` |
-| Registrations | `GET/POST /camps/:id/registrations`, `PATCH /registrations/:id`, `POST /registrations/:id/attendance` |
-| Volunteers | `GET/POST /volunteer-applications`, `PATCH /volunteer-applications/:id` |
-| Beneficiaries | `GET/POST /beneficiaries`, `GET/PATCH /beneficiaries/:id` (restricted access) |
-| Notifications | `GET /notifications`, `PATCH /notifications/:id/read` |
-
-Suggested PostgreSQL entities: `users`, `organizations`, `organization_verifications`, `campaigns`, `campaign_resources`, `donations`, `receipts`, `distributions`, `camps`, `camp_registrations`, `attendance`, `volunteer_applications`, `beneficiaries`, `outcomes`, `feedback`, `notifications`, and `audit_events`. Use role/permission checks in the API, store sensitive beneficiary information privately, and integrate a payment provider through a backend rather than accepting payment details in this frontend.
-
-## Current scope and known prototype limits
-
-The apps include public campaign and camp discovery, detail pages, donation and registration demo flows, organizer forms, profile/leaderboard/invitation features, editable local campaigns, moderation examples, registration management, and local notification interactions. There is no production organization verification, real admin authorization/moderation, server-backed dashboards, auditable distribution reports, delivery of notifications, or reliable cross-device persistence; those require backend entities and endpoints. No payment is processed by this prototype.
+Both module service layers and their API request boundaries are preserved inside the unified app. `src/shared/AuthContext.jsx` is the single app-level auth context; module auth hooks delegate to it. Suggested REST resources: auth/users, organizations/verifications, campaigns/resources, donations/receipts/distributions, camps/registrations/attendance, volunteers, beneficiaries, notifications, and audit events. Suggested PostgreSQL entities and security considerations are documented in [`sevana-platform/README.md`](./sevana-platform/README.md).

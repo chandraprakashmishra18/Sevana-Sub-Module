@@ -25,9 +25,9 @@ function NotFound() {
 
         <div className="not-found-crosslink">
           <p>Looking for Medical or Educational Camps?</p>
-          <a href="http://localhost:5174/" className="not-found-external-btn">
-            🏕️ Open Camps & Community Service (Port 5174) ↗
-          </a>
+          <Link to="/camps" className="not-found-external-btn">
+            🏕️ Browse Educational & Medical Camps
+          </Link>
         </div>
       </div>
     </div>

@@ -23,6 +23,9 @@
   color: var(--color-accent-dark);
 }
 
+.badge--medical { background:#DBEAFE; color:#1D4ED8; }
+.badge--educational { background:#FEF3C7; color:#B45309; }
+
 .badge--neutral {
   background: var(--color-border);
   color: var(--color-text-muted);

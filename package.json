@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm --prefix sevana-platform run dev",
-    "build": "npm --prefix sevana-platform run build",
+    "dev": "node scripts/platform.js dev",
+    "build": "node scripts/platform.js build",
     "lint": "npm --prefix sevana-platform run lint"
   }
 }

@@ -13,6 +13,7 @@ import NGOProfile from "./modules/donations/pages/NGOProfilePage";
 import Impact from "./modules/donations/pages/ImpactTransparency";
 import DonorLeaderboard from "./modules/donations/pages/DonorLeaderboardPage";
 import CampaignManager from "./modules/donations/pages/CampaignManager";
+import ModerationConsole from "./modules/donations/pages/AdminConsole";
 import OrganizationRegistration from "./modules/donations/pages/OrganizationRegistration";
 import AdminConsole from "./modules/donations/pages/AdminConsole";
 import Camps from "./modules/camps/pages/Camps";
@@ -39,6 +40,7 @@ export default function AppRoutes() {
     <Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} />
     <Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} />
     <Route path="/dashboard" element={<Dashboard />} /><Route path="/organization" element={<OrganizationDashboard />} /><Route path="/admin" element={<AdminDashboard />} />
+    <Route path="/admin/moderation" element={<ModerationConsole />} />
     <Route path="/beneficiaries" element={<Beneficiaries />} /><Route path="/analytics" element={<Analytics />} /><Route path="/notifications" element={<Notifications />} />
     <Route path="/campaigns" element={<Campaigns />} /><Route path="/campaigns/:id" element={<CampaignDetail />} /><Route path="/donate" element={<Donate />} /><Route path="/manage-campaigns" element={<CampaignManager />} /><Route path="/register-organization" element={<OrganizationRegistration />} />
     <Route path="/ngo-partners" element={<NGOPartners />} /><Route path="/ngo-partners/:id" element={<NGOProfile />} /><Route path="/impact" element={<Impact />} /><Route path="/leaderboard" element={<DonorLeaderboard />} />
