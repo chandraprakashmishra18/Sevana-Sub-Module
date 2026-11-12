@@ -13,7 +13,7 @@ function JoinConfirmation({ camp }) {
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    const result = await submitJoinCamp(joinData);
+    const result = await submitJoinCamp({ ...joinData, campTitle: camp.title });
     if (result.success) {
       setAlreadyJoined(Boolean(result.duplicate));
       setSubmitted(true);
@@ -35,9 +35,9 @@ function JoinConfirmation({ camp }) {
         </div>
 
         <p>
-          You've successfully joined <strong>{camp.title}</strong> as{" "}
+          Your demo registration request for <strong>{camp.title}</strong> was recorded as{" "}
           {isWorker ? "a volunteer worker" : "an attendee"}. A confirmation
-          has been sent to {joinData.email}.
+          pending organizer review. A simulated notification was saved for {joinData.email}.
         </p>
 
         <p className="join-confirmation__xp-note">

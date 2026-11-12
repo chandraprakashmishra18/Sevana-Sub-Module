@@ -19,10 +19,10 @@ Open [Donations & Aid](http://localhost:5173) and [Camps](http://localhost:5174)
 
 | Module | Routes |
 | --- | --- |
-| Donations | `/`, `/about`, `/contact`, `/campaigns`, `/campaigns/:id`, `/donate`, `/ngo-partners`, `/ngo-partners/:id`, `/impact`, `/leaderboard`, `/login`, `/register`, `/dashboard` |
-| Camps | `/`, `/about`, `/contact`, `/camps`, `/camps/:id`, `/camps/:id/join`, `/organize`, `/organizers`, `/organizers/:id`, `/past-camps`, `/profile`, `/profile/:id`, `/leaderboard`, `/invitations`, `/login`, `/register`, `/dashboard` |
+| Donations | `/`, `/about`, `/contact`, `/campaigns`, `/campaigns/:id`, `/donate`, `/ngo-partners`, `/ngo-partners/:id`, `/impact`, `/leaderboard`, `/login`, `/register`, `/dashboard`, `/manage-campaigns`, `/register-organization`, `/admin`, `/notifications` |
+| Camps | `/`, `/about`, `/contact`, `/camps`, `/camps/:id`, `/camps/:id/join`, `/organize`, `/organizers`, `/organizers/:id`, `/past-camps`, `/profile`, `/profile/:id`, `/leaderboard`, `/invitations`, `/login`, `/register`, `/dashboard`, `/manage-camps`, `/notifications` |
 
-The dashboards provide a persisted demo role switcher (individual, volunteer, organization, platform admin) so the corresponding views can be reviewed without pretending the role switch is authorization. Cross-module navigation expects both dev servers to be running.
+The dashboards provide a persisted demo role switcher (individual, volunteer, organization, platform admin) so the corresponding views can be reviewed without pretending the role switch is authorization. Organizations can save campaign drafts and edit campaigns; the separate admin console can change their demo moderation state. Camp organizers can review locally saved registrations, approve/reject them, record attendance, and update camp status. Organization verification submissions and notifications are also stored in the browser. These actions are simulated. Cross-module navigation expects both dev servers to be running.
 
 ## Backend integration boundary
 
@@ -47,4 +47,4 @@ Suggested PostgreSQL entities: `users`, `organizations`, `organization_verificat
 
 ## Current scope and known prototype limits
 
-The existing apps include public campaign and camp discovery, detail pages, donation and registration demo flows, organizer forms, profile/leaderboard/invitation features, and local persistence. Dashboards and the backend resource boundary are prototype additions. There is no production organization verification workflow, real admin moderation, server-backed user dashboard, complete campaign editing/distribution reports, or live notification delivery yet; those require backend entities and endpoints. No payment is processed by this prototype.
+The apps include public campaign and camp discovery, detail pages, donation and registration demo flows, organizer forms, profile/leaderboard/invitation features, editable local campaigns, moderation examples, registration management, and local notification interactions. There is no production organization verification, real admin authorization/moderation, server-backed dashboards, auditable distribution reports, delivery of notifications, or reliable cross-device persistence; those require backend entities and endpoints. No payment is processed by this prototype.

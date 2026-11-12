@@ -80,7 +80,7 @@ export async function submitJoinCamp(joinData) {
 
   const id = `join${Date.now()}`;
   const xp = joinData.role === "worker" ? 150 : 30;
-  joins.unshift({ ...joinData, id, xp, createdAt: new Date().toISOString() });
+  joins.unshift({ ...joinData, status: "pending", attended: false, id, xp, createdAt: new Date().toISOString() });
   localStorage.setItem(JOIN_KEY, JSON.stringify(joins));
   addNotification({ title: "Camp registration received", message: `Your ${joinData.role || "attendee"} registration for ${joinData.campTitle || "the camp"} is pending organizer review.`, type: "registration", href: "/dashboard" });
 

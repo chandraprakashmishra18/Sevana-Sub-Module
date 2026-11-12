@@ -16,7 +16,7 @@ function Campaigns() {
 
     getAllCampaigns().then((data) => {
       if (isMounted) {
-        setCampaigns(data);
+        setCampaigns(data.filter((campaign) => !["draft", "rejected", "paused"].includes(campaign.status)));
         setLoading(false);
       }
     });
