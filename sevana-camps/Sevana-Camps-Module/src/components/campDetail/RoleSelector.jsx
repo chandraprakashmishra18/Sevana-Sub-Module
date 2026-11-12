@@ -28,12 +28,12 @@ function RoleSelector({ camp }) {
     <div className="role-selector">
       <h3>How do you want to join?</h3>
 
-      <div className="role-option">
-        <div className="role-option__header">
-          <span className="role-option__icon">🙋</span>
+      <div className="role-selector__option">
+        <div className="role-selector__option-header">
+          <span className="role-selector__option-icon">🙋</span>
           <div>
-            <p className="role-option__title">Join as a Worker</p>
-            <p className="role-option__subtitle">Doctor, teacher, volunteer, or coordinator</p>
+            <p className="role-selector__option-title">Join as a Worker</p>
+            <p className="role-selector__option-subtitle">Doctor, teacher, volunteer, or coordinator</p>
           </div>
         </div>
         <ProgressBar current={workerSlots.filled} total={workerSlots.total} label="worker slots filled" />
@@ -48,17 +48,17 @@ function RoleSelector({ camp }) {
       </div>
 
       {hasAttendeeOption && (
-        <div className="role-option">
-          <div className="role-option__header">
-            <span className="role-option__icon">🧑</span>
+        <div className="role-selector__option">
+          <div className="role-selector__option-header">
+            <span className="role-selector__option-icon">🧑</span>
             <div>
-              <p className="role-option__title">Join as an Attendee</p>
-              <p className="role-option__subtitle">Get a checkup or attend the class</p>
+              <p className="role-selector__option-title">Join as an Attendee</p>
+              <p className="role-selector__option-subtitle">Get a checkup or attend the class</p>
             </div>
           </div>
           <ProgressBar current={attendeeSlots.filled} total={attendeeSlots.total} label="attendee slots filled" />
           <Button
-            variant="accent"
+            variant="outline"
             fullWidth
             disabled={isAttendeeFull}
             onClick={() => handleJoin("attendee")}
