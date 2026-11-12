@@ -1,16 +1,10 @@
 {
-  "name": "sevana-community-platform",
+  "name": "sevana-workspace",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node scripts/dev.js",
-    "camps": "node scripts/dev.js camps",
-    "donations": "node scripts/dev.js donations",
-    "dev:camps": "node scripts/dev.js camps",
-    "dev:donations": "node scripts/dev.js donations",
-    "dev:all": "node scripts/dev.js all",
-    "build": "npm run build:donations && npm run build:camps",
-    "build:donations": "npm --prefix sevana-donations/Sevana-Donations-And-Aid run build",
-    "build:camps": "npm --prefix sevana-camps/Sevana-Camps-Module run build"
+    "dev": "npm --prefix sevana-platform run dev",
+    "build": "npm --prefix sevana-platform run build",
+    "lint": "npm --prefix sevana-platform run lint"
   }
 }
