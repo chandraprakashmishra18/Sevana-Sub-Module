@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
 import {
   getInvitationsByUser,
   updateInvitationStatus,
 } from "../services/invitationService";
-import Badge from "../components/common/Badge";
 import Button from "../components/common/Button";
 import "./InvitationsPage.css";
-import { getCommunityActivity } from "../services/communityService";
 
 const STATUS_LABELS = {
   pending: "Pending",
@@ -77,7 +76,7 @@ function ReceivedCard({ invitation, onAccept, onDecline }) {
         </div>
       ) : invitation.status === "accepted" ? (
         <div className="invitation-card__accepted-info">
-          <span>✅ Invitation accepted. Your Community Service XP has been recorded for this response.</span>
+          <span>✅ Invitation accepted. Your Community Service XP has been recorded.</span>
           {invitation.campId && (
             <Link to={`/camps/${invitation.campId}`}>
               <Button variant="outline" size="sm">Go to Camp</Button>
@@ -132,17 +131,19 @@ function SentCard({ invitation }) {
 }
 
 function InvitationsPage() {
+  const { user, addXP } = useAuth();
   const [activeTab, setActiveTab] = useState("received");
   const [received, setReceived] = useState([]);
   const [sent, setSent] = useState([]);
   const [loading, setLoading] = useState(true);
   const [xpNotice, setXpNotice] = useState(null);
-  const [userEmail, setUserEmail] = useState(() => localStorage.getItem("sevana_demo_user_email") || "volunteer@example.com");
-  const [communityXP, setCommunityXP] = useState(() => getCommunityActivity(userEmail).totalXP);
+
+  // Email to check invitations for
+  const currentEmail = user ? user.email : "volunteer@example.com";
 
   useEffect(() => {
     let isMounted = true;
-    getInvitationsByUser("currentUser", userEmail).then(({ received: r, sent: s }) => {
+    getInvitationsByUser(user ? user.id : "currentUser", currentEmail).then(({ received: r, sent: s }) => {
       if (isMounted) {
         setReceived(r);
         setSent(s);
@@ -150,23 +151,19 @@ function InvitationsPage() {
       }
     });
     return () => { isMounted = false; };
-  }, [userEmail]);
-
-  const handleIdentityChange = (value) => {
-    setUserEmail(value);
-    localStorage.setItem("sevana_demo_user_email", value);
-    setCommunityXP(getCommunityActivity(value).totalXP);
-  };
+  }, [user, currentEmail]);
 
   const handleAccept = async (invitation) => {
     await updateInvitationStatus(invitation.id, "accepted");
-    setCommunityXP(getCommunityActivity(userEmail).totalXP);
+    const xp = invitation.xpReward || 150;
+    if (addXP) {
+      addXP(xp, `Accepted invitation for ${invitation.campTitle}`);
+    }
     setReceived((prev) =>
       prev.map((inv) => (inv.id === invitation.id ? { ...inv, status: "accepted" } : inv))
     );
-    const xp = invitation.xpReward || 150;
     setXpNotice(
-      `🎉 Invitation accepted for "${invitation.campTitle}"! +${xp} Community Service XP recorded.`
+      `🎉 Invitation accepted for "${invitation.campTitle}"! +${xp} Community Service XP has been added to your profile.`
     );
     setTimeout(() => setXpNotice(null), 6000);
   };
@@ -190,11 +187,15 @@ function InvitationsPage() {
               <p>
                 Collaborate with others to arrange and organize medical and educational camps for NGOs, Orphanages, and Old Age Homes. Earn XP points for every community contribution!
               </p>
-              <label className="invitations-page__identity" htmlFor="invitations-email">
-                Demo inbox email
-                <input id="invitations-email" type="email" value={userEmail} onChange={(event) => handleIdentityChange(event.target.value)} />
-              </label>
-              <p className="invitations-page__xp-total">Your recorded community XP: <strong>{communityXP}</strong></p>
+              {user ? (
+                <div style={{ marginTop: "8px", fontSize: "13.5px", color: "var(--color-primary-dark)", fontWeight: "600" }}>
+                  👤 Viewing inbox for <strong>{user.name}</strong> ({user.email}) &bull; Current XP: <strong>{user.totalXP || 0} XP</strong>
+                </div>
+              ) : (
+                <div style={{ marginTop: "8px", fontSize: "13px", color: "var(--color-text-muted)" }}>
+                  💡 <Link to="/login" style={{ color: "var(--color-primary)", fontWeight: "600" }}>Log in</Link> or <Link to="/register" style={{ color: "var(--color-primary)", fontWeight: "600" }}>register</Link> to receive camp invitations at your personal email address.
+                </div>
+              )}
             </div>
             <div className="invitations-page__header-actions">
               <Link to="/camps">
@@ -237,7 +238,7 @@ function InvitationsPage() {
           received.length === 0 ? (
             <div className="invitations-page__empty">
               <div className="invitations-page__empty-icon">📭</div>
-              <p>You haven't received any invitations yet.</p>
+              <p>No invitations received for {currentEmail}.</p>
               <Link to="/camps">
                 <Button variant="primary" size="sm">Explore Camps</Button>
               </Link>

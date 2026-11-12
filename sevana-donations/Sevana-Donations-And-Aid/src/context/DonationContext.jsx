@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { DonationContext } from "./donation-context-instance";
+import { getCurrentUser } from "../services/authService";
 
 export function DonationProvider({ children, initialCampaignId, initialAmount }) {
+  const currentUser = getCurrentUser();
   const [step, setStep] = useState(1);
   const [donation, setDonation] = useState({
     campaignId: initialCampaignId || null,
     amount: initialAmount || 500,
-    donorName: "",
-    donorEmail: "",
-    donorPhone: "",
+    donorName: currentUser ? currentUser.name : "",
+    donorEmail: currentUser ? currentUser.email : "",
+    donorPhone: currentUser ? currentUser.phone : "",
     panNumber: "",
     anonymous: false,
     paymentMethod: "upi",

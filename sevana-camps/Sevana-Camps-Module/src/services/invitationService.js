@@ -1,5 +1,6 @@
 import mockInvitations from "../data/mockInvitations";
 import { awardCommunityXP } from "./communityService";
+import { getCurrentUser, awardUserXP } from "./authService";
 
 const STORAGE_KEY = "sevana_camps_invitations";
 
@@ -33,12 +34,21 @@ let _invitations = loadInvitations();
  * Returns all invitations relevant to a user —
  * both received (toEmail matches) and sent (fromUserId matches).
  */
-export async function getInvitationsByUser(userId = "currentUser", email = "volunteer@example.com") {
+export async function getInvitationsByUser(userId = null, email = null) {
   _invitations = loadInvitations();
-  const received = _invitations.filter(
-    (inv) => inv.toEmail?.toLowerCase() === email.toLowerCase()
+  const currentUser = getCurrentUser();
+  const effectiveUserId = userId || (currentUser ? currentUser.id : "currentUser");
+  const effectiveEmail = (email || (currentUser ? currentUser.email : "volunteer@example.com")).toLowerCase().trim();
+
+  const received = _invitations.filter((inv) => {
+    const invEmail = (inv.toEmail || "").toLowerCase().trim();
+    return invEmail === effectiveEmail || (!currentUser && invEmail === "volunteer@example.com");
+  });
+
+  const sent = _invitations.filter(
+    (inv) => inv.fromUserId === effectiveUserId || (currentUser && inv.fromEmail?.toLowerCase() === currentUser.email.toLowerCase())
   );
-  const sent = _invitations.filter((inv) => inv.fromUserId === userId);
+
   return Promise.resolve({ received, sent });
 }
 
@@ -47,20 +57,23 @@ export async function getInvitationsByUser(userId = "currentUser", email = "volu
  * data: { campId, campTitle, targetBeneficiary, toEmail, role, message }
  */
 export async function sendInvitation(data) {
+  const currentUser = getCurrentUser();
   const newInvitation = {
     id: `inv${Date.now()}`,
     campId: data.campId,
     campTitle: data.campTitle || "Community Service Camp",
     targetBeneficiary: data.targetBeneficiary || "General",
-    fromUserId: "currentUser",
-    fromName: "You",
-    toEmail: data.toEmail,
+    fromUserId: currentUser ? currentUser.id : "currentUser",
+    fromName: currentUser ? currentUser.name : "You",
+    fromEmail: currentUser ? currentUser.email : "volunteer@example.com",
+    toEmail: data.toEmail.trim().toLowerCase(),
     status: "pending",
     message: data.message || "",
     createdAt: new Date().toISOString().split("T")[0],
     role: data.role || "worker",
     xpReward: data.role === "organizer" ? 250 : 150,
   };
+
   _invitations = [newInvitation, ..._invitations];
   saveInvitations(_invitations);
   return Promise.resolve(newInvitation);
@@ -68,7 +81,7 @@ export async function sendInvitation(data) {
 
 /**
  * Updates the status of an invitation (accept or decline).
- * Accepting rewards community service XP points.
+ * Accepting rewards community service XP points to the real user!
  */
 export async function updateInvitationStatus(id, status) {
   _invitations = _invitations.map((inv) =>
@@ -76,14 +89,21 @@ export async function updateInvitationStatus(id, status) {
   );
   saveInvitations(_invitations);
   const updated = _invitations.find((inv) => inv.id === id);
+
   if (updated && status === "accepted") {
+    const currentUser = getCurrentUser();
+    const xp = updated.xpReward || 150;
+    if (currentUser) {
+      awardUserXP(currentUser.id, xp, `Accepted invite: ${updated.campTitle}`);
+    }
     awardCommunityXP({
       eventId: `invitation:${id}`,
       kind: "invitation",
-      xp: updated.xpReward || 150,
+      xp,
       description: `Accepted ${updated.campTitle}`,
-      email: updated.toEmail,
+      email: currentUser ? currentUser.email : updated.toEmail,
     });
   }
+
   return Promise.resolve(updated);
 }
