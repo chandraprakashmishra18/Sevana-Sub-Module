@@ -1,0 +1,210 @@
+.register-page {
+  padding: var(--space-8) 0;
+  background: var(--color-bg);
+  min-height: calc(100vh - 160px);
+}
+
+.register-page__container {
+  display: flex;
+  justify-content: center;
+}
+
+.register-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-7) var(--space-6);
+  width: 100%;
+  max-width: 680px;
+}
+
+.register-card__header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.register-card__icon {
+  font-size: 36px;
+  display: inline-block;
+  margin-bottom: var(--space-2);
+}
+
+.register-card__header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.register-card__header p {
+  color: var(--color-text-muted);
+  font-size: 14.5px;
+  line-height: 1.5;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.register-card__bonus {
+  display: inline-block;
+  margin-top: var(--space-3);
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.register-card__alert {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 500;
+  margin-bottom: var(--space-5);
+}
+
+.register-card__alert--error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.register-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.register-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.register-form__field span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.register-form__field input,
+.register-form__field select {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: border-color 0.15s;
+}
+
+.register-form__field input:focus,
+.register-form__field select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: #fff;
+}
+
+.register-form__password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.register-form__password-wrap input {
+  padding-right: 70px;
+}
+
+.register-form__toggle-pw {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.register-form__toggle-pw:hover {
+  color: var(--color-text);
+  background: var(--color-border);
+}
+
+.register-role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.role-option {
+  text-align: left;
+  padding: var(--space-3);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.role-option:hover {
+  border-color: var(--color-primary-light);
+  background: #f8fafc;
+}
+
+.role-option--selected {
+  background: #f0fdf4;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.role-option__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 2px;
+}
+
+.role-option__desc {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+.register-card__footer {
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.register-card__footer a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register-card__footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .register-form__row {
+    grid-template-columns: 1fr;
+  }
+  .register-role-grid {
+    grid-template-columns: 1fr;
+  }
+}

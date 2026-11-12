@@ -10,6 +10,8 @@ import PastCamps from "../pages/PastCamps";
 import WorkerProfile from "../pages/WorkerProfile";
 import LeaderboardPage from "../pages/LeaderboardPage";
 import InvitationsPage from "../pages/InvitationsPage";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
@@ -25,9 +27,12 @@ function AppRoutes() {
       <Route path="/organizers" element={<Organizers />} />
       <Route path="/organizers/:id" element={<OrganizerProfilePage />} />
       <Route path="/past-camps" element={<PastCamps />} />
+      <Route path="/profile" element={<WorkerProfile />} />
       <Route path="/profile/:id" element={<WorkerProfile />} />
       <Route path="/leaderboard" element={<LeaderboardPage />} />
       <Route path="/invitations" element={<InvitationsPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="*" element={<NotFound />} />
