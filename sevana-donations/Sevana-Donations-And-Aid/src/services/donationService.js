@@ -2,6 +2,7 @@ import mockDonors from "../data/mockDonors";
 import mockDisbursements from "../data/mockDisbursements";
 import { getXPForDonation } from "../data/mockDonorXP";
 import { getCurrentUser, getUsers, awardUserXP, recordUserDonation } from "./authService";
+import { addNotification } from "./notificationService";
 
 const DONATION_KEY = "sevana_donation_history";
 
@@ -35,6 +36,7 @@ export async function submitDonation(donationData) {
     const history = JSON.parse(localStorage.getItem(DONATION_KEY) || "[]");
     history.unshift(donation);
     localStorage.setItem(DONATION_KEY, JSON.stringify(history));
+    addNotification({ title: "Demo contribution recorded", message: `Your ₹${Number(donationData.amount).toLocaleString("en-IN")} contribution was saved locally. No payment was processed.`, type: "donation", href: "/dashboard" });
 
     const currentUser = getCurrentUser();
     const realUsers = getUsers();

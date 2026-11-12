@@ -1,6 +1,7 @@
 import mockWorkers, { getTierForXP, getNextTierProgress } from "../data/mockWorkers";
 import { getUsers, awardUserXP, recordUserCampJoined, getCurrentUser } from "./authService";
 import { awardCommunityXP } from "./communityService";
+import { addNotification } from "./notificationService";
 
 const JOIN_KEY = "sevana_camp_joins";
 
@@ -81,6 +82,7 @@ export async function submitJoinCamp(joinData) {
   const xp = joinData.role === "worker" ? 150 : 30;
   joins.unshift({ ...joinData, id, xp, createdAt: new Date().toISOString() });
   localStorage.setItem(JOIN_KEY, JSON.stringify(joins));
+  addNotification({ title: "Camp registration received", message: `Your ${joinData.role || "attendee"} registration for ${joinData.campTitle || "the camp"} is pending organizer review.`, type: "registration", href: "/dashboard" });
 
   // Check if there is an active logged-in user or registered user matching this email
   const realUsers = getUsers();
@@ -110,4 +112,12 @@ export async function submitJoinCamp(joinData) {
   });
 
   return { success: true, joinId: id, xpAwarded: true };
+}
+
+export function getCampRegistrations() { try { return JSON.parse(localStorage.getItem(JOIN_KEY) || "[]"); } catch { return []; } }
+export function updateCampRegistration(id, updates) {
+  const joins = getCampRegistrations(); const item = joins.find((join) => join.id === id); if (!item) return null;
+  Object.assign(item, updates); localStorage.setItem(JOIN_KEY, JSON.stringify(joins));
+  addNotification({ title: "Camp registration updated", message: `Your registration for ${item.campTitle || "a camp"} is ${item.status || "updated"}.`, type: "registration", href: "/dashboard" });
+  return item;
 }

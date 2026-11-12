@@ -16,6 +16,9 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
 import CrossModuleBridge from "../components/common/CrossModuleBridge";
+import Dashboard from "../pages/Dashboard";
+import CampManager from "../pages/CampManager";
+import Notifications from "../pages/Notifications";
 
 function AppRoutes() {
   return (
@@ -36,6 +39,9 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/manage-camps" element={<CampManager />} />
+      <Route path="/notifications" element={<Notifications />} />
 
       {/* Cross-module redirects from Camps (5174) to Donations (5173) */}
       <Route path="/campaigns" element={<CrossModuleBridge targetPort={5173} targetTitle="Sevana Donations & Aid" />} />
