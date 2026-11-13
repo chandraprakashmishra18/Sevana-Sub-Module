@@ -7,7 +7,465 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+// -----------------------------------------------------
+// ENUMS
+// -----------------------------------------------------
+
+enum PlatformRole {
+  INDIVIDUAL
+  ADMIN
+}
+
+enum OrganizationType {
+  NGO
+  SCHOOL
+  COLLEGE
+  NSS
+  NCC
+  COMPANY
+  COMMUNITY_GROUP
+  OTHER
+}
+
+enum OrganizationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  SUSPENDED
+}
+
+enum OrganizationMemberRole {
+  OWNER
+  ADMIN
+  COORDINATOR
+  MEMBER
+}
+
+enum CampaignCategory {
+  STUDENT_SPONSORSHIP
+  MEDICAL_AID
+  FOOD_SUPPORT
+  CLOTHING_SUPPORT
+  EMERGENCY_RELIEF
+  EDUCATION
+  HEALTH
+  OTHER
+}
+
+enum BeneficiaryGroup {
+  GENERAL
+  CHILDREN
+  WOMEN
+  ELDERLY
+  PERSONS_WITH_DISABILITIES
+  STUDENTS
+  FAMILIES
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum DonationType {
+  MONEY
+  GOODS
+  SERVICES
+}
+
+enum DonationStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+  REFUNDED
+}
+
+enum AidRequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  FULFILLED
+}
+
+enum UrgencyLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum CampType {
+  MEDICAL
+  EDUCATIONAL
+}
+
+enum CampStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum CampRegistrationRole {
+  BENEFICIARY
+  VOLUNTEER
+}
+
+enum RegistrationStatus {
+  REGISTERED
+  WAITLISTED
+  CANCELLED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  EXCUSED
+}
+
+// -----------------------------------------------------
+// USERS
+// -----------------------------------------------------
+
+model User {
+  id           String       @id @default(uuid()) @db.Uuid
+  fullName     String       @db.VarChar(120)
+  email        String       @unique @db.VarChar(255)
+  passwordHash String       @db.VarChar(255)
+  phone        String?      @db.VarChar(20)
+  platformRole PlatformRole @default(INDIVIDUAL)
+  isActive     Boolean      @default(true)
+
+  memberships       OrganizationMember[]
+  donations         Donation[]           @relation("Donor")
+  aidRequests       AidRequest[]         @relation("AidRequester")
+  campRegistrations CampRegistration[]
+
+  createdCampaigns Campaign[] @relation("CampaignCreator")
+  createdCamps     Camp[]     @relation("CampCreator")
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([fullName])
+}
+
+// -----------------------------------------------------
+// ORGANIZATIONS
+// -----------------------------------------------------
+
+model Organization {
+  id                 String             @id @default(uuid()) @db.Uuid
+  name               String             @db.VarChar(180)
+  type               OrganizationType
+  description        String?            @db.Text
+  email              String?            @db.VarChar(255)
+  phone              String?            @db.VarChar(20)
+  website            String?            @db.VarChar(255)
+  address            String?            @db.Text
+  city               String?            @db.VarChar(100)
+  state              String?            @db.VarChar(100)
+  verificationStatus OrganizationStatus @default(PENDING)
+  verifiedAt         DateTime?
+
+  members       OrganizationMember[]
+  campaigns     Campaign[]
+  aidRequests   AidRequest[]
+  distributions AidDistribution[]
+  camps         Camp[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([type, verificationStatus])
+  @@index([city])
+}
+
+model OrganizationMember {
+  id             String                 @id @default(uuid()) @db.Uuid
+  organizationId String                 @db.Uuid
+  userId         String                 @db.Uuid
+  role           OrganizationMemberRole @default(MEMBER)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+}
+
+// -----------------------------------------------------
+// DONATIONS & AID - CAMPAIGNS
+// -----------------------------------------------------
+
+model Campaign {
+  id             String @id @default(uuid()) @db.Uuid
+  organizationId String @db.Uuid
+  createdById    String @db.Uuid
+
+  title            String           @db.VarChar(200)
+  description      String           @db.Text
+  category         CampaignCategory
+  beneficiaryGroup BeneficiaryGroup @default(GENERAL)
+
+  imageUrl   String?        @db.Text
+  goalAmount Decimal?       @db.Decimal(12, 2)
+  currency   String         @default("INR") @db.VarChar(3)
+  status     CampaignStatus @default(DRAFT)
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  location String? @db.Text
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  creator      User         @relation("CampaignCreator", fields: [createdById], references: [id], onDelete: Restrict)
+
+  donations     Donation[]
+  distributions AidDistribution[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([organizationId])
+  @@index([status, category])
+}
+
+// -----------------------------------------------------
+// DONATIONS
+// -----------------------------------------------------
+
+model Donation {
+  id          String  @id @default(uuid()) @db.Uuid
+  campaignId  String? @db.Uuid
+  donorUserId String? @db.Uuid
+
+  donorName  String? @db.VarChar(120)
+  donorEmail String? @db.VarChar(255)
+
+  type            DonationType
+  amount          Decimal?     @db.Decimal(12, 2)
+  currency        String       @default("INR") @db.VarChar(3)
+  itemDescription String?      @db.Text
+  quantity        Decimal?     @db.Decimal(12, 2)
+
+  status        DonationStatus @default(PENDING)
+  isAnonymous   Boolean        @default(false)
+  receiptNumber String?        @unique @db.VarChar(100)
+
+  campaign Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  donor    User?     @relation("Donor", fields: [donorUserId], references: [id], onDelete: SetNull)
+
+  transactions  PaymentTransaction[]
+  distributions AidDistribution[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([campaignId, status])
+  @@index([donorUserId])
+  @@index([createdAt])
+}
+
+// -----------------------------------------------------
+// PAYMENT TRANSACTIONS
+// -----------------------------------------------------
+
+model PaymentTransaction {
+  id         String @id @default(uuid()) @db.Uuid
+  donationId String @db.Uuid
+
+  provider          String? @db.VarChar(80)
+  providerOrderId   String? @unique @db.VarChar(150)
+  providerPaymentId String? @unique @db.VarChar(150)
+
+  amount   Decimal       @db.Decimal(12, 2)
+  currency String        @default("INR") @db.VarChar(3)
+  status   PaymentStatus @default(PENDING)
+
+  failureReason String? @db.Text
+
+  donation Donation @relation(fields: [donationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([donationId, status])
+}
+
+// -----------------------------------------------------
+// AID REQUESTS
+// -----------------------------------------------------
+
+model AidRequest {
+  id             String  @id @default(uuid()) @db.Uuid
+  organizationId String  @db.Uuid
+  requesterId    String? @db.Uuid
+
+  title            String           @db.VarChar(200)
+  description      String           @db.Text
+  category         CampaignCategory
+  beneficiaryName  String?          @db.VarChar(120)
+  beneficiaryCount Int              @default(1)
+
+  requestedAmount Decimal? @db.Decimal(12, 2)
+  itemDescription String?  @db.Text
+  quantity        Decimal? @db.Decimal(12, 2)
+  unit            String?  @db.VarChar(40)
+
+  urgency     UrgencyLevel     @default(MEDIUM)
+  status      AidRequestStatus @default(SUBMITTED)
+  reviewNotes String?          @db.Text
+  fulfilledAt DateTime?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  requester    User?        @relation("AidRequester", fields: [requesterId], references: [id], onDelete: SetNull)
+
+  distributions AidDistribution[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([organizationId, status])
+  @@index([urgency, status])
+}
+
+// -----------------------------------------------------
+// AID DISTRIBUTION / RESOURCE UTILIZATION
+// -----------------------------------------------------
+
+model AidDistribution {
+  id             String  @id @default(uuid()) @db.Uuid
+  organizationId String  @db.Uuid
+  aidRequestId   String  @db.Uuid
+  campaignId     String? @db.Uuid
+  donationId     String? @db.Uuid
+
+  amount          Decimal? @db.Decimal(12, 2)
+  currency        String   @default("INR") @db.VarChar(3)
+  itemDescription String?  @db.Text
+  quantity        Decimal? @db.Decimal(12, 2)
+  notes           String?  @db.Text
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  aidRequest   AidRequest   @relation(fields: [aidRequestId], references: [id], onDelete: Restrict)
+  campaign     Campaign?    @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  donation     Donation?    @relation(fields: [donationId], references: [id], onDelete: SetNull)
+
+  distributedAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([organizationId])
+  @@index([aidRequestId])
+}
+
+// -----------------------------------------------------
+// EDUCATIONAL & MEDICAL CAMPS
+// -----------------------------------------------------
+
+model Camp {
+  id             String @id @default(uuid()) @db.Uuid
+  organizationId String @db.Uuid
+  createdById    String @db.Uuid
+
+  title       String     @db.VarChar(200)
+  description String     @db.Text
+  type        CampType
+  status      CampStatus @default(DRAFT)
+
+  serviceDetails String? @db.Text
+  targetAudience String? @db.Text
+
+  venue     String? @db.VarChar(200)
+  address   String? @db.Text
+  city      String? @db.VarChar(100)
+  state     String? @db.VarChar(100)
+  latitude  Float?
+  longitude Float?
+
+  startsAt             DateTime
+  endsAt               DateTime
+  registrationDeadline DateTime?
+  capacity             Int?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  creator      User         @relation("CampCreator", fields: [createdById], references: [id], onDelete: Restrict)
+
+  registrations CampRegistration[]
+  outcomes      CampOutcome[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([organizationId, status])
+  @@index([type, startsAt])
+  @@index([city])
+}
+
+// -----------------------------------------------------
+// CAMP REGISTRATIONS & VOLUNTEERS
+// -----------------------------------------------------
+
+model CampRegistration {
+  id     String  @id @default(uuid()) @db.Uuid
+  campId String  @db.Uuid
+  userId String? @db.Uuid
+
+  fullName String  @db.VarChar(120)
+  email    String? @db.VarChar(255)
+  phone    String? @db.VarChar(20)
+
+  role       CampRegistrationRole @default(BENEFICIARY)
+  status     RegistrationStatus   @default(REGISTERED)
+  attendance AttendanceStatus?
+
+  notes        String?  @db.Text
+  registeredAt DateTime @default(now()) @db.Timestamptz(6)
+
+  camp Camp  @relation(fields: [campId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@unique([campId, userId])
+  @@index([campId, role, status])
+}
+
+// -----------------------------------------------------
+// CAMP IMPACT & OUTCOMES
+// -----------------------------------------------------
+
+model CampOutcome {
+  id     String @id @default(uuid()) @db.Uuid
+  campId String @db.Uuid
+
+  summary                String  @db.Text
+  beneficiariesServed    Int     @default(0)
+  volunteersParticipated Int     @default(0)
+  servicesProvided       String? @db.Text
+  materialsDistributed   String? @db.Text
+
+  camp Camp @relation(fields: [campId], references: [id], onDelete: Cascade)
+
+  reportedAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([campId])
+}
+
+// -----------------------------------------------------
+// EXISTING POSTGIS SYSTEM TABLE - PRESERVED
+// -----------------------------------------------------
+
 model spatial_ref_sys {
   srid      Int     @id
   auth_name String? @db.VarChar(256)
