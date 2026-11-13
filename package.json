@@ -6,5 +6,14 @@
     "dev": "node scripts/platform.js dev",
     "build": "node scripts/platform.js build",
     "lint": "node scripts/platform.js lint"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "helmet": "^8.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
