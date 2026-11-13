@@ -5,6 +5,6 @@
   "scripts": {
     "dev": "node scripts/platform.js dev",
     "build": "node scripts/platform.js build",
-    "lint": "npm --prefix sevana-platform run lint"
+    "lint": "node scripts/platform.js lint"
   }
 }

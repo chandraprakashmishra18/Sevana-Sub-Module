@@ -13,10 +13,10 @@ const fallbackRoot = path.join(repo, "sevana-donations", "Sevana-Donations-And-A
 const fallbackTool = path.join(fallbackRoot, "node_modules", ".bin", process.platform === "win32" ? `${toolName}.cmd` : toolName);
 const usePlatformInstall = existsSync(localTool);
 const executable = usePlatformInstall ? localTool : fallbackTool;
-const cwd = usePlatformInstall ? platform : fallbackRoot;
+const cwd = usePlatformInstall || action === "lint" ? platform : fallbackRoot;
 const args = usePlatformInstall
   ? action === "build" ? ["build"] : action === "lint" ? ["."] : ["--host", "0.0.0.0", "--port", "5173"]
-  : action === "build" ? ["build", "--config", "vite.unified.config.js"] : action === "lint" ? ["../../sevana-platform", "--config", "eslint.config.js"] : ["--config", "vite.unified.config.js", "--host", "0.0.0.0", "--port", "5173"];
+  : action === "build" ? ["build", "--config", "vite.unified.config.js"] : action === "lint" ? [".", "--config", path.join(fallbackRoot, "eslint.config.js")] : ["--config", "vite.unified.config.js", "--host", "0.0.0.0", "--port", "5173"];
 
 if (!existsSync(executable)) {
   console.error("Unified Sevana dependencies are missing. Run: npm install --prefix sevana-platform");
