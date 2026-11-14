@@ -1,8 +1,10 @@
 
 const prisma = require("../config/prisma");
+
 const {
   createCampSchema,
-  updateCampSchema
+  updateCampSchema,
+  registerForCampSchema
 } = require("../validators/camp.validator");
 
 // -----------------------------------------------------
@@ -182,7 +184,11 @@ const getCamps = asyncHandler(async (req, res) => {
         },
         _count: {
           select: {
-            registrations: true
+            registrations: {
+              where: {
+                status: "REGISTERED"
+              }
+            }
           }
         }
       },
@@ -239,7 +245,6 @@ const getCampById = asyncHandler(async (req, res) => {
     }
   });
 
-  // Do not expose unpublished camps publicly.
   if (!camp || camp.status !== "PUBLISHED") {
     return res.status(404).json({
       success: false,
@@ -303,7 +308,6 @@ const updateCamp = asyncHandler(async (req, res) => {
     });
   }
 
-  // Validate the final dates, including unchanged existing values.
   const startsAt = data.startsAt ?? camp.startsAt;
   const endsAt = data.endsAt ?? camp.endsAt;
 
@@ -484,6 +488,188 @@ const cancelCamp = asyncHandler(async (req, res) => {
 });
 
 // -----------------------------------------------------
+// REGISTER FOR CAMP
+// POST /api/camps/:campId/register
+// -----------------------------------------------------
+
+const registerForCamp = asyncHandler(async (req, res) => {
+  const { campId } = req.params;
+
+  const validation = registerForCampSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Validation failed.",
+      errors: validation.error.flatten()
+    });
+  }
+
+  const data = validation.data;
+
+  const userId = req.user?.id || null;
+
+  try {
+    const registration = await prisma.$transaction(
+      async (tx) => {
+        // Check whether the camp exists and is published.
+        const camp = await tx.camp.findUnique({
+          where: { id: campId }
+        });
+
+        if (!camp || camp.status !== "PUBLISHED") {
+          return {
+            error: "CAMP_NOT_FOUND"
+          };
+        }
+
+        const now = new Date();
+
+        // Registration must close before the camp starts.
+        if (
+          camp.startsAt <= now ||
+          (camp.registrationDeadline &&
+            camp.registrationDeadline <= now)
+        ) {
+          return {
+            error: "REGISTRATION_CLOSED"
+          };
+        }
+
+        // Check for duplicate registrations.
+        let existingRegistration;
+
+        if (userId) {
+          existingRegistration = await tx.campRegistration.findFirst({
+            where: {
+              campId,
+              userId
+            }
+          });
+        } else {
+          const contactConditions = [];
+
+          if (data.email) {
+            contactConditions.push({
+              email: {
+                equals: data.email,
+                mode: "insensitive"
+              }
+            });
+          }
+
+          if (data.phone) {
+            contactConditions.push({
+              phone: data.phone
+            });
+          }
+
+          existingRegistration = await tx.campRegistration.findFirst({
+            where: {
+              campId,
+              userId: null,
+              OR: contactConditions
+            }
+          });
+        }
+
+        if (existingRegistration) {
+          return {
+            error: "DUPLICATE_REGISTRATION"
+          };
+        }
+
+        // Count confirmed registrations.
+        const registeredCount = await tx.campRegistration.count({
+          where: {
+            campId,
+            status: "REGISTERED"
+          }
+        });
+
+        // Assign a waitlist position when capacity is full.
+        const status =
+          camp.capacity !== null &&
+          registeredCount >= camp.capacity
+            ? "WAITLISTED"
+            : "REGISTERED";
+
+        // Create registration.
+        const newRegistration = await tx.campRegistration.create({
+          data: {
+            campId,
+            userId,
+            fullName: data.fullName,
+            email: data.email || null,
+            phone: data.phone || null,
+            role: data.role,
+            status
+          }
+        });
+
+        return {
+          registration: newRegistration
+        };
+      },
+      {
+        isolationLevel: "Serializable"
+      }
+    );
+
+    // Handle expected business-rule errors.
+    if (registration.error === "CAMP_NOT_FOUND") {
+      return res.status(404).json({
+        success: false,
+        message: "Published camp not found."
+      });
+    }
+
+    if (registration.error === "REGISTRATION_CLOSED") {
+      return res.status(409).json({
+        success: false,
+        message: "Registration for this camp is closed."
+      });
+    }
+
+    if (registration.error === "DUPLICATE_REGISTRATION") {
+      return res.status(409).json({
+        success: false,
+        message: "You are already registered for this camp."
+      });
+    }
+
+    const isWaitlisted =
+      registration.registration.status === "WAITLISTED";
+
+    return res.status(201).json({
+      success: true,
+      message: isWaitlisted
+        ? "Camp is full. You have been added to the waitlist."
+        : "Registration successful.",
+      data: registration.registration
+    });
+  } catch (error) {
+    // Handle unique constraint violations.
+    if (error.code === "P2002") {
+      return res.status(409).json({
+        success: false,
+        message: "You are already registered for this camp."
+      });
+    }
+
+    // Serializable transaction conflict: client can retry.
+    if (error.code === "P2034") {
+      return res.status(409).json({
+        success: false,
+        message: "Registration conflict. Please try again."
+      });
+    }
+
+    throw error;
+  }
+});
+
+// -----------------------------------------------------
 // EXPORTS
 // -----------------------------------------------------
 
@@ -493,5 +679,6 @@ module.exports = {
   getCampById,
   updateCamp,
   publishCamp,
-  cancelCamp
+  cancelCamp,
+  registerForCamp
 };
