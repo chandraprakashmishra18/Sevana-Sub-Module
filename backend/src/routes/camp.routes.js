@@ -2,7 +2,10 @@
 const express = require("express");
 const router = express.Router();
 
-const { requireAuth } = require("../middleware/auth.middleware");
+const {
+  requireAuth,
+  optionalAuth
+} = require("../middleware/auth.middleware");
 
 const {
   createCamp,
@@ -10,35 +13,21 @@ const {
   getCampById,
   updateCamp,
   publishCamp,
-  cancelCamp
+  cancelCamp,
+  registerForCamp
 } = require("../controllers/camp.controller");
 
-// -----------------------------------------------------
-// PUBLIC ROUTES
-// -----------------------------------------------------
-
-// Get all published camps
+// Public routes
 router.get("/", getCamps);
-
-// Get published camp details
 router.get("/:campId", getCampById);
 
-// -----------------------------------------------------
-// PROTECTED ROUTES
-// -----------------------------------------------------
-
-// Create a camp
-router.post("/", requireAuth, createCamp);
-
-// Update a camp
-router.patch("/:campId", requireAuth, updateCamp);
-
-// Publish a camp
-router.post("/:campId/publish", requireAuth, publishCamp);
-
-// Cancel a camp
-router.post("/:campId/cancel", requireAuth, cancelCamp);
-
+// Guest or authenticated registration
 router.post("/:campId/register", optionalAuth, registerForCamp);
+
+// Organization manager routes
+router.post("/", requireAuth, createCamp);
+router.patch("/:campId", requireAuth, updateCamp);
+router.post("/:campId/publish", requireAuth, publishCamp);
+router.post("/:campId/cancel", requireAuth, cancelCamp);
 
 module.exports = router;
