@@ -39,4 +39,6 @@ router.post("/:campId/publish", requireAuth, publishCamp);
 // Cancel a camp
 router.post("/:campId/cancel", requireAuth, cancelCamp);
 
+router.post("/:campId/register", optionalAuth, registerForCamp);
+
 module.exports = router;
