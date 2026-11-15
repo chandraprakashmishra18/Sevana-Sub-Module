@@ -4,7 +4,9 @@ const prisma = require("../config/prisma");
 const {
   createCampSchema,
   updateCampSchema,
-  registerForCampSchema
+  registerForCampSchema,
+  updateRegistrationSchema,
+  campOutcomeSchema
 } = require("../validators/camp.validator");
 
 // -----------------------------------------------------
