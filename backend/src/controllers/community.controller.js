@@ -290,7 +290,16 @@ const createAidRequest = asyncHandler(async (req, res) => {
     organizationId: z.string().uuid(),
     title: z.string().trim().min(3).max(200),
     description: z.string().trim().min(10),
-    category: z.string().min(2),
+    category: z.enum([
+      "STUDENT_SPONSORSHIP",
+      "MEDICAL_AID",
+      "FOOD_SUPPORT",
+      "CLOTHING_SUPPORT",
+      "EMERGENCY_RELIEF",
+      "EDUCATION",
+      "HEALTH",
+      "OTHER"
+    ]),
     beneficiaryName: z.string().optional(),
     beneficiaryCount: z.coerce.number().int().positive().default(1),
     requestedAmount: z.coerce.number().positive().optional(),
@@ -423,12 +432,42 @@ const createDistribution = asyncHandler(async (req, res) => {
 });
 
 const getDistributions = asyncHandler(async (req, res) => {
+  const organizationId = req.query.organizationId;
+
+  if (!organizationId) {
+    return res.status(400).json({
+      success: false,
+      message: "organizationId is required."
+    });
+  }
+
+  const permission = await checkManager(req.user.id, organizationId);
+
+  if (!permission.allowed) {
+    return res.status(403).json({
+      success: false,
+      message: permission.message
+    });
+  }
+
   const distributions = await prisma.aidDistribution.findMany({
-    where: { organizationId: req.query.organizationId },
+    where: { organizationId },
+    include: {
+      aidRequest: {
+        select: { id: true, title: true, status: true }
+      },
+      campaign: {
+        select: { id: true, title: true }
+      }
+    },
     orderBy: { distributedAt: "desc" }
   });
 
-  res.json({ success: true, count: distributions.length, data: distributions });
+  return res.json({
+    success: true,
+    count: distributions.length,
+    data: distributions
+  });
 });
 
 module.exports = {
