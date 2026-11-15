@@ -435,6 +435,40 @@ const createDistribution = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: "Only approved aid requests can receive distributions." });
   }
 
+  if (data.campaignId) {
+    const campaign = await prisma.campaign.findFirst({
+      where: {
+        id: data.campaignId,
+        organizationId: data.organizationId
+      }
+    });
+
+    if (!campaign) {
+      return res.status(400).json({
+        success: false,
+        message: "Campaign does not belong to this organization."
+      });
+    }
+  }
+
+  if (data.donationId) {
+    const donation = await prisma.donation.findFirst({
+      where: {
+        id: data.donationId,
+        campaign: {
+          organizationId: data.organizationId
+        }
+      }
+    });
+
+    if (!donation) {
+      return res.status(400).json({
+        success: false,
+        message: "Donation is not linked to this organization's campaign."
+      });
+    }
+  }
+
   const distribution = await prisma.aidDistribution.create({
     data: {
       ...data,
