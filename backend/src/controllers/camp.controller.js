@@ -788,6 +788,37 @@ const updateRegistration = asyncHandler(async (req, res) => {
     });
   }
 
+  const updates = validation.data;
+  const allowedTransitions = {
+    REGISTERED: ["CANCELLED"],
+    WAITLISTED: ["REGISTERED", "CANCELLED"],
+    CANCELLED: []
+  };
+
+  if (
+    updates.status &&
+    !allowedTransitions[registration.status]?.includes(updates.status)
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: `Cannot change registration from ${registration.status} to ${updates.status}.`
+    });
+  }
+
+  if (updates.attendance && registration.status === "CANCELLED") {
+    return res.status(400).json({
+      success: false,
+      message: "Attendance cannot be assigned to a cancelled registration."
+    });
+  }
+
+  if (updates.status === "CANCELLED" && registration.attendance !== null) {
+    return res.status(400).json({
+      success: false,
+      message: "A registration with recorded attendance cannot be cancelled."
+    });
+  }
+
   const updatedRegistration = await prisma.campRegistration.update({
     where: { id: registration.id },
     data: validation.data
