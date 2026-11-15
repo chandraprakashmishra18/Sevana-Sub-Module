@@ -335,6 +335,20 @@ const getAidRequests = asyncHandler(async (req, res) => {
     ? { organizationId: req.query.organizationId }
     : { requesterId: req.user.id };
 
+  if (req.query.organizationId) {
+    const permission = await checkManager(
+      req.user.id,
+      req.query.organizationId
+    );
+
+    if (!permission.allowed) {
+      return res.status(403).json({
+        success: false,
+        message: permission.message
+      });
+    }
+  }
+
   const requests = await prisma.aidRequest.findMany({
     where,
     include: {
