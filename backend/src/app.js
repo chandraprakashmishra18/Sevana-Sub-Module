@@ -36,8 +36,6 @@ const apiLimiter = rateLimit({
   }
 });
 
-app.use("/api", apiLimiter);
-
 // -----------------------------------------------------
 // HEALTH CHECK
 // -----------------------------------------------------
@@ -48,6 +46,8 @@ app.get("/api/health", (req, res) => {
     message: "Sevana Community API is running"
   });
 });
+
+app.use("/api", apiLimiter);
 
 // -----------------------------------------------------
 // API ROUTES
