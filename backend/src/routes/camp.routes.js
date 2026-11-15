@@ -14,7 +14,9 @@ const {
   updateCamp,
   publishCamp,
   cancelCamp,
-  registerForCamp
+  registerForCamp,
+  updateRegistration,
+  submitCampOutcome
 } = require("../controllers/camp.controller");
 
 // Public routes
@@ -29,5 +31,15 @@ router.post("/", requireAuth, createCamp);
 router.patch("/:campId", requireAuth, updateCamp);
 router.post("/:campId/publish", requireAuth, publishCamp);
 router.post("/:campId/cancel", requireAuth, cancelCamp);
+
+// Update camp registration
+router.patch(
+  "/registrations/:registrationId",
+  requireAuth,
+  updateRegistration
+);
+
+// Submit camp outcome
+router.post("/:campId/outcomes", requireAuth, submitCampOutcome);
 
 module.exports = router;
