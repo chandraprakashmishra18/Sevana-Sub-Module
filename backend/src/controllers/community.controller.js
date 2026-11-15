@@ -373,7 +373,7 @@ const reviewAidRequest = asyncHandler(async (req, res) => {
 
   const request = await prisma.aidRequest.findUnique({
     where: { id: req.params.requestId },
-    select: { id: true, organizationId: true }
+    select: { id: true, organizationId: true, status: true }
   });
 
   if (!request) {
@@ -383,6 +383,21 @@ const reviewAidRequest = asyncHandler(async (req, res) => {
   const permission = await checkManager(req.user.id, request.organizationId);
   if (!permission.allowed) {
     return res.status(403).json({ success: false, message: permission.message });
+  }
+
+  const allowedTransitions = {
+    SUBMITTED: ["UNDER_REVIEW"],
+    UNDER_REVIEW: ["APPROVED", "REJECTED"],
+    APPROVED: ["FULFILLED"],
+    REJECTED: [],
+    FULFILLED: []
+  };
+
+  if (!allowedTransitions[request.status]?.includes(validation.data.status)) {
+    return res.status(400).json({
+      success: false,
+      message: `Cannot change aid request from ${request.status} to ${validation.data.status}.`
+    });
   }
 
   const updated = await prisma.aidRequest.update({
