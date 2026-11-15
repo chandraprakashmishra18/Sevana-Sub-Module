@@ -36,8 +36,8 @@ const registerLimiter = rateLimit({
 
 const router = express.Router();
 
-router.post("/register", register);
-router.post("/login", login);
+router.post("/register", registerLimiter, register);
+router.post("/login", loginLimiter, login);
 router.get("/me", requireAuth, getMe);
 
 module.exports = router;
