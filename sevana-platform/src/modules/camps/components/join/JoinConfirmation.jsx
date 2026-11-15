@@ -9,6 +9,7 @@ function JoinConfirmation({ camp }) {
   const { joinData, prevStep } = useJoinCamp();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [registration, setRegistration] = useState(null);
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
@@ -16,7 +17,7 @@ function JoinConfirmation({ camp }) {
     setError("");
     try {
       const result = await submitJoinCamp({ ...joinData, campId: camp.id, campTitle: camp.title });
-      if (result.success) setSubmitted(true);
+      if (result.success) { setRegistration(result.registration); setSubmitted(true); }
     } catch (err) { setError(err.message || "Could not register for this camp."); }
     finally { setSubmitting(false); }
   };
@@ -28,12 +29,12 @@ function JoinConfirmation({ camp }) {
         <h2>Registration received, {joinData.fullName.split(" ")[0]}.</h2>
         
         <div className="join-confirmation__xp-badge">
-          <strong>Registration status: pending review</strong>
+          <strong>Registration status: {registration?.status || "REGISTERED"}</strong>
         </div>
 
         <p>
           Your registration for <strong>{camp.title}</strong> was recorded as{" "}
-          {joinData.role === "worker" ? "a volunteer" : "a beneficiary"}. The backend will confirm whether you are registered or waitlisted.
+          {joinData.role === "worker" ? "a volunteer" : "a beneficiary"}. {registration?.status === "WAITLISTED" ? "The camp is full, so this registration is waitlisted." : "Your place is registered."}
         </p>
 
         <div className="join-confirmation__actions">
@@ -82,16 +83,12 @@ function JoinConfirmation({ camp }) {
               <span>Availability</span>
               <strong>{joinData.availability}</strong>
             </div>
-            <div className="join-confirmation__row">
-            </div>
           </>
         ) : (
           <>
             <div className="join-confirmation__row">
               <span>Age Group</span>
               <strong>{joinData.ageGroup}</strong>
-            </div>
-            <div className="join-confirmation__row">
             </div>
           </>
         )}

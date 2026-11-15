@@ -28,8 +28,7 @@ function NGOPartners() {
         <div className="ngo-partners-page__header">
           <h1>Our NGO Partners</h1>
           <p>
-            Every campaign on Sevana is signed off by one of these verified,
-            registered NGO partners before it goes live.
+            Campaigns display their organization from the backend. A public organization directory is not available yet.
           </p>
         </div>
 
@@ -42,6 +41,7 @@ function NGOPartners() {
             ))}
           </div>
         )}
+        {!loading && ngos.length === 0 && <p className="ngo-partners-page__loading">No organization directory data is available. Browse active campaigns to see participating organizations.</p>}
       </div>
     </section>
   );

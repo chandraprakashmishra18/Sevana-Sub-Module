@@ -7,7 +7,8 @@ import "./FeaturedCampaigns.css";
 
 function FeaturedCampaigns() {
   const [featured, setFeatured] = useState([]);
-  useEffect(() => { getAllCampaigns().then((campaigns) => setFeatured(campaigns.slice(0, 3))).catch(() => setFeatured([])); }, []);
+  const [error, setError] = useState("");
+  useEffect(() => { getAllCampaigns().then((campaigns) => setFeatured(campaigns.slice(0, 3))).catch((err) => setError(err.message || "Could not load campaigns.")); }, []);
 
   return (
     <section className="featured-campaigns">
@@ -26,7 +27,7 @@ function FeaturedCampaigns() {
           {featured.map((campaign) => (
             <CampaignCard key={campaign.id} campaign={campaign} />
           ))}
-          {!featured.length && <p>No active campaigns are available right now.</p>}
+          {!featured.length && <p>{error || "No active campaigns are available right now."}</p>}
         </div>
       </div>
     </section>

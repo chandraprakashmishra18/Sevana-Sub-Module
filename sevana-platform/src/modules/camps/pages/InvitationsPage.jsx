@@ -131,12 +131,11 @@ function SentCard({ invitation }) {
 }
 
 function InvitationsPage() {
-  const { user, addXP } = useAuth();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("received");
   const [received, setReceived] = useState([]);
   const [sent, setSent] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [xpNotice, setXpNotice] = useState(null);
 
   // Email to check invitations for
   const currentEmail = user ? user.email : "volunteer@example.com";
@@ -155,17 +154,9 @@ function InvitationsPage() {
 
   const handleAccept = async (invitation) => {
     await updateInvitationStatus(invitation.id, "accepted");
-    const xp = invitation.xpReward || 150;
-    if (addXP) {
-      addXP(xp, `Accepted invitation for ${invitation.campTitle}`);
-    }
     setReceived((prev) =>
       prev.map((inv) => (inv.id === invitation.id ? { ...inv, status: "accepted" } : inv))
     );
-    setXpNotice(
-      `🎉 Invitation accepted for "${invitation.campTitle}"! +${xp} Community Service XP has been added to your profile.`
-    );
-    setTimeout(() => setXpNotice(null), 6000);
   };
 
   const handleDecline = async (id) => {
@@ -185,7 +176,7 @@ function InvitationsPage() {
             <div>
               <h1>Camp Invitations &amp; Community Service</h1>
               <p>
-                Collaborate with others to arrange and organize medical and educational camps for NGOs, Orphanages, and Old Age Homes. Earn XP points for every community contribution!
+                Camp invitations are not available yet because the backend does not provide invitation endpoints.
               </p>
               {user ? (
                 <div style={{ marginTop: "8px", fontSize: "13.5px", color: "var(--color-primary-dark)", fontWeight: "600" }}>
@@ -207,12 +198,6 @@ function InvitationsPage() {
             </div>
           </div>
         </div>
-
-        {xpNotice && (
-          <div className="invitations-page__xp-alert">
-            {xpNotice}
-          </div>
-        )}
 
         <div className="invitations-page__tabs">
           <button
