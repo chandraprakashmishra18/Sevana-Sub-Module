@@ -172,6 +172,10 @@ const campOutcomeSchema = z.object({
   materialsDistributed: z.string().optional()
 });
 
+const attendanceSchema = z.object({
+  attendance: z.enum(["PRESENT", "ABSENT", "EXCUSED"])
+}).strict();
+
 // -----------------------------------------------------
 // EXPORTS
 // -----------------------------------------------------
@@ -181,5 +185,6 @@ module.exports = {
   updateCampSchema,
   registerForCampSchema,
   updateRegistrationSchema,
-  campOutcomeSchema
+  campOutcomeSchema,
+  attendanceSchema
 };

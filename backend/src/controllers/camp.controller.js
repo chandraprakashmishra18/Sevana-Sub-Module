@@ -6,7 +6,8 @@ const {
   updateCampSchema,
   registerForCampSchema,
   updateRegistrationSchema,
-  campOutcomeSchema
+  campOutcomeSchema,
+  attendanceSchema
 } = require("../validators/camp.validator");
 
 // -----------------------------------------------------
@@ -672,6 +673,54 @@ const registerForCamp = asyncHandler(async (req, res) => {
 });
 
 // -----------------------------------------------------
+// GET CAMP REGISTRATIONS
+// GET /api/camps/:campId/registrations
+// -----------------------------------------------------
+
+const getCampRegistrations = asyncHandler(async (req, res) => {
+  const camp = await prisma.camp.findUnique({
+    where: { id: req.params.campId },
+    select: { id: true, organizationId: true }
+  });
+
+  if (!camp) {
+    return res.status(404).json({
+      success: false,
+      message: "Camp not found."
+    });
+  }
+
+  const permission = await checkOrganizationPermission(
+    req.user.id,
+    camp.organizationId
+  );
+
+  if (!permission.allowed) {
+    return res.status(403).json({
+      success: false,
+      message: permission.message
+    });
+  }
+
+  const registrations = await prisma.campRegistration.findMany({
+    where: { campId: camp.id },
+    orderBy: { registeredAt: "desc" },
+    include: {
+      user: {
+        select: { id: true, fullName: true, email: true, phone: true }
+      }
+    }
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Camp registrations fetched successfully.",
+    count: registrations.length,
+    data: registrations
+  });
+});
+
+// -----------------------------------------------------
 // UPDATE CAMP REGISTRATION
 // PATCH /api/camps/registrations/:registrationId
 // -----------------------------------------------------
@@ -723,6 +772,79 @@ const updateRegistration = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Registration updated successfully.",
+    data: updatedRegistration
+  });
+});
+
+// -----------------------------------------------------
+// MARK CAMP REGISTRATION ATTENDANCE
+// PATCH /api/camps/:campId/registrations/:registrationId/attendance
+// -----------------------------------------------------
+
+const markAttendance = asyncHandler(async (req, res) => {
+  const validation = attendanceSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Validation failed.",
+      errors: validation.error.flatten()
+    });
+  }
+
+  const camp = await prisma.camp.findUnique({
+    where: { id: req.params.campId },
+    select: { id: true, organizationId: true }
+  });
+
+  if (!camp) {
+    return res.status(404).json({
+      success: false,
+      message: "Camp not found."
+    });
+  }
+
+  const permission = await checkOrganizationPermission(
+    req.user.id,
+    camp.organizationId
+  );
+
+  if (!permission.allowed) {
+    return res.status(403).json({
+      success: false,
+      message: permission.message
+    });
+  }
+
+  const registration = await prisma.campRegistration.findFirst({
+    where: {
+      id: req.params.registrationId,
+      campId: camp.id
+    }
+  });
+
+  if (!registration) {
+    return res.status(404).json({
+      success: false,
+      message: "Camp registration not found."
+    });
+  }
+
+  if (registration.status !== "REGISTERED") {
+    return res.status(400).json({
+      success: false,
+      message: "Attendance can only be marked for registered participants."
+    });
+  }
+
+  const updatedRegistration = await prisma.campRegistration.update({
+    where: { id: registration.id },
+    data: { attendance: validation.data.attendance }
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Attendance marked successfully.",
     data: updatedRegistration
   });
 });
@@ -790,6 +912,8 @@ module.exports = {
   publishCamp,
   cancelCamp,
   registerForCamp,
+  getCampRegistrations,
   updateRegistration,
+  markAttendance,
   submitCampOutcome
 };
