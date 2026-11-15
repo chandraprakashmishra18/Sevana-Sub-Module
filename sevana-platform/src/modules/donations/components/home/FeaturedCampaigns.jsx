@@ -1,12 +1,27 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CampaignCard from "../campaigns/CampaignCard";
-import Button from "../common/Button";
-import mockCampaigns from "../../data/mockCampaigns";
+import { getAllCampaigns } from "../../services/campaignService";
+import { isCampaignPublic, isGoalReached } from "../../utils/campaignRules";
+import "../common/Button.css";
 import "./FeaturedCampaigns.css";
 
 function FeaturedCampaigns() {
-  // Show only the first 3 on the homepage
-  const featured = mockCampaigns.slice(0, 3);
+  const [featured, setFeatured] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    getAllCampaigns().then((all) => {
+      if (!isMounted) return;
+      const open = all.filter((c) => isCampaignPublic(c) && !isGoalReached(c));
+      setFeatured(open.slice(0, 3));
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (featured.length === 0) return null;
 
   return (
     <section className="featured-campaigns">
@@ -14,10 +29,10 @@ function FeaturedCampaigns() {
         <div className="featured-campaigns__header">
           <div>
             <h2>Campaigns that need you right now</h2>
-            <p>Every listing below is NGO-verified and actively raising funds.</p>
+            <p>Sample campaigns from our demo NGO partners.</p>
           </div>
-          <Link to="/campaigns">
-            <Button variant="outline">View All Campaigns</Button>
+          <Link to="/campaigns" className="btn btn--outline btn--md">
+            View All Campaigns
           </Link>
         </div>
 

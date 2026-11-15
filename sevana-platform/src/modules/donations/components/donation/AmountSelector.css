@@ -75,3 +75,16 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+
+.donation-step__error {
+  display: block;
+  color: #b91c1c;
+  font-size: 12.5px;
+  margin: 0 0 var(--space-3);
+}
+
+.donation-step__field input[aria-invalid="true"],
+.donation-step__input[aria-invalid="true"] {
+  border-color: #dc2626;
+}

@@ -2,16 +2,24 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../common/Button";
 import ProgressBar from "../common/ProgressBar";
-import "./DonationWidget.css";
-
 import { DONATION_PRESET_AMOUNTS } from "../../utils/constants";
+import { getDonationBlockReason, MIN_DONATION, MAX_DONATION } from "../../utils/campaignRules";
+import "./DonationWidget.css";
 
 function DonationWidget({ campaign }) {
   const [selectedAmount, setSelectedAmount] = useState(500);
   const [customAmount, setCustomAmount] = useState("");
   const navigate = useNavigate();
 
-  const finalAmount = customAmount ? Number(customAmount) : selectedAmount;
+  const blockReason = getDonationBlockReason(campaign);
+  const finalAmount = customAmount ? Number(customAmount) : selectedAmount || 0;
+
+  let amountError = "";
+  if (finalAmount < MIN_DONATION) {
+    amountError = `Enter at least ₹${MIN_DONATION}.`;
+  } else if (finalAmount > MAX_DONATION) {
+    amountError = `Maximum ₹${MAX_DONATION.toLocaleString("en-IN")} per demo donation.`;
+  }
 
   const handlePresetClick = (amount) => {
     setSelectedAmount(amount);
@@ -19,24 +27,41 @@ function DonationWidget({ campaign }) {
   };
 
   const handleCustomChange = (e) => {
-    setCustomAmount(e.target.value);
+    setCustomAmount(e.target.value.replace(/\D/g, "").slice(0, 7));
     setSelectedAmount(null);
   };
 
   const handleDonateClick = () => {
-    navigate("/donate", {
-      state: { campaignId: campaign.id, amount: finalAmount },
-    });
+    if (amountError) return;
+    navigate("/donate", { state: { campaignId: campaign.id, amount: finalAmount } });
   };
+
+  const goalLine = (
+    <p className="donation-widget__goal">
+      Goal: ₹{Number(campaign.goalAmount).toLocaleString("en-IN")} &nbsp;•&nbsp; {campaign.donorCount} donors
+    </p>
+  );
+
+  if (blockReason) {
+    return (
+      <div className="donation-widget">
+        <ProgressBar raised={campaign.raisedAmount} goal={campaign.goalAmount} />
+        {goalLine}
+        {blockReason === "goal-reached" ? (
+          <div className="donation-widget__closed">Goal reached — thank you to everyone who donated.</div>
+        ) : (
+          <div className="donation-widget__closed donation-widget__closed--muted">
+            This campaign is not accepting donations right now.
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="donation-widget">
       <ProgressBar raised={campaign.raisedAmount} goal={campaign.goalAmount} />
-
-      <p className="donation-widget__goal">
-        Goal: ₹{campaign.goalAmount.toLocaleString("en-IN")} &nbsp;•&nbsp;{" "}
-        {campaign.donorCount} donors
-      </p>
+      {goalLine}
 
       <p className="donation-widget__label">Choose an amount</p>
 
@@ -44,29 +69,36 @@ function DonationWidget({ campaign }) {
         {DONATION_PRESET_AMOUNTS.map((amount) => (
           <button
             key={amount}
+            type="button"
+            aria-pressed={selectedAmount === amount}
             className={`amount-pill ${selectedAmount === amount ? "amount-pill--active" : ""}`}
             onClick={() => handlePresetClick(amount)}
           >
-            ₹{amount}
+            ₹{amount.toLocaleString("en-IN")}
           </button>
         ))}
       </div>
 
       <input
-        type="number"
+        type="text"
+        inputMode="numeric"
+        maxLength={7}
         placeholder="Enter custom amount"
+        aria-label="Custom donation amount in rupees"
+        aria-invalid={Boolean(amountError)}
         className="donation-widget__custom"
         value={customAmount}
         onChange={handleCustomChange}
-        min="1"
       />
 
-      <Button variant="accent" size="lg" fullWidth onClick={handleDonateClick}>
-        Donate ₹{finalAmount || 0}
+      {amountError && <p className="donation-widget__error" role="alert">{amountError}</p>}
+
+      <Button variant="accent" size="lg" fullWidth disabled={Boolean(amountError)} onClick={handleDonateClick}>
+        Donate ₹{finalAmount.toLocaleString("en-IN")}
       </Button>
 
       <p className="donation-widget__note">
-        You'll receive an 80G tax-exemption receipt instantly after payment.
+        Demo checkout: you'll see an on-screen receipt. No real payment is made.
       </p>
     </div>
   );

@@ -15,7 +15,7 @@ import DonorLeaderboard from "./modules/donations/pages/DonorLeaderboardPage";
 import CampaignManager from "./modules/donations/pages/CampaignManager";
 import ModerationConsole from "./modules/donations/pages/AdminConsole";
 import OrganizationRegistration from "./modules/donations/pages/OrganizationRegistration";
-import AdminConsole from "./modules/donations/pages/AdminConsole";
+
 import Camps from "./modules/camps/pages/Camps";
 import CampDetail from "./modules/camps/pages/CampDetail";
 import JoinCamp from "./modules/camps/pages/JoinCamp";
