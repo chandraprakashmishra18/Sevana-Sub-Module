@@ -15,7 +15,9 @@ const {
   publishCamp,
   cancelCamp,
   registerForCamp,
+  getCampRegistrations,
   updateRegistration,
+  markAttendance,
   submitCampOutcome
 } = require("../controllers/camp.controller");
 
@@ -31,6 +33,16 @@ router.post("/", requireAuth, createCamp);
 router.patch("/:campId", requireAuth, updateCamp);
 router.post("/:campId/publish", requireAuth, publishCamp);
 router.post("/:campId/cancel", requireAuth, cancelCamp);
+
+// View camp registrations
+router.get("/:campId/registrations", requireAuth, getCampRegistrations);
+
+// Mark participant attendance
+router.patch(
+  "/:campId/registrations/:registrationId/attendance",
+  requireAuth,
+  markAttendance
+);
 
 // Update camp registration
 router.patch(
