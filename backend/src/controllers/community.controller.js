@@ -242,18 +242,71 @@ const createDonation = asyncHandler(async (req, res) => {
 });
 
 const getDonations = asyncHandler(async (req, res) => {
+  const { organizationId, mine } = req.query;
+
+  let where;
+
+  // A donor can view only their own donations.
+  if (mine === "true") {
+    where = { donorUserId: req.user.id };
+  }
+  // Organization managers can view donations made to their campaigns.
+  else if (organizationId) {
+    const permission = await checkManager(req.user.id, organizationId);
+
+    if (!permission.allowed) {
+      return res.status(403).json({
+        success: false,
+        message: permission.message
+      });
+    }
+
+    where = {
+      campaign: {
+        organizationId
+      }
+    };
+  }
+  // No unrestricted donation listing.
+  else {
+    return res.status(400).json({
+      success: false,
+      message: "Provide mine=true or an organizationId."
+    });
+  }
+
   const donations = await prisma.donation.findMany({
-    where: req.query.mine === "true"
-      ? { donorUserId: req.user.id }
-      : {},
-    include: {
-      campaign: { select: { id: true, title: true } },
-      transactions: true
+    where,
+    select: {
+      id: true,
+      campaignId: true,
+      donorName: true,
+      type: true,
+      amount: true,
+      currency: true,
+      itemDescription: true,
+      quantity: true,
+      status: true,
+      isAnonymous: true,
+      createdAt: true,
+      campaign: {
+        select: { id: true, title: true }
+      },
+      transactions: {
+        select: {
+          id: true,
+          amount: true,
+          currency: true,
+          status: true,
+          provider: true,
+          createdAt: true
+        }
+      }
     },
     orderBy: { createdAt: "desc" }
   });
 
-  res.json({ success: true, count: donations.length, data: donations });
+  return res.json({ success: true, count: donations.length, data: donations });
 });
 
 // Only an authorized organization manager can confirm a donation.
