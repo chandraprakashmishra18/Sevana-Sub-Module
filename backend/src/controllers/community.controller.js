@@ -31,7 +31,10 @@ async function checkManager(userId, organizationId) {
     return { allowed: false, message: "Organization is not permitted to operate." };
   }
 
-  return { allowed: true };
+  return {
+    allowed: true,
+    verificationStatus: membership.organization.verificationStatus
+  };
 }
 
 // CAMPAIGNS
@@ -154,6 +157,16 @@ const updateCampaignStatus = asyncHandler(async (req, res) => {
   const permission = await checkManager(req.user.id, campaign.organizationId);
   if (!permission.allowed) {
     return res.status(403).json({ success: false, message: permission.message });
+  }
+
+  if (
+    validation.data.status === "ACTIVE" &&
+    permission.verificationStatus !== "VERIFIED"
+  ) {
+    return res.status(403).json({
+      success: false,
+      message: "Organization verification is required to activate campaigns."
+    });
   }
 
   const allowedTransitions = {
