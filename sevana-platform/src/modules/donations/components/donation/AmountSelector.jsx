@@ -4,9 +4,25 @@ import { DONATION_PRESET_AMOUNTS } from "../../utils/constants";
 import { getXPForDonation } from "../../data/mockDonorXP";
 import "./AmountSelector.css";
 
+const MIN_AMOUNT = 1;
+const MAX_AMOUNT = 100000;
+
 function AmountSelector({ campaign }) {
   const { donation, updateDonation, nextStep } = useDonation();
-  const estimatedXP = getXPForDonation(donation.amount || 0);
+  const amount = Number(donation.amount) || 0;
+  const estimatedXP = getXPForDonation(amount);
+
+  let amountError = "";
+  if (amount < MIN_AMOUNT) {
+    amountError = `Enter an amount of at least ₹${MIN_AMOUNT}.`;
+  } else if (amount > MAX_AMOUNT) {
+    amountError = `Maximum ₹${MAX_AMOUNT.toLocaleString("en-IN")} per demo donation.`;
+  }
+
+  const handleCustomChange = (e) => {
+    const digitsOnly = e.target.value.replace(/\D/g, "");
+    updateDonation({ amount: digitsOnly ? Number(digitsOnly) : 0 });
+  };
 
   return (
     <div className="donation-step">
@@ -27,26 +43,33 @@ function AmountSelector({ campaign }) {
         {DONATION_PRESET_AMOUNTS.map((amt) => (
           <button
             key={amt}
-            className={`amount-pill ${donation.amount === amt ? "amount-pill--active" : ""}`}
+            type="button"
+            aria-pressed={amount === amt}
+            className={`amount-pill ${amount === amt ? "amount-pill--active" : ""}`}
             onClick={() => updateDonation({ amount: amt })}
           >
-            ₹{amt}
+            ₹{amt.toLocaleString("en-IN")}
           </button>
         ))}
       </div>
 
       <input
-        type="number"
+        type="text"
+        inputMode="numeric"
+        maxLength={7}
         className="donation-step__input"
         placeholder="Or enter a custom amount"
+        aria-label="Custom donation amount in rupees"
+        aria-invalid={Boolean(amountError)}
         value={donation.amount || ""}
-        onChange={(e) => updateDonation({ amount: Number(e.target.value) })}
-        min="1"
+        onChange={handleCustomChange}
       />
 
-      {estimatedXP > 0 && (
+      {amountError && <p className="donation-step__error" role="alert">{amountError}</p>}
+
+      {estimatedXP > 0 && !amountError && (
         <div className="amount-selector__xp-tag">
-          🌟 You will earn <strong>+{estimatedXP} Community XP</strong> with this donation!
+          You will earn <strong>+{estimatedXP} Community XP</strong> with this donation!
         </div>
       )}
 
@@ -54,10 +77,10 @@ function AmountSelector({ campaign }) {
         variant="accent"
         size="lg"
         fullWidth
-        disabled={!donation.amount || donation.amount <= 0}
+        disabled={Boolean(amountError)}
         onClick={nextStep}
       >
-        Continue with ₹{donation.amount || 0}
+        Continue with ₹{amount.toLocaleString("en-IN")}
       </Button>
     </div>
   );

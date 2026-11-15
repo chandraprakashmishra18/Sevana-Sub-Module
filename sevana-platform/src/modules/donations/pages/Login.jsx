@@ -48,7 +48,7 @@ function Login() {
       <div className="container auth-page__container">
         <div className="auth-card">
           <div className="auth-card__header">
-            <span className="auth-card__icon">🔐</span>
+            
             <h1>Welcome Back to Sevana</h1>
             <p>Log in to track your donations, earn donor karma XP, and view 80G tax receipts.</p>
           </div>
@@ -85,12 +85,12 @@ function Login() {
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label="Toggle password visibility"
                 >
-                  {showPassword ? "👁️ Hide" : "👁️ Show"}
+                  {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
             </label>
 
-            <Button variant="accent" size="lg" fullWidth disabled={submitting}>
+            <Button type="submit" variant="accent" size="lg" fullWidth disabled={submitting}>
               {submitting ? "Signing in..." : "Sign In to Account"}
             </Button>
           </form>
@@ -100,7 +100,7 @@ function Login() {
           </div>
 
           <div className="auth-card__quick-demo">
-            <p className="auth-card__demo-title">⚡ 1-Click Sample Accounts:</p>
+            <p className="auth-card__demo-title">1-Click Sample Accounts:</p>
             <div className="auth-card__demo-pills">
               {SEED_USERS.map((seed) => (
                 <button

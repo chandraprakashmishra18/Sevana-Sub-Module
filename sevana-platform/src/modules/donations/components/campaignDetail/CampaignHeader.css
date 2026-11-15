@@ -50,3 +50,29 @@
     height: 220px;
   }
 }
+
+
+.campaign-header__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  background: var(--color-primary-light);
+  border-radius: var(--radius-md);
+}
+
+.campaign-header__facts dt {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.campaign-header__facts dd {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+}

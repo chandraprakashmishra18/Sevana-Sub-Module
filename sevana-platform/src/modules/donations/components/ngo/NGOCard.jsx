@@ -13,7 +13,7 @@ function NGOCard({ ngo }) {
       <div className="ngo-card__body">
         <div className="ngo-card__title-row">
           <h3>{ngo.name}</h3>
-          {ngo.verified && <Badge tone="verified">✔ Verified</Badge>}
+          {ngo.verified && <Badge tone="verified">Verified</Badge>}
         </div>
 
         <p className="ngo-card__focus">{ngo.focusArea}</p>

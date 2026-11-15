@@ -13,20 +13,20 @@ function NotFound() {
 
         <div className="not-found-actions">
           <Link to="/" className="not-found-primary-btn">
-            🏠 Return to Home
+            Return to Home
           </Link>
           <Link to="/campaigns" className="not-found-secondary-btn">
-            💖 Browse Campaigns
+            Browse Campaigns
           </Link>
           <Link to="/donate" className="not-found-secondary-btn">
-            🤝 Donate Now
+            Donate Now
           </Link>
         </div>
 
         <div className="not-found-crosslink">
           <p>Looking for Medical or Educational Camps?</p>
           <Link to="/camps" className="not-found-external-btn">
-            🏕️ Browse Educational & Medical Camps
+            Browse Educational & Medical Camps
           </Link>
         </div>
       </div>

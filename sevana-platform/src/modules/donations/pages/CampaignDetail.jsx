@@ -4,7 +4,8 @@ import CampaignHeader from "../components/campaignDetail/CampaignHeader";
 import DonationWidget from "../components/campaignDetail/DonationWidget";
 import DonorList from "../components/campaignDetail/DonorList";
 import DisbursementTrail from "../components/campaignDetail/DisbursementTrail";
-import { getCampaignById } from "../services/campaignService";
+import { getCampaignById } from "../services/campaignService"; 
+import { isCampaignPublic } from "../utils/campaignRules";
 import { getDonorsByCampaign, getDisbursementsByCampaign } from "../services/donationService";
 import "./CampaignDetail.css";
 
@@ -44,7 +45,7 @@ function CampaignDetail() {
     );
   }
 
-  if (!campaign) {
+  if (!campaign || !isCampaignPublic(campaign)) {
     return (
       <div className="container campaign-detail__not-found">
         <h2>Campaign not found</h2>

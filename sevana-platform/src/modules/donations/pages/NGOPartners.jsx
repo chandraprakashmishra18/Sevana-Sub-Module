@@ -28,8 +28,8 @@ function NGOPartners() {
         <div className="ngo-partners-page__header">
           <h1>Our NGO Partners</h1>
           <p>
-            Every campaign on Sevana is signed off by one of these verified,
-            registered NGO partners before it goes live.
+            In this demo, campaigns are listed under these sample NGO
+            partners. Details are sample data.
           </p>
         </div>
 

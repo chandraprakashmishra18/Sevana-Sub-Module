@@ -84,13 +84,13 @@ function Register() {
       <div className="container register-page__container">
         <div className="register-card">
           <div className="register-card__header">
-            <span className="register-card__icon">💖</span>
+            
             <h1>Join the Sevana Community</h1>
             <p>
               Register your account to donate, track verified disbursement trails, and earn donor karma XP!
             </p>
             <div className="register-card__bonus">
-              🎁 <strong>+50 Welcome XP</strong> awarded instantly upon registration!
+              <strong>+50 Welcome XP</strong> awarded instantly upon registration!
             </div>
           </div>
 
@@ -205,7 +205,7 @@ function Register() {
               </label>
             )}
 
-            <Button variant="accent" size="lg" fullWidth disabled={submitting}>
+            <Button type="submit" variant="accent" size="lg" fullWidth disabled={submitting}>
               {submitting ? "Creating Account..." : "Create Account & Claim +50 XP"}
             </Button>
           </form>

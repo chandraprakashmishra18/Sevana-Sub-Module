@@ -23,6 +23,10 @@ export async function getDisbursementsByCampaign(campaignId) {
 }
 
 export async function submitDonation(donationData) {
+  const amountNumber = Number(donationData.amount);
+  if (!Number.isInteger(amountNumber) || amountNumber < 1 || amountNumber > 100000) {
+    return { success: false, error: "Enter a whole-rupee amount between ₹1 and ₹1,00,000." };
+  }
   const receiptId = `SEV-${Date.now().toString().slice(-8)}`;
   const xp = getXPForDonation(Number(donationData.amount) || 0);
   const donation = {

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import NGOProfile from "../components/ngo/NGOProfile";
 import { getNGOById } from "../services/ngoService";
+import { isCampaignPublic } from "../utils/campaignRules";
+
 import { getAllCampaigns } from "../services/campaignService";
 
 function NGOProfilePage() {
@@ -18,7 +20,7 @@ function NGOProfilePage() {
         if (isMounted) {
           setNgo(ngoData);
           setNgoCampaigns(
-            ngoData ? allCampaigns.filter((c) => c.ngo === ngoData.name) : []
+            ngoData ? allCampaigns.filter((c) => c.ngo === ngoData.name && isCampaignPublic(c)) : []
           );
           setLoading(false);
         }

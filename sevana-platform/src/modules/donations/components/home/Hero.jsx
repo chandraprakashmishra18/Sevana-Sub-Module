@@ -7,14 +7,14 @@ function Hero() {
     <section className="hero">
       <div className="container hero__inner">
         <div className="hero__content">
-          <span className="hero__eyebrow">सेवना — Devoted Service</span>
+          <span className="hero__eyebrow">सेवाना — Devoted Service</span>
           <h1 className="hero__title">
-            Verified giving. <span>Real Impact.</span> No Middlemen.
+            Local giving. <span>Clear progress.</span> Made simple.
           </h1>
           <p className="hero__subtitle">
-            Every rupee you donate is tracked from your pocket to a
-            geotagged, photo-verified disbursement — sponsor a student,
-            support a family, or fund an NGO drive, and see exactly where it went.
+            Browse local needs, pick a campaign, and see how your
+            contribution moves a goal forward — sponsor a student,
+            support a family, or back an NGO drive. (Demo project: no real payments.)
           </p>
 
           <div className="hero__actions">
@@ -27,9 +27,9 @@ function Hero() {
           </div>
 
           <div className="hero__trustrow">
-            <span>✔ 80G Tax Receipts</span>
-            <span>✔ NGO Verified</span>
-            <span>✔ Full Disbursement Trail</span>
+            <span>Demo Project</span>
+            <span>Sample NGO Partners</span>
+            <span>Live Campaign Progress</span>
           </div>
         </div>
 
