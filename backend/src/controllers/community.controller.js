@@ -110,7 +110,7 @@ const updateCampaign = asyncHandler(async (req, res) => {
 
   const campaign = await prisma.campaign.findUnique({
     where: { id: req.params.campaignId },
-    select: { id: true, organizationId: true }
+    select: { id: true, organizationId: true, status: true }
   });
 
   if (!campaign) {
@@ -120,6 +120,21 @@ const updateCampaign = asyncHandler(async (req, res) => {
   const permission = await checkManager(req.user.id, campaign.organizationId);
   if (!permission.allowed) {
     return res.status(403).json({ success: false, message: permission.message });
+  }
+
+  const allowedTransitions = {
+    DRAFT: ["ACTIVE", "CANCELLED"],
+    ACTIVE: ["PAUSED", "COMPLETED", "CANCELLED"],
+    PAUSED: ["ACTIVE", "CANCELLED"],
+    COMPLETED: [],
+    CANCELLED: []
+  };
+
+  if (!allowedTransitions[campaign.status]?.includes(validation.data.status)) {
+    return res.status(400).json({
+      success: false,
+      message: `Cannot change campaign from ${campaign.status} to ${validation.data.status}.`
+    });
   }
 
   const updated = await prisma.campaign.update({
