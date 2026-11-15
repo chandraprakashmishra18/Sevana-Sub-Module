@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const authRoutes = require("./routes/auth.routes");
 const campRoutes = require("./routes/camp.routes");
 const adminRoutes = require("./routes/admin.routes");
+const communityRoutes = require("./routes/community.routes");
 
 const app = express();
 
@@ -42,6 +43,9 @@ app.use("/api/camps", campRoutes);
 
 // Admin routes
 app.use("/api/admin", adminRoutes);
+
+// Community routes
+app.use("/api", communityRoutes);
 
 // -----------------------------------------------------
 // 404 HANDLER - MUST REMAIN LAST
