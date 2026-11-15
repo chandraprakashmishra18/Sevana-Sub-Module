@@ -672,6 +672,113 @@ const registerForCamp = asyncHandler(async (req, res) => {
 });
 
 // -----------------------------------------------------
+// UPDATE CAMP REGISTRATION
+// PATCH /api/camps/registrations/:registrationId
+// -----------------------------------------------------
+
+const updateRegistration = asyncHandler(async (req, res) => {
+  const validation = updateRegistrationSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Validation failed.",
+      errors: validation.error.flatten()
+    });
+  }
+
+  const registration = await prisma.campRegistration.findUnique({
+    where: { id: req.params.registrationId },
+    include: {
+      camp: {
+        select: { id: true, organizationId: true }
+      }
+    }
+  });
+
+  if (!registration) {
+    return res.status(404).json({
+      success: false,
+      message: "Camp registration not found."
+    });
+  }
+
+  const permission = await checkOrganizationPermission(
+    req.user.id,
+    registration.camp.organizationId
+  );
+
+  if (!permission.allowed) {
+    return res.status(403).json({
+      success: false,
+      message: permission.message
+    });
+  }
+
+  const updatedRegistration = await prisma.campRegistration.update({
+    where: { id: registration.id },
+    data: validation.data
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Registration updated successfully.",
+    data: updatedRegistration
+  });
+});
+
+// -----------------------------------------------------
+// SUBMIT CAMP OUTCOME
+// POST /api/camps/:campId/outcomes
+// -----------------------------------------------------
+
+const submitCampOutcome = asyncHandler(async (req, res) => {
+  const validation = campOutcomeSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Validation failed.",
+      errors: validation.error.flatten()
+    });
+  }
+
+  const camp = await prisma.camp.findUnique({
+    where: { id: req.params.campId },
+    select: { id: true, organizationId: true }
+  });
+
+  if (!camp) {
+    return res.status(404).json({
+      success: false,
+      message: "Camp not found."
+    });
+  }
+
+  const permission = await checkOrganizationPermission(
+    req.user.id,
+    camp.organizationId
+  );
+
+  if (!permission.allowed) {
+    return res.status(403).json({
+      success: false,
+      message: permission.message
+    });
+  }
+
+  const outcome = await prisma.campOutcome.create({
+    data: { ...validation.data, campId: camp.id }
+  });
+
+  return res.status(201).json({
+    success: true,
+    message: "Camp outcome submitted successfully.",
+    data: outcome
+  });
+});
+
+// -----------------------------------------------------
 // EXPORTS
 // -----------------------------------------------------
 
@@ -682,5 +789,7 @@ module.exports = {
   updateCamp,
   publishCamp,
   cancelCamp,
-  registerForCamp
+  registerForCamp,
+  updateRegistration,
+  submitCampOutcome
 };
