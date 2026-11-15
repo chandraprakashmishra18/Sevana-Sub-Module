@@ -110,6 +110,34 @@ const updateCampaign = asyncHandler(async (req, res) => {
 
   const campaign = await prisma.campaign.findUnique({
     where: { id: req.params.campaignId },
+    select: { id: true, organizationId: true }
+  });
+
+  if (!campaign) {
+    return res.status(404).json({ success: false, message: "Campaign not found." });
+  }
+
+  const permission = await checkManager(req.user.id, campaign.organizationId);
+  if (!permission.allowed) {
+    return res.status(403).json({ success: false, message: permission.message });
+  }
+
+  const updated = await prisma.campaign.update({
+    where: { id: campaign.id },
+    data: validation.data
+  });
+
+  res.json({ success: true, message: "Campaign updated.", data: updated });
+});
+
+const updateCampaignStatus = asyncHandler(async (req, res) => {
+  const validation = updateCampaignStatusSchema.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({ success: false, errors: validation.error.flatten() });
+  }
+
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: req.params.campaignId },
     select: { id: true, organizationId: true, status: true }
   });
 
@@ -135,34 +163,6 @@ const updateCampaign = asyncHandler(async (req, res) => {
       success: false,
       message: `Cannot change campaign from ${campaign.status} to ${validation.data.status}.`
     });
-  }
-
-  const updated = await prisma.campaign.update({
-    where: { id: campaign.id },
-    data: validation.data
-  });
-
-  res.json({ success: true, message: "Campaign updated.", data: updated });
-});
-
-const updateCampaignStatus = asyncHandler(async (req, res) => {
-  const validation = updateCampaignStatusSchema.safeParse(req.body);
-  if (!validation.success) {
-    return res.status(400).json({ success: false, errors: validation.error.flatten() });
-  }
-
-  const campaign = await prisma.campaign.findUnique({
-    where: { id: req.params.campaignId },
-    select: { id: true, organizationId: true }
-  });
-
-  if (!campaign) {
-    return res.status(404).json({ success: false, message: "Campaign not found." });
-  }
-
-  const permission = await checkManager(req.user.id, campaign.organizationId);
-  if (!permission.allowed) {
-    return res.status(403).json({ success: false, message: permission.message });
   }
 
   const updated = await prisma.campaign.update({
