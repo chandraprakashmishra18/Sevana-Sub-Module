@@ -77,4 +77,21 @@ app.use((req, res) => {
   });
 });
 
+// --------------------------------------------------
+// CENTRALIZED ERROR HANDLER - MUST REMAIN LAST
+// --------------------------------------------------
+
+app.use((err, req, res, next) => {
+  console.error("API Error:", err);
+
+  const statusCode = err.statusCode || err.status || 500;
+
+  res.status(statusCode).json({
+    success: false,
+    message: statusCode === 500
+      ? "Internal server error."
+      : err.message || "Something went wrong."
+  });
+});
+
 module.exports = app;
