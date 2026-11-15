@@ -10,6 +10,7 @@ const campRoutes = require("./routes/camp.routes");
 const adminRoutes = require("./routes/admin.routes");
 const communityRoutes = require("./routes/community.routes");
 
+const allowedOrigin = process.env.CLIENT_URL || "http://localhost:5173";
 const app = express();
 
 // -----------------------------------------------------
@@ -18,7 +19,7 @@ const app = express();
 
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: allowedOrigin,
   credentials: true
 }));
 app.use(express.json());
