@@ -7,7 +7,7 @@ function Hero() {
     <section className="hero">
       <div className="container hero__inner">
         <div className="hero__content">
-          <span className="hero__eyebrow">सेवना — Devoted Community Service</span>
+          <span className="hero__eyebrow">सेवाना — Devoted Community Service</span>
           <h1 className="hero__title">
             Medical care. <span>Real education.</span> For NGOs, Orphanages &amp; Seniors.
           </h1>

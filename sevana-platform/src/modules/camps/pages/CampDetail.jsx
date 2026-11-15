@@ -47,7 +47,7 @@ function CampDetail() {
     );
   }
 
-  if (!camp) {
+  if (!camp || camp.status === "draft") {
     return (
       <div className="container camp-detail__not-found">
         <h2>Camp not found</h2>
@@ -74,7 +74,17 @@ function CampDetail() {
         </div>
 
         <div className="camp-detail__sidebar">
-          <RoleSelector camp={camp} />
+          {camp.status === "cancelled" || camp.status === "ongoing" ? (
+            <div className="role-selector role-selector--past">
+              <p>
+                {camp.status === "cancelled"
+                  ? "This camp has been cancelled by the organizer."
+                  : "This camp is in progress, so registrations are closed."}
+              </p>
+            </div>
+          ) : (
+            <RoleSelector camp={camp} />
+          )}
           <OrganizerCard organizer={organizer} />
           {camp.status === "upcoming" && (
             <InvitePanel

@@ -10,13 +10,17 @@ function JoinConfirmation({ camp }) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [alreadyJoined, setAlreadyJoined] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async () => {
     setSubmitting(true);
+    setError("");
     const result = await submitJoinCamp({ ...joinData, campTitle: camp.title });
     if (result.success) {
       setAlreadyJoined(Boolean(result.duplicate));
       setSubmitted(true);
+    } else {
+      setError(result.error || "Could not complete your registration. Please try again.");
     }
     setSubmitting(false);
   };
@@ -36,8 +40,7 @@ function JoinConfirmation({ camp }) {
 
         <p>
           Your demo registration request for <strong>{camp.title}</strong> was recorded as{" "}
-          {isWorker ? "a volunteer worker" : "an attendee"}. A confirmation
-          pending organizer review. A simulated notification was saved for {joinData.email}.
+          {isWorker ? "a volunteer worker" : "an attendee"}. You can track or cancel it under My Registrations. A simulated notification was saved for {joinData.email}.
         </p>
 
         <p className="join-confirmation__xp-note">
@@ -47,6 +50,7 @@ function JoinConfirmation({ camp }) {
         </p>
 
         <div className="join-confirmation__actions">
+          <Link to="/my-registrations"><Button variant="outline">My Registrations</Button></Link>
           <Link to="/leaderboard"><Button variant="outline">View Leaderboard</Button></Link>
           <Link to={`/camps/${camp.id}`}><Button variant="primary">Back to Camp</Button></Link>
         </div>
@@ -111,6 +115,8 @@ function JoinConfirmation({ camp }) {
           </>
         )}
       </div>
+
+      {error && <p role="alert" style={{ color: "#b91c1c", margin: "12px 0" }}>{error}</p>}
 
       <div className="join-step__actions">
         <Button variant="ghost" onClick={prevStep} disabled={submitting}>← Back</Button>

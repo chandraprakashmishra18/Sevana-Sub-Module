@@ -64,6 +64,16 @@ function JoinCamp() {
     );
   }
 
+  if (camp.status !== "upcoming") {
+    return (
+      <div className="container" style={{ padding: "60px 0", textAlign: "center" }}>
+        <h2>Registrations are closed</h2>
+        <p>This camp is not accepting registrations right now.</p>
+        <Link to={`/camps/${camp.id}`}>← Back to camp</Link>
+      </div>
+    );
+  }
+
   return (
     <section className="join-page">
       <div className="container join-page__container">

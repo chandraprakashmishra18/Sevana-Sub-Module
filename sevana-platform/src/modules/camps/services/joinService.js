@@ -2,8 +2,8 @@ import mockWorkers, { getTierForXP, getNextTierProgress } from "../data/mockWork
 import { getUsers, awardUserXP, recordUserCampJoined, getCurrentUser } from "./authService";
 import { awardCommunityXP } from "./communityService";
 import { addNotification } from "./notificationService";
-
-const JOIN_KEY = "sevana_camp_joins";
+import { getCampById } from "./campService";
+import { readRegistrations, writeRegistrations, normalizeRegistration, isCancelled } from "../utils/registrationModel";
 
 export async function getWorkerById(id) {
   // First check real registered users
@@ -68,21 +68,41 @@ export function getWorkerTierInfo(xp) {
 }
 
 export async function submitJoinCamp(joinData) {
-  const joins = JSON.parse(localStorage.getItem(JOIN_KEY) || "[]");
+  const camp = await getCampById(joinData.campId);
+  if (!camp) return { success: false, error: "This camp could not be found." };
+  if (camp.status !== "upcoming") return { success: false, error: "Registrations are closed for this camp." };
+
+  const joins = readRegistrations();
   const email = (joinData.email || "").toLowerCase().trim();
-  const duplicate = joins.find(
+  const existing = joins.find(
     (join) => join.campId === joinData.campId && (join.email || "").toLowerCase() === email
   );
 
-  if (duplicate) {
-    return { success: true, joinId: duplicate.id, duplicate: true, xpAwarded: false };
+  // Already registered (and not cancelled) -> no duplicate.
+  if (existing && !isCancelled(existing)) {
+    return { success: true, joinId: existing.id, duplicate: true, xpAwarded: false };
+  }
+
+  // Capacity is enforced per role (live count = seeded + saved registrations).
+  const slots = joinData.role === "worker" ? camp.workerSlots : camp.attendeeSlots;
+  if (slots && slots.filled >= slots.total) {
+    return { success: false, error: "This camp is full for the role you selected." };
+  }
+
+  // Previously cancelled -> re-activate the same record instead of creating a second one.
+  if (existing) {
+    existing.status = "REGISTERED";
+    existing.attendance = null;
+    existing.attended = false;
+    writeRegistrations(joins);
+    return { success: true, joinId: existing.id, duplicate: false, xpAwarded: false };
   }
 
   const id = `join${Date.now()}`;
   const xp = joinData.role === "worker" ? 150 : 30;
-  joins.unshift({ ...joinData, status: "pending", attended: false, id, xp, createdAt: new Date().toISOString() });
-  localStorage.setItem(JOIN_KEY, JSON.stringify(joins));
-  addNotification({ title: "Camp registration received", message: `Your ${joinData.role || "attendee"} registration for ${joinData.campTitle || "the camp"} is pending organizer review.`, type: "registration", href: "/dashboard" });
+  joins.unshift({ ...joinData, status: "REGISTERED", attendance: null, attended: false, id, xp, createdAt: new Date().toISOString() });
+  writeRegistrations(joins);
+  addNotification({ title: "Camp registration confirmed", message: `Your ${joinData.role === "worker" ? "volunteer" : "attendee"} registration for ${joinData.campTitle || "the camp"} is confirmed.`, type: "registration", href: "/my-registrations" });
 
   // Check if there is an active logged-in user or registered user matching this email
   const realUsers = getUsers();
@@ -114,10 +134,51 @@ export async function submitJoinCamp(joinData) {
   return { success: true, joinId: id, xpAwarded: true };
 }
 
-export function getCampRegistrations() { try { return JSON.parse(localStorage.getItem(JOIN_KEY) || "[]"); } catch { return []; } }
-export function updateCampRegistration(id, updates) {
-  const joins = getCampRegistrations(); const item = joins.find((join) => join.id === id); if (!item) return null;
-  Object.assign(item, updates); localStorage.setItem(JOIN_KEY, JSON.stringify(joins));
-  addNotification({ title: "Camp registration updated", message: `Your registration for ${item.campTitle || "a camp"} is ${item.status || "updated"}.`, type: "registration", href: "/dashboard" });
+export function getCampRegistrations() {
+  return readRegistrations();
+}
+
+export function updateCampRegistration(id, updates, { notify = true } = {}) {
+  const joins = readRegistrations();
+  const item = joins.find((join) => join.id === id);
+  if (!item) return null;
+  Object.assign(item, updates);
+  writeRegistrations(joins);
+  if (notify) {
+    addNotification({
+      title: "Camp registration updated",
+      message: `Your registration for ${item.campTitle || "a camp"} is now ${normalizeRegistration(item).status.toLowerCase()}.`,
+      type: "registration",
+      href: "/my-registrations",
+    });
+  }
   return item;
+}
+
+// ---- Citizen side: "My registrations" ----
+export function getMyRegistrations(user) {
+  if (!user?.email) return [];
+  const email = user.email.toLowerCase();
+  return readRegistrations()
+    .filter((join) => (join.email || "").toLowerCase() === email)
+    .map(normalizeRegistration);
+}
+
+export async function cancelMyRegistration(user, id) {
+  const reg = readRegistrations().find((join) => join.id === id);
+  if (!reg || !user?.email || (reg.email || "").toLowerCase() !== user.email.toLowerCase()) {
+    return { success: false, error: "Registration not found." };
+  }
+  const camp = await getCampById(reg.campId);
+  if (camp && (camp.status === "past" || camp.status === "cancelled")) {
+    return { success: false, error: "This camp is already over, so the registration can't be cancelled." };
+  }
+  updateCampRegistration(id, { status: "CANCELLED", attendance: null, attended: false }, { notify: false });
+  addNotification({
+    title: "Registration cancelled",
+    message: `You cancelled your registration for ${reg.campTitle || "the camp"}.`,
+    type: "registration",
+    href: "/my-registrations",
+  });
+  return { success: true };
 }
