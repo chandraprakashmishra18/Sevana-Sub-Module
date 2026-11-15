@@ -425,33 +425,33 @@ const createAidRequest = asyncHandler(async (req, res) => {
 });
 
 const getAidRequests = asyncHandler(async (req, res) => {
-  const where = req.query.organizationId
-    ? { organizationId: req.query.organizationId }
-    : { requesterId: req.user.id };
+  const organizationId = req.query.organizationId;
 
-  if (req.query.organizationId) {
-    const permission = await checkManager(
-      req.user.id,
-      req.query.organizationId
-    );
+  if (!organizationId) {
+    return res.status(400).json({
+      success: false,
+      message: "organizationId is required."
+    });
+  }
 
-    if (!permission.allowed) {
-      return res.status(403).json({
-        success: false,
-        message: permission.message
-      });
-    }
+  const permission = await checkManager(req.user.id, organizationId);
+
+  if (!permission.allowed) {
+    return res.status(403).json({
+      success: false,
+      message: permission.message
+    });
   }
 
   const requests = await prisma.aidRequest.findMany({
-    where,
+    where: { organizationId },
     include: {
       organization: { select: { id: true, name: true } }
     },
     orderBy: { createdAt: "desc" }
   });
 
-  res.json({ success: true, count: requests.length, data: requests });
+  return res.json({ success: true, count: requests.length, data: requests });
 });
 
 const reviewAidRequest = asyncHandler(async (req, res) => {
