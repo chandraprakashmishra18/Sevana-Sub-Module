@@ -1,51 +1,27 @@
-import mockOrganizers from "../data/mockOrganizers";
-import { saveCreatedCamp } from "./campService";
-import { awardCommunityXP } from "./communityService";
-import { getCurrentUser, awardUserXP, recordUserCampOrganized } from "./authService";
+import { createCamp } from "./campService";
 
-export async function getAllOrganizers() {
-  return Promise.resolve(mockOrganizers);
-}
+export async function getAllOrganizers() { return []; }
+export async function getOrganizerById() { return null; }
 
-export async function getOrganizerById(id) {
-  const found = mockOrganizers.find((o) => o.id === id);
-  return Promise.resolve(found || null);
-}
-
-export async function submitNewCamp(campData) {
-  const campId = `community-${Date.now()}`;
-  const currentUser = getCurrentUser();
-  const organizerName = campData.organizer || (currentUser ? (currentUser.organization || currentUser.name) : "Community Organizer");
-
-  const camp = {
-    ...campData,
-    id: campId,
-    organizer: organizerName,
-    organizerId: currentUser ? currentUser.id : null,
-    organizerVerified: !!(currentUser && currentUser.organization),
-    image: campData.image || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop",
-    workerSlots: { total: 20, filled: 0 },
-    attendeeSlots: { total: 100, filled: 0 },
-    workerRolesNeeded: (campData.workerRolesNeeded || "General Volunteer").split(",").map((role) => role.trim()),
-    status: "upcoming",
-    approvalStatus: "approved",
-  };
-
-  try {
-    saveCreatedCamp(camp);
-    if (currentUser) {
-      awardUserXP(currentUser.id, 300, `Organized ${camp.title}`);
-      recordUserCampOrganized(currentUser.id, campId);
-    }
-    awardCommunityXP({
-      eventId: `camp-created:${campId}`,
-      kind: "organize",
-      xp: 300,
-      description: `Organized ${camp.title}`,
-      email: currentUser ? currentUser.email : "volunteer@example.com",
-    });
-    return { success: true, campId };
-  } catch {
-    return { success: false, error: "Could not save this camp in this browser." };
-  }
+export async function submitNewCamp(formData, organizationId) {
+  if (!organizationId) throw new Error("Select an organization before creating a camp.");
+  const startsAt = new Date(`${formData.date}T${formData.startTime || "09:00"}:00`);
+  const endsAt = new Date(`${formData.date}T${formData.endTime || "16:00"}:00`);
+  const [city = "", ...stateParts] = String(formData.location || "").split(",");
+  const saved = await createCamp({
+    organizationId,
+    title: formData.title.trim(),
+    description: formData.description.trim(),
+    type: formData.type === "Medical" ? "MEDICAL" : "EDUCATIONAL",
+    serviceDetails: formData.workerRolesNeeded || undefined,
+    targetAudience: formData.targetBeneficiary || undefined,
+    venue: formData.location.trim(),
+    address: formData.location.trim(),
+    city: city.trim() || undefined,
+    state: stateParts.join(",").trim() || undefined,
+    startsAt: startsAt.toISOString(),
+    endsAt: endsAt.toISOString(),
+    capacity: 100
+  });
+  return { success: true, camp: saved, campId: saved.id };
 }

@@ -17,6 +17,7 @@ function CampDetail() {
   const [organizer, setOrganizer] = useState(null);
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -32,7 +33,7 @@ function CampDetail() {
           setLoading(false);
         }
       }
-    );
+    ).catch((err) => { if (isMounted) { setError(err.message || "Could not load camp details."); setLoading(false); } });
 
     return () => {
       isMounted = false;
@@ -51,6 +52,7 @@ function CampDetail() {
     return (
       <div className="container camp-detail__not-found">
         <h2>Camp not found</h2>
+        {error && <p role="alert">{error}</p>}
         <Link to="/camps">← Back to all camps</Link>
       </div>
     );

@@ -217,6 +217,30 @@ const getCamps = asyncHandler(async (req, res) => {
   });
 });
 
+// GET ORGANIZATION CAMPS (including drafts)
+const getMyCamps = asyncHandler(async (req, res) => {
+  const organizationId = req.query.organizationId;
+  if (!organizationId) {
+    return res.status(400).json({ success: false, message: "organizationId is required." });
+  }
+
+  const permission = await checkOrganizationPermission(req.user.id, organizationId);
+  if (!permission.allowed) {
+    return res.status(403).json({ success: false, message: permission.message });
+  }
+
+  const camps = await prisma.camp.findMany({
+    where: { organizationId },
+    include: {
+      organization: { select: { id: true, name: true, verificationStatus: true } },
+      _count: { select: { registrations: { where: { status: "REGISTERED" } } } }
+    },
+    orderBy: { startsAt: "asc" }
+  });
+
+  return res.status(200).json({ success: true, count: camps.length, data: camps });
+});
+
 // -----------------------------------------------------
 // GET CAMP DETAILS
 // GET /api/camps/:campId
@@ -907,6 +931,7 @@ const submitCampOutcome = asyncHandler(async (req, res) => {
 module.exports = {
   createCamp,
   getCamps,
+  getMyCamps,
   getCampById,
   updateCamp,
   publishCamp,

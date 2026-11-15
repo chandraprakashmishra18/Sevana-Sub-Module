@@ -2,6 +2,7 @@ import { useState } from "react";
 import CampDetailsForm from "../components/organize/CampDetailsForm";
 import MediaUploadForm from "../components/organize/MediaUploadForm";
 import OrganizerReview from "../components/organize/OrganizerReview";
+import { useAuth } from "../../../shared/useAuth";
 import "./OrganizeCamp.css";
 
 const initialFormData = {
@@ -9,7 +10,8 @@ const initialFormData = {
   type: "",
   targetBeneficiary: "",
   date: "",
-  time: "",
+  startTime: "09:00",
+  endTime: "16:00",
   location: "",
   description: "",
   workerRolesNeeded: "",
@@ -17,6 +19,7 @@ const initialFormData = {
 };
 
 function OrganizeCamp() {
+  const { activeOrganization } = useAuth();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState(initialFormData);
 
@@ -33,7 +36,7 @@ function OrganizeCamp() {
         <div className="organize-page__card">
           <div className="organize-page__header">
             <h1>Organize a Camp</h1>
-            <p>For NSS, NCC, schools, colleges, and NGOs — list your medical or educational camp.</p>
+            <p>Create a draft for {activeOrganization?.name}. Publishing requires organization verification.</p>
           </div>
 
           <div className="organize-page__progress">
@@ -49,7 +52,7 @@ function OrganizeCamp() {
             <MediaUploadForm formData={formData} updateFormData={updateFormData} onNext={nextStep} onBack={prevStep} />
           )}
           {step === 3 && (
-            <OrganizerReview formData={formData} onBack={prevStep} />
+            <OrganizerReview formData={formData} organizationId={activeOrganization?.id} onBack={prevStep} />
           )}
         </div>
       </div>

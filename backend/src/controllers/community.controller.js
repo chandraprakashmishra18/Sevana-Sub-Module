@@ -69,24 +69,36 @@ const createCampaign = asyncHandler(async (req, res) => {
 });
 
 const getCampaigns = asyncHandler(async (req, res) => {
-  const where = req.query.mine === "true" && req.user
-    ? {
-        organization: {
-          members: { some: { userId: req.user.id } }
-        }
-      }
-    : { status: "ACTIVE" };
-
   const campaigns = await prisma.campaign.findMany({
-    where,
+    where: { status: "ACTIVE" },
     include: {
       organization: { select: { id: true, name: true } },
-      _count: { select: { donations: true } }
+      _count: { select: { donations: { where: { status: "SUCCESSFUL" } } } }
     },
     orderBy: { createdAt: "desc" }
   });
 
   res.json({ success: true, count: campaigns.length, data: campaigns });
+});
+
+const getOrganizationCampaigns = asyncHandler(async (req, res) => {
+  const organizationId = req.query.organizationId;
+  if (!organizationId) {
+    return res.status(400).json({ success: false, message: "organizationId is required." });
+  }
+  const permission = await checkManager(req.user.id, organizationId);
+  if (!permission.allowed) {
+    return res.status(403).json({ success: false, message: permission.message });
+  }
+  const campaigns = await prisma.campaign.findMany({
+    where: { organizationId },
+    include: {
+      organization: { select: { id: true, name: true } },
+      _count: { select: { donations: { where: { status: "SUCCESSFUL" } } } }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+  return res.json({ success: true, count: campaigns.length, data: campaigns });
 });
 
 const getCampaignById = asyncHandler(async (req, res) => {
@@ -104,7 +116,7 @@ const getCampaignById = asyncHandler(async (req, res) => {
     }
   });
 
-  if (!campaign) {
+  if (!campaign || campaign.status !== "ACTIVE") {
     return res.status(404).json({ success: false, message: "Campaign not found." });
   }
 
@@ -417,6 +429,11 @@ const createAidRequest = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: "Organization is not available." });
   }
 
+  const permission = await checkManager(req.user.id, organization.id);
+  if (!permission.allowed) {
+    return res.status(403).json({ success: false, message: permission.message });
+  }
+
   const request = await prisma.aidRequest.create({
     data: { ...validation.data, requesterId: req.user.id }
   });
@@ -564,6 +581,7 @@ const createDistribution = asyncHandler(async (req, res) => {
     const donation = await prisma.donation.findFirst({
       where: {
         id: data.donationId,
+        status: "SUCCESSFUL",
         campaign: {
           organizationId: data.organizationId
         }
@@ -573,7 +591,7 @@ const createDistribution = asyncHandler(async (req, res) => {
     if (!donation) {
       return res.status(400).json({
         success: false,
-        message: "Donation is not linked to this organization's campaign."
+        message: "Donation must be successful and linked to this organization's campaign."
       });
     }
   }
@@ -630,6 +648,7 @@ const getDistributions = asyncHandler(async (req, res) => {
 module.exports = {
   createCampaign,
   getCampaigns,
+  getOrganizationCampaigns,
   getCampaignById,
   updateCampaign,
   updateCampaignStatus,

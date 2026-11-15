@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import CampaignCard from "../campaigns/CampaignCard";
 import Button from "../common/Button";
-import mockCampaigns from "../../data/mockCampaigns";
+import { useEffect, useState } from "react";
+import { getAllCampaigns } from "../../services/campaignService";
 import "./FeaturedCampaigns.css";
 
 function FeaturedCampaigns() {
-  // Show only the first 3 on the homepage
-  const featured = mockCampaigns.slice(0, 3);
+  const [featured, setFeatured] = useState([]);
+  useEffect(() => { getAllCampaigns().then((campaigns) => setFeatured(campaigns.slice(0, 3))).catch(() => setFeatured([])); }, []);
 
   return (
     <section className="featured-campaigns">
@@ -14,7 +15,7 @@ function FeaturedCampaigns() {
         <div className="featured-campaigns__header">
           <div>
             <h2>Campaigns that need you right now</h2>
-            <p>Every listing below is NGO-verified and actively raising funds.</p>
+            <p>Active community campaigns from the Sevana backend.</p>
           </div>
           <Link to="/campaigns">
             <Button variant="outline">View All Campaigns</Button>
@@ -25,6 +26,7 @@ function FeaturedCampaigns() {
           {featured.map((campaign) => (
             <CampaignCard key={campaign.id} campaign={campaign} />
           ))}
+          {!featured.length && <p>No active campaigns are available right now.</p>}
         </div>
       </div>
     </section>

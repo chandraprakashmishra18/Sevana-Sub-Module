@@ -1,4 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { useAuth } from "./shared/useAuth";
 import LandingPage from "./LandingPage";
 import NotFound from "./modules/donations/pages/NotFound";
 import Login from "./modules/donations/pages/Login";
@@ -34,17 +35,39 @@ import Beneficiaries from "./shared/Beneficiaries";
 import Analytics from "./shared/Analytics";
 import Notifications from "./shared/Notifications";
 
+function RequireAuth({ children }) {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+  if (loading) return <p className="container" role="status">Restoring your session…</p>;
+  return user ? children : <Navigate to="/login" replace state={{ from: `${location.pathname}${location.search}` }} />;
+}
+
+function RequireOrganization({ children }) {
+  const { user, loading, organizations } = useAuth();
+  const location = useLocation();
+  if (loading) return <p className="container" role="status">Restoring your session…</p>;
+  if (!user) return <Navigate to="/login" replace state={{ from: `${location.pathname}${location.search}` }} />;
+  return organizations.length ? children : <Navigate to="/dashboard" replace />;
+}
+
+function RequireAdmin({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <p className="container" role="status">Restoring your session…</p>;
+  if (!user) return <Navigate to="/login" replace state={{ from: "/admin" }} />;
+  return user.platformRole === "ADMIN" ? children : <Navigate to="/dashboard" replace />;
+}
+
 export default function AppRoutes() {
   return <Routes>
     <Route path="/" element={<LandingPage />} />
     <Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} />
     <Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} />
-    <Route path="/dashboard" element={<Dashboard />} /><Route path="/organization" element={<OrganizationDashboard />} /><Route path="/admin" element={<AdminDashboard />} />
-    <Route path="/admin/moderation" element={<ModerationConsole />} />
-    <Route path="/beneficiaries" element={<Beneficiaries />} /><Route path="/analytics" element={<Analytics />} /><Route path="/notifications" element={<Notifications />} />
-    <Route path="/campaigns" element={<Campaigns />} /><Route path="/campaigns/:id" element={<CampaignDetail />} /><Route path="/donate" element={<Donate />} /><Route path="/manage-campaigns" element={<CampaignManager />} /><Route path="/register-organization" element={<OrganizationRegistration />} />
+    <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} /><Route path="/organization" element={<RequireOrganization><OrganizationDashboard /></RequireOrganization>} /><Route path="/admin" element={<RequireAdmin><AdminDashboard /></RequireAdmin>} />
+    <Route path="/admin/moderation" element={<RequireAdmin><ModerationConsole /></RequireAdmin>} />
+    <Route path="/beneficiaries" element={<RequireAuth><Beneficiaries /></RequireAuth>} /><Route path="/analytics" element={<RequireAuth><Analytics /></RequireAuth>} /><Route path="/notifications" element={<RequireAuth><Notifications /></RequireAuth>} />
+    <Route path="/campaigns" element={<Campaigns />} /><Route path="/campaigns/:id" element={<CampaignDetail />} /><Route path="/donate" element={<RequireAuth><Donate /></RequireAuth>} /><Route path="/manage-campaigns" element={<RequireOrganization><CampaignManager /></RequireOrganization>} /><Route path="/register-organization" element={<Navigate to="/register?type=organization" replace />} />
     <Route path="/ngo-partners" element={<NGOPartners />} /><Route path="/ngo-partners/:id" element={<NGOProfile />} /><Route path="/impact" element={<Impact />} /><Route path="/leaderboard" element={<DonorLeaderboard />} />
-    <Route path="/camps" element={<Camps />} /><Route path="/camps/:id" element={<CampDetail />} /><Route path="/camps/:id/join" element={<JoinCamp />} /><Route path="/organize" element={<OrganizeCamp />} /><Route path="/manage-camps" element={<CampManager />} />
+    <Route path="/camps" element={<Camps />} /><Route path="/camps/:id" element={<CampDetail />} /><Route path="/camps/:id/join" element={<JoinCamp />} /><Route path="/organize" element={<RequireOrganization><OrganizeCamp /></RequireOrganization>} /><Route path="/manage-camps" element={<RequireOrganization><CampManager /></RequireOrganization>} />
     <Route path="/organizers" element={<Organizers />} /><Route path="/organizers/:id" element={<OrganizerProfile />} /><Route path="/past-camps" element={<PastCamps />} /><Route path="/profile" element={<WorkerProfile />} /><Route path="/profile/:id" element={<WorkerProfile />} /><Route path="/invitations" element={<Invitations />} /><Route path="/volunteer-leaderboard" element={<VolunteerLeaderboard />} />
     <Route path="*" element={<NotFound />} />
   </Routes>;

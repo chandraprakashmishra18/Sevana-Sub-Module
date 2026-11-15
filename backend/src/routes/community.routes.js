@@ -6,6 +6,7 @@ const router = express.Router();
 
 // Campaigns
 router.get("/campaigns", controller.getCampaigns);
+router.get("/campaigns/mine", requireAuth, controller.getOrganizationCampaigns);
 router.get("/campaigns/:campaignId", controller.getCampaignById);
 router.post("/campaigns", requireAuth, controller.createCampaign);
 router.patch("/campaigns/:campaignId", requireAuth, controller.updateCampaign);

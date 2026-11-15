@@ -35,6 +35,7 @@ function JoinCamp() {
 
   const [camp, setCamp] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -44,7 +45,7 @@ function JoinCamp() {
         setCamp(data);
         setLoading(false);
       }
-    });
+    }).catch((err) => { if (isMounted) { setError(err.message || "Could not load this camp."); setLoading(false); } });
 
     return () => {
       isMounted = false;
@@ -59,6 +60,7 @@ function JoinCamp() {
     return (
       <div className="container" style={{ padding: "60px 0", textAlign: "center" }}>
         <h2>Camp not found</h2>
+        {error && <p role="alert">{error}</p>}
         <Link to="/camps">← Back to all camps</Link>
       </div>
     );

@@ -9,45 +9,34 @@ function JoinConfirmation({ camp }) {
   const { joinData, prevStep } = useJoinCamp();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [alreadyJoined, setAlreadyJoined] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    const result = await submitJoinCamp({ ...joinData, campTitle: camp.title });
-    if (result.success) {
-      setAlreadyJoined(Boolean(result.duplicate));
-      setSubmitted(true);
-    }
-    setSubmitting(false);
+    setError("");
+    try {
+      const result = await submitJoinCamp({ ...joinData, campId: camp.id, campTitle: camp.title });
+      if (result.success) setSubmitted(true);
+    } catch (err) { setError(err.message || "Could not register for this camp."); }
+    finally { setSubmitting(false); }
   };
 
   if (submitted) {
-    const isWorker = joinData.role === "worker";
-    const xpReward = isWorker ? 150 : 30;
-
     return (
       <div className="join-confirmation join-confirmation--success">
         <div className="join-confirmation__icon">🎉</div>
-        <h2>You're in, {joinData.fullName.split(" ")[0]}!</h2>
+        <h2>Registration received, {joinData.fullName.split(" ")[0]}.</h2>
         
         <div className="join-confirmation__xp-badge">
-          🌟 <strong>{alreadyJoined ? "Already registered" : `+${xpReward} Community XP`}</strong> {alreadyJoined ? "for this email and camp." : "awarded for registering to serve"}!
+          <strong>Registration status: pending review</strong>
         </div>
 
         <p>
-          Your demo registration request for <strong>{camp.title}</strong> was recorded as{" "}
-          {isWorker ? "a volunteer worker" : "an attendee"}. A confirmation
-          pending organizer review. A simulated notification was saved for {joinData.email}.
-        </p>
-
-        <p className="join-confirmation__xp-note">
-          {alreadyJoined
-            ? "This email already has a registration for this camp."
-            : "Your XP is saved in this browser and recorded once for this camp registration."}
+          Your registration for <strong>{camp.title}</strong> was recorded as{" "}
+          {joinData.role === "worker" ? "a volunteer" : "a beneficiary"}. The backend will confirm whether you are registered or waitlisted.
         </p>
 
         <div className="join-confirmation__actions">
-          <Link to="/leaderboard"><Button variant="outline">View Leaderboard</Button></Link>
           <Link to={`/camps/${camp.id}`}><Button variant="primary">Back to Camp</Button></Link>
         </div>
       </div>
@@ -94,8 +83,6 @@ function JoinConfirmation({ camp }) {
               <strong>{joinData.availability}</strong>
             </div>
             <div className="join-confirmation__row">
-              <span>XP Reward</span>
-              <strong style={{ color: "#d97706" }}>+150 XP upon completion</strong>
             </div>
           </>
         ) : (
@@ -105,12 +92,12 @@ function JoinConfirmation({ camp }) {
               <strong>{joinData.ageGroup}</strong>
             </div>
             <div className="join-confirmation__row">
-              <span>XP Reward</span>
-              <strong style={{ color: "#d97706" }}>+30 XP for participation</strong>
             </div>
           </>
         )}
       </div>
+
+      {error && <p role="alert" className="join-confirmation__error">{error}</p>}
 
       <div className="join-step__actions">
         <Button variant="ghost" onClick={prevStep} disabled={submitting}>← Back</Button>

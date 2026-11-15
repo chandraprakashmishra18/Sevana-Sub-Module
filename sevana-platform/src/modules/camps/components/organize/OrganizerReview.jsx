@@ -4,33 +4,32 @@ import Button from "../common/Button";
 import { submitNewCamp } from "../../services/organizerService";
 import "./OrganizerReview.css";
 
-function OrganizerReview({ formData, onBack }) {
+function OrganizerReview({ formData, organizationId, onBack }) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    const result = await submitNewCamp(formData);
-    if (result.success) {
-      setSubmitted(true);
-    }
-    setSubmitting(false);
+    setError("");
+    try {
+      const result = await submitNewCamp(formData, organizationId);
+      if (result.success) setSubmitted(true);
+    } catch (err) { setError(err.message || "Could not create this camp."); }
+    finally { setSubmitting(false); }
   };
 
   if (submitted) {
     return (
       <div className="organizer-review organizer-review--success">
         <div className="organizer-review__icon">🎉</div>
-        <h2>Camp Submitted Successfully!</h2>
-        <div className="organizer-review__xp-award">
-          🌟 <strong>+300 XP Earned!</strong> You've received organizer community karma.
-        </div>
+        <h2>Camp draft created</h2>
         <p>
-          <strong>{formData.title}</strong> is now listed in the Camps directory as a community-submitted camp. NGO verification and moderator approval are not connected in this demo.
+          <strong>{formData.title}</strong> was saved to your organization. It will appear in the public directory after an authorized manager publishes it.
         </p>
         <div className="organizer-review__actions">
-          <Link to="/camps"><Button variant="outline">Browse Camps</Button></Link>
-          <Link to="/leaderboard"><Button variant="primary">View Leaderboard</Button></Link>
+          <Link to="/manage-camps"><Button variant="outline">Manage camps</Button></Link>
+          <Link to="/camps"><Button variant="primary">Browse published camps</Button></Link>
         </div>
       </div>
     );
@@ -59,7 +58,7 @@ function OrganizerReview({ formData, onBack }) {
         </div>
         <div className="organizer-review__row">
           <span>Time</span>
-          <strong>{formData.time}</strong>
+          <strong>{formData.startTime} – {formData.endTime}</strong>
         </div>
         <div className="organizer-review__row">
           <span>Location</span>
@@ -70,8 +69,6 @@ function OrganizerReview({ formData, onBack }) {
           <strong>{formData.workerRolesNeeded || "General Volunteers"}</strong>
         </div>
         <div className="organizer-review__row">
-          <span>Community XP Reward</span>
-          <strong style={{ color: "#d97706" }}>+300 XP for Organizer</strong>
         </div>
         {formData.media && formData.media.length > 0 && (
           <div className="organizer-review__row">
@@ -82,11 +79,12 @@ function OrganizerReview({ formData, onBack }) {
       </div>
 
       <p className="organizer-review__description">{formData.description}</p>
+      {error && <p role="alert">{error}</p>}
 
       <div className="organize-step__actions">
         <Button variant="ghost" onClick={onBack} disabled={submitting}>← Back</Button>
         <Button variant="accent" size="lg" onClick={handleSubmit} disabled={submitting}>
-          {submitting ? "Submitting..." : "Submit Camp (+300 XP)"}
+          {submitting ? "Creating draft…" : "Create camp draft"}
         </Button>
       </div>
     </div>

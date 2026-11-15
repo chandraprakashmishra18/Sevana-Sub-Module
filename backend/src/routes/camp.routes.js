@@ -10,6 +10,7 @@ const {
 const {
   createCamp,
   getCamps,
+  getMyCamps,
   getCampById,
   updateCamp,
   publishCamp,
@@ -23,6 +24,7 @@ const {
 
 // Public routes
 router.get("/", getCamps);
+router.get("/mine", requireAuth, getMyCamps);
 router.get("/:campId", getCampById);
 
 // Guest or authenticated registration

@@ -1,43 +1,5 @@
-const baseUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
-
-export const TOKEN_STORAGE_KEY = "sevana_access_token";
-
-export async function apiRequest(
-  path,
-  { method = "GET", body, headers = {}, ...options } = {}
-) {
-  if (!baseUrl) {
-    throw new Error("Backend URL is not configured.");
-  }
-
-  const token = localStorage.getItem(TOKEN_STORAGE_KEY);
-
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...options,
-    method,
-    headers: {
-      Accept: "application/json",
-      ...(body ? { "Content-Type": "application/json" } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...headers
-    },
-    ...(body ? { body: JSON.stringify(body) } : {})
-  });
-
-  const result = response.status === 204
-    ? null
-    : await response.json().catch(() => null);
-
-  if (!response.ok) {
-    const error = new Error(
-      result?.message || `Request failed (${response.status})`
-    );
-    error.status = response.status;
-    error.details = result?.errors;
-    throw error;
-  }
-
-  return result;
-}
-
-export const apiConfigured = Boolean(baseUrl);
+export {
+  apiRequest,
+  apiConfigured,
+  TOKEN_STORAGE_KEY
+} from "../../../shared/apiClient";

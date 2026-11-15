@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import Button from "../components/common/Button";
 import "./Register.css";
@@ -13,17 +13,28 @@ const ROLE_OPTIONS = [
   { value: "citizen", label: "General Citizen / Supporter", desc: "Support local causes and participate in community drives." },
 ];
 
+const ORGANIZATION_TYPES = [
+  ["NGO", "NGO"], ["SCHOOL", "School"], ["COLLEGE", "College"],
+  ["NSS", "NSS"], ["NCC", "NCC"], ["COMPANY", "Company"],
+  ["COMMUNITY_GROUP", "Community group"], ["OTHER", "Other"]
+];
+
 function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || "/";
+  const [searchParams] = useSearchParams();
+  const from = location.state?.from || (searchParams.get("type") === "organization" ? "/organization" : "/");
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
+    accountType: searchParams.get("type") === "organization" ? "ORGANIZATION" : "INDIVIDUAL",
+    organizationName: "",
+    organizationType: "NGO",
+    organizationDescription: "",
     roleType: "donor",
     phone: "",
     location: "Gurugram, Haryana",
@@ -47,8 +58,13 @@ function Register() {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long.");
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+
+    if (formData.accountType === "ORGANIZATION" && !formData.organizationName.trim()) {
+      setError("Organization name is required.");
       return;
     }
 
@@ -59,19 +75,21 @@ function Register() {
 
     setSubmitting(true);
     try {
-      const selectedRoleObj = ROLE_OPTIONS.find((r) => r.value === formData.roleType);
       await register({
-        name: formData.name,
+        fullName: formData.name.trim(),
         email: formData.email,
         password: formData.password,
-        role: selectedRoleObj ? selectedRoleObj.label : "Donor & Supporter",
-        roleType: formData.roleType,
         phone: formData.phone,
-        location: formData.location,
-        organization: formData.organization,
+        accountType: formData.accountType,
+        ...(formData.accountType === "ORGANIZATION" ? {
+          organizationName: formData.organizationName.trim(),
+          organizationType: formData.organizationType,
+          organizationDescription: formData.organizationDescription.trim() || undefined
+        } : {})
       });
 
-      navigate(from, { replace: true });
+      const destination = location.state?.from || (formData.accountType === "ORGANIZATION" ? "/organization" : "/dashboard");
+      navigate(destination, { replace: true });
     } catch (err) {
       setError(err.message || "Failed to register account.");
     } finally {
@@ -85,18 +103,48 @@ function Register() {
         <div className="register-card">
           <div className="register-card__header">
             <span className="register-card__icon">💖</span>
-            <h1>Join the Sevana Community</h1>
+            <h1>Create your Sevana account</h1>
             <p>
-              Register your account to donate, track verified disbursement trails, and earn donor karma XP!
+              Use one account to participate in Sevana as an individual or register an organization.
             </p>
             <div className="register-card__bonus">
-              🎁 <strong>+50 Welcome XP</strong> awarded instantly upon registration!
+              Your credentials are securely stored by the Sevana backend.
             </div>
           </div>
 
           {error && <div className="register-card__alert register-card__alert--error">{error}</div>}
 
           <form onSubmit={handleSubmit} className="register-form">
+            <label className="register-form__field">
+              <span>Account type *</span>
+              <select
+                value={formData.accountType}
+                onChange={(e) => updateField("accountType", e.target.value)}
+              >
+                <option value="INDIVIDUAL">Individual</option>
+                <option value="ORGANIZATION">Organization / NGO</option>
+              </select>
+            </label>
+
+            {formData.accountType === "ORGANIZATION" && (
+              <div className="register-form__row">
+                <label className="register-form__field">
+                  <span>Organization name *</span>
+                  <input required value={formData.organizationName} onChange={(e) => updateField("organizationName", e.target.value)} />
+                </label>
+                <label className="register-form__field">
+                  <span>Organization type *</span>
+                  <select value={formData.organizationType} onChange={(e) => updateField("organizationType", e.target.value)}>
+                    {ORGANIZATION_TYPES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  </select>
+                </label>
+                <label className="register-form__field register-form__field--wide">
+                  <span>Organization description (optional)</span>
+                  <textarea rows="3" value={formData.organizationDescription} onChange={(e) => updateField("organizationDescription", e.target.value)} />
+                </label>
+              </div>
+            )}
+
             <div className="register-form__row">
               <label className="register-form__field">
                 <span>Full Name *</span>
@@ -123,7 +171,7 @@ function Register() {
 
             <div className="register-form__row">
               <label className="register-form__field">
-                <span>Password * (min 6 chars)</span>
+                <span>Password * (min 8 chars)</span>
                 <div className="register-form__password-wrap">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -154,7 +202,7 @@ function Register() {
               </label>
             </div>
 
-            <div className="register-form__field">
+            {formData.accountType === "INDIVIDUAL" && <div className="register-form__field">
               <span>Primary Role / Interest *</span>
               <div className="register-role-grid">
                 {ROLE_OPTIONS.map((opt) => (
@@ -169,7 +217,7 @@ function Register() {
                   </button>
                 ))}
               </div>
-            </div>
+            </div>}
 
             <div className="register-form__row">
               <label className="register-form__field">
@@ -193,20 +241,8 @@ function Register() {
               </label>
             </div>
 
-            {(formData.roleType === "organizer" || formData.roleType === "doctor" || formData.roleType === "donor") && (
-              <label className="register-form__field">
-                <span>Company / Foundation / Organization (optional)</span>
-                <input
-                  type="text"
-                  placeholder="e.g. TechCorp CSR / Roshni Trust / Independent Philanthropist"
-                  value={formData.organization}
-                  onChange={(e) => updateField("organization", e.target.value)}
-                />
-              </label>
-            )}
-
             <Button type="submit" variant="accent" size="lg" fullWidth disabled={submitting}>
-              {submitting ? "Creating Account..." : "Create Account & Claim +50 XP"}
+              {submitting ? "Creating account…" : "Create account"}
             </Button>
           </form>
 

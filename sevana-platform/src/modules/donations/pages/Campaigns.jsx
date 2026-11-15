@@ -10,16 +10,17 @@ function Campaigns() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeBeneficiary, setActiveBeneficiary] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
 
     getAllCampaigns().then((data) => {
       if (isMounted) {
-        setCampaigns(data.filter((campaign) => !["draft", "rejected", "paused"].includes(campaign.status)));
+        setCampaigns(data);
         setLoading(false);
       }
-    });
+    }).catch((err) => { if (isMounted) { setError(err.message || "Could not load campaigns."); setLoading(false); } });
 
     return () => {
       isMounted = false;
@@ -50,7 +51,7 @@ function Campaigns() {
         <div className="campaigns-page__header">
           <h1>All Donation Campaigns</h1>
           <p>
-            Support verified drives for Orphanages, Old Age Homes, NGOs, and student sponsorships. Every donation earns XP points!
+            Explore active community campaigns. Donations remain pending until a payment provider confirms them.
           </p>
         </div>
 
@@ -65,6 +66,8 @@ function Campaigns() {
 
         {loading ? (
           <p className="campaigns-page__loading">Loading campaigns...</p>
+        ) : error ? (
+          <p role="alert">{error}</p>
         ) : (
           <CampaignGrid campaigns={filteredCampaigns} />
         )}

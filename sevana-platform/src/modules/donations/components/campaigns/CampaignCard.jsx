@@ -66,7 +66,7 @@ function CampaignCard({ campaign }) {
         <div className="campaign-card__footer">
           <span className="campaign-card__donors">{donorCount} donors</span>
           <Link to={`/campaigns/${id}`}>
-            <Button variant="primary" size="sm">Donate &amp; Earn XP</Button>
+            <Button variant="primary" size="sm">View campaign</Button>
           </Link>
         </div>
       </div>

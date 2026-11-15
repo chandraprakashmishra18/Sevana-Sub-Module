@@ -6,7 +6,7 @@ function CampDetailsForm({ formData, updateFormData, onNext }) {
     formData.title.trim() &&
     formData.type &&
     formData.date &&
-    formData.time.trim() &&
+    formData.startTime && formData.endTime &&
     formData.location.trim() &&
     formData.description.trim();
 
@@ -59,13 +59,12 @@ function CampDetailsForm({ formData, updateFormData, onNext }) {
         </label>
 
         <label className="organize-step__field">
-          <span>Time *</span>
-          <input
-            type="text"
-            value={formData.time}
-            onChange={(e) => updateFormData({ time: e.target.value })}
-            placeholder="e.g. 9:00 AM – 2:00 PM"
-          />
+          <span>Starts at *</span>
+          <input type="time" value={formData.startTime} onChange={(e) => updateFormData({ startTime: e.target.value })} required />
+        </label>
+        <label className="organize-step__field">
+          <span>Ends at *</span>
+          <input type="time" value={formData.endTime} onChange={(e) => updateFormData({ endTime: e.target.value })} required />
         </label>
       </div>
 
