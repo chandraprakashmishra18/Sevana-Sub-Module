@@ -91,7 +91,13 @@ const getCampaignById = asyncHandler(async (req, res) => {
     where: { id: req.params.campaignId },
     include: {
       organization: { select: { id: true, name: true } },
-      donations: { where: { status: "SUCCESSFUL" } }
+      _count: {
+        select: {
+          donations: {
+            where: { status: "SUCCESSFUL" }
+          }
+        }
+      }
     }
   });
 
