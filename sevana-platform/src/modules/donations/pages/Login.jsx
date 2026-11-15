@@ -90,7 +90,7 @@ function Login() {
               </div>
             </label>
 
-            <Button variant="accent" size="lg" fullWidth disabled={submitting}>
+            <Button type="submit" variant="accent" size="lg" fullWidth disabled={submitting}>
               {submitting ? "Signing in..." : "Sign In to Account"}
             </Button>
           </form>

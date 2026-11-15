@@ -205,7 +205,7 @@ function Register() {
               </label>
             )}
 
-            <Button variant="accent" size="lg" fullWidth disabled={submitting}>
+            <Button type="submit" variant="accent" size="lg" fullWidth disabled={submitting}>
               {submitting ? "Creating Account..." : "Create Account & Claim +50 XP"}
             </Button>
           </form>
