@@ -789,6 +789,11 @@ const updateRegistration = asyncHandler(async (req, res) => {
   }
 
   const updates = validation.data;
+  const resultingStatus = updates.status ?? registration.status;
+  const resultingAttendance =
+    updates.attendance === undefined
+      ? registration.attendance
+      : updates.attendance;
   const allowedTransitions = {
     REGISTERED: ["CANCELLED"],
     WAITLISTED: ["REGISTERED", "CANCELLED"],
@@ -805,17 +810,10 @@ const updateRegistration = asyncHandler(async (req, res) => {
     });
   }
 
-  if (updates.attendance && registration.status === "CANCELLED") {
+  if (resultingStatus === "CANCELLED" && resultingAttendance !== null) {
     return res.status(400).json({
       success: false,
-      message: "Attendance cannot be assigned to a cancelled registration."
-    });
-  }
-
-  if (updates.status === "CANCELLED" && registration.attendance !== null) {
-    return res.status(400).json({
-      success: false,
-      message: "A registration with recorded attendance cannot be cancelled."
+      message: "Cancelled registrations cannot have attendance."
     });
   }
 
