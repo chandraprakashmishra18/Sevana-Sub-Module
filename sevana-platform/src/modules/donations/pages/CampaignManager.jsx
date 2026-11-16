@@ -15,6 +15,7 @@ export default function CampaignManager() {
   const [editing, setEditing] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [statusError, setStatusError] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -38,9 +39,13 @@ export default function CampaignManager() {
   };
 
   const changeStatus = async (campaign, status) => {
-    setError(""); setMessage("");
+    setError(""); setStatusError(""); setMessage("");
+    if (status === "ACTIVE" && activeOrganization?.verificationStatus !== "VERIFIED") {
+      setStatusError("Your organization must be verified before campaigns can be activated.");
+      return;
+    }
     try { await updateCampaignStatus(campaign.id, status); setMessage(`Campaign status updated to ${status.toLowerCase()}.`); await refresh(); }
-    catch (err) { setError(err.message || "Could not update campaign status."); }
+    catch (err) { setStatusError(err.message || "Could not update campaign status."); }
   };
 
   return <section className="workspace-dashboard"><div className="container">
@@ -54,6 +59,6 @@ export default function CampaignManager() {
       <label>End date<input type="date" value={form.deadline} onChange={e=>setForm({...form,deadline:e.target.value})}/></label>
       <label className="campaign-manager__wide">Description<textarea required minLength="10" rows="4" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label>
     </div><button className="workspace-dashboard__primary" type="submit" disabled={saving}>{saving ? "Saving…" : editing ? "Save changes" : "Save draft"}</button>{editing && <button className="workspace-dashboard__secondary" type="button" onClick={()=>{setEditing(null);setForm(blank)}}>Cancel edit</button>}</form>
-    <section className="workspace-dashboard__panel" style={{marginTop:18}}><h2>Your campaigns ({campaigns.length})</h2>{activeOrganization?.verificationStatus !== "VERIFIED" && <p>Campaign activation is disabled until this organization is verified. Draft management remains available.</p>}{loading ? <p>Loading campaigns…</p> : campaigns.length ? <div className="workspace-dashboard__list">{campaigns.map(c=><article key={c.id}><div><strong>{c.title}</strong><small>{c.status} · {c.location || "Location not set"}</small></div><div className="manager-row__actions"><button type="button" onClick={()=>{setEditing(c);setForm({title:c.title,category:c.category,location:c.location||"",description:c.description,goalAmount:c.goalAmount||"",deadline:c.endDate?new Date(c.endDate).toISOString().slice(0,10):""});window.scrollTo({top:0,behavior:"smooth"})}} disabled={["completed","cancelled"].includes(c.status)}>Edit</button>{c.status === "draft" || c.status === "paused" ? <button type="button" disabled={activeOrganization?.verificationStatus !== "VERIFIED"} onClick={()=>changeStatus(c,"ACTIVE")}>Activate</button> : null}{c.status === "active" ? <button type="button" onClick={()=>changeStatus(c,"PAUSED")}>Pause</button> : null}{["draft","active","paused"].includes(c.status) ? <button type="button" onClick={()=>changeStatus(c,"CANCELLED")}>Cancel</button> : null}</div></article>)}</div> : <p>No campaigns for this organization yet.</p>}</section>
+    <section className="workspace-dashboard__panel" style={{marginTop:18}}><h2>Your campaigns ({campaigns.length})</h2>{activeOrganization?.verificationStatus !== "VERIFIED" && <p>Your organization must be verified before campaigns can be activated.</p>}{statusError && <p role="alert">{statusError}</p>}{loading ? <p>Loading campaigns…</p> : campaigns.length ? <div className="workspace-dashboard__list">{campaigns.map(c=><article key={c.id}><div><strong>{c.title}</strong><small>{c.status} · {c.location || "Location not set"}</small></div><div className="manager-row__actions"><button type="button" onClick={()=>{setEditing(c);setForm({title:c.title,category:c.category,location:c.location||"",description:c.description,goalAmount:c.goalAmount||"",deadline:c.endDate?new Date(c.endDate).toISOString().slice(0,10):""});window.scrollTo({top:0,behavior:"smooth"})}} disabled={["completed","cancelled"].includes(c.status)}>Edit</button>{c.status === "draft" || c.status === "paused" ? <button type="button" disabled={activeOrganization?.verificationStatus !== "VERIFIED"} onClick={()=>changeStatus(c,"ACTIVE")}>Activate</button> : null}{c.status === "active" ? <button type="button" onClick={()=>changeStatus(c,"PAUSED")}>Pause</button> : null}{["draft","active","paused"].includes(c.status) ? <button type="button" onClick={()=>changeStatus(c,"CANCELLED")}>Cancel</button> : null}</div></article>)}</div> : <p>No campaigns for this organization yet.</p>}</section>
   </div></section>;
 }
