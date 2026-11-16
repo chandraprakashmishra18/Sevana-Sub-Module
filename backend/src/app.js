@@ -28,12 +28,23 @@ app.use(express.urlencoded({ extended: true }));
 // General API rate limiter
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 100,
+  // Keep a finite general API ceiling, while leaving room for the app's
+  // multi-request dashboards and normal navigation. Auth routes have stricter
+  // route-specific limits in auth.routes.js.
+  limit: 300,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   message: {
     success: false,
     message: "Too many requests. Please try again later."
+  },
+  handler: (req, res) => {
+    const route = req.originalUrl.split("?")[0];
+    console.warn(`API rate limit exceeded: ${req.method} ${route}`);
+    res.status(429).json({
+      success: false,
+      message: "Too many requests. Please try again later."
+    });
   }
 });
 
