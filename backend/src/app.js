@@ -84,13 +84,24 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error("API Error:", err);
 
-  const statusCode = err.statusCode || err.status || 500;
+  const prismaCode = err.code;
+  const prismaValidationError = err.name === "PrismaClientValidationError";
+  const statusCode = err.statusCode || err.status || (
+    prismaValidationError || prismaCode === "P2003" ? 400 :
+    prismaCode === "P2002" ? 409 :
+    prismaCode === "P2025" ? 404 : 500
+  );
+  const message = statusCode === 500
+    ? (process.env.NODE_ENV === "production" ? "Internal server error." : err.message || "Internal server error.")
+    : prismaValidationError ? "Campaign or request data is invalid. Check the submitted fields." :
+      prismaCode === "P2003" ? "A referenced organization or user is invalid." :
+      prismaCode === "P2002" ? "A record with these details already exists." :
+      prismaCode === "P2025" ? "The requested record was not found." :
+      err.message || "Something went wrong.";
 
   res.status(statusCode).json({
     success: false,
-    message: statusCode === 500
-      ? "Internal server error."
-      : err.message || "Something went wrong."
+    message
   });
 });
 

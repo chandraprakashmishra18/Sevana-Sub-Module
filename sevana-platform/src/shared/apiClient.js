@@ -29,9 +29,14 @@ export async function apiRequest(
     : await response.json().catch(() => null);
 
   if (!response.ok) {
-    const error = new Error(
-      result?.message || `Request failed (${response.status})`
-    );
+    const detailMessages = [
+      ...(result?.errors?.formErrors || []),
+      ...Object.values(result?.errors?.fieldErrors || {}).flat()
+    ];
+    const error = new Error([
+      result?.message || result?.error || `Request failed (${response.status})`,
+      ...detailMessages
+    ].filter(Boolean).join(" "));
     error.status = response.status;
     error.details = result?.errors;
     throw error;
