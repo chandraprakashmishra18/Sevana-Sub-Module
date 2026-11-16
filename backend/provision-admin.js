@@ -13,15 +13,19 @@ const readline = require("node:readline/promises");
 
 function getEmailArgument() {
   const args = process.argv.slice(2);
-  if (args.length !== 1) {
-    throw new Error("Usage: node provision-admin.js <account-email>");
+  if (args.length !== 1 && !(args.length === 3 && args[1] === "--name")) {
+    throw new Error("Usage: node provision-admin.js <account-email> [--name <full-name>]");
   }
 
   const email = args[0].trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw new Error("Provide one valid account email address.");
   }
-  return email;
+  const suppliedName = args.length === 3 ? args[2].trim() : null;
+  if (suppliedName && (suppliedName.length < 2 || suppliedName.length > 120)) {
+    throw new Error("Account name must be between 2 and 120 characters.");
+  }
+  return { email, suppliedName };
 }
 
 function assertLocalDevelopmentDatabase() {
@@ -99,8 +103,41 @@ function isStrongPassword(password) {
     /[^A-Za-z0-9]/.test(password);
 }
 
+async function verifyAdminLogin(email, password) {
+  const apiUrl = new URL(`http://127.0.0.1:${process.env.PORT || 5000}/api`);
+  try {
+    const loginResponse = await fetch(`${apiUrl}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    if (!loginResponse.ok) return { login: false, adminOrganizations: false };
+
+    const loginResult = await loginResponse.json();
+    const accessToken = loginResult?.data?.accessToken;
+    if (!accessToken) return { login: false, adminOrganizations: false };
+
+    const organizationsResponse = await fetch(`${apiUrl}/admin/organizations`, {
+      headers: { Accept: "application/json", Authorization: `Bearer ${accessToken}` }
+    });
+    if (!organizationsResponse.ok) {
+      return { login: true, adminOrganizations: false };
+    }
+
+    const organizationsResult = await organizationsResponse.json();
+    const organizations = organizationsResult?.data;
+    return {
+      login: true,
+      adminOrganizations: true,
+      organizationCount: Array.isArray(organizations) ? organizations.length : null
+    };
+  } catch {
+    return { login: false, adminOrganizations: false };
+  }
+}
+
 async function main() {
-  const email = getEmailArgument();
+  const { email, suppliedName } = getEmailArgument();
   assertLocalDevelopmentDatabase();
 
   const existing = await prisma.user.findUnique({
@@ -119,7 +156,7 @@ async function main() {
     console.log(`Existing account: ${existing.fullName} <${existing.email}>`);
     console.log(`Current platform role: ${existing.platformRole}`);
   } else {
-    fullName = (await askLine("New admin account name: ")).trim();
+    fullName = suppliedName || (await askLine("New admin account name: ")).trim();
     if (fullName.length < 2 || fullName.length > 120) {
       throw new Error("Account name must be between 2 and 120 characters.");
     }
@@ -149,7 +186,6 @@ async function main() {
     throw new Error("BCRYPT_SALT_ROUNDS must be an integer from 4 to 31.");
   }
   const passwordHash = await bcrypt.hash(password, rounds);
-  password = "";
 
   if (existing) {
     await prisma.user.update({
@@ -162,6 +198,22 @@ async function main() {
       data: { fullName, email, passwordHash, platformRole: "ADMIN" }
     });
     console.log(`Created admin account: ${fullName} <${email}>.`);
+  }
+
+  const provisionedUser = await prisma.user.findUnique({
+    where: { email },
+    select: { platformRole: true }
+  });
+  console.log(`Database ADMIN role: ${provisionedUser?.platformRole === "ADMIN" ? "CONFIRMED" : "NOT CONFIRMED"}.`);
+
+  const verification = await verifyAdminLogin(email, password);
+  password = "";
+  console.log(`Login via /api/auth/login: ${verification.login ? "PASS" : "NOT VERIFIED"}.`);
+  if (verification.adminOrganizations) {
+    const count = verification.organizationCount;
+    console.log(`Protected /api/admin/organizations: PASS${count === null ? "." : ` (${count} records loaded).`}`);
+  } else {
+    console.log("Protected /api/admin/organizations: NOT VERIFIED.");
   }
 }
 
