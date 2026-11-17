@@ -1,12 +1,10 @@
+import { useEffect, useState } from "react";
 import useCountUp from "../../hooks/useCountUp";
+import { getAllCampaigns } from "../../services/campaignService";
+import mockNGOs from "../../data/mockNGOs";
 import "./ImpactStats.css";
 
-const stats = [
-  { label: "Total Disbursed", value: 2500000, prefix: "₹", suffix: "+" },
-  { label: "Families & Students Helped", value: 1840, suffix: "+" },
-  { label: "Verified NGO Partners", value: 12, suffix: "" },
-  { label: "Donors Who Gave Again", value: 68, suffix: "%" },
-];
+const HIDDEN_STATUSES = ["draft", "rejected", "paused"];
 
 function StatCard({ stat }) {
   const count = useCountUp(stat.value, 1800, true);
@@ -20,7 +18,6 @@ function StatCard({ stat }) {
       <p className="stat-card__value">
         {stat.prefix || ""}
         {displayValue}
-        {stat.suffix || ""}
       </p>
       <p className="stat-card__label">{stat.label}</p>
     </div>
@@ -28,6 +25,25 @@ function StatCard({ stat }) {
 }
 
 function ImpactStats() {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    getAllCampaigns().then((all) => {
+      if (!isMounted) return;
+      const live = all.filter((c) => !HIDDEN_STATUSES.includes(c.status));
+      setStats([
+        { label: "Raised across demo campaigns", value: live.reduce((s, c) => s + (Number(c.raisedAmount) || 0), 0), prefix: "₹" },
+        { label: "Donors across campaigns", value: live.reduce((s, c) => s + (Number(c.donorCount) || 0), 0) },
+        { label: "Active campaigns", value: live.length },
+        { label: "Sample NGO partners", value: mockNGOs.length },
+      ]);
+    });
+    return () => { isMounted = false; };
+  }, []);
+
+  if (!stats) return null;
+
   return (
     <section className="impact-stats">
       <div className="container impact-stats__grid">

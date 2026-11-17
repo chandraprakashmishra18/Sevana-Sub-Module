@@ -37,6 +37,13 @@
   --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
   --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
 
+  /* Tier colours (XP gamification) */
+  --tier-seedling: #84CC16;
+  --tier-sprout: #22C55E;
+  --tier-sapling: #14B8A6;
+  --tier-tree: #0EA5E9;
+  --tier-legend: #A855F7;
+
   /* Font */
   --font-base: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }

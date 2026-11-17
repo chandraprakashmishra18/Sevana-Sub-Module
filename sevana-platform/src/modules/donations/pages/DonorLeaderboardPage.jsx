@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import mockDonorXPProfiles, { getTierForDonorXP } from "../data/mockDonorXP";
 import { getDonationHistory } from "../services/donationService";
 import { getUsers } from "../services/authService";
 import "./DonorLeaderboardPage.css";
 
-const rankIcons = { 1: "🥇", 2: "🥈", 3: "🥉" };
+const rankIcons = { 1: "1st", 2: "2nd", 3: "3rd" };
 
 function DonorLeaderboardPage() {
-  const [donors, setDonors] = useState([]);
-  const [loading, setLoading] = useState(true);
+  
+  const loading = false;
 
-  useEffect(() => {
+  const donors = useMemo(() => {
     // 1. Fetch donation history
     const history = getDonationHistory();
     const historyByEmail = history.reduce((groups, donation) => {
@@ -63,15 +63,15 @@ function DonorLeaderboardPage() {
       .sort((a, b) => b.totalXP - a.totalXP)
       .map((d, i) => ({ ...d, rank: i + 1 }));
 
-    setDonors(sorted);
-    setLoading(false);
+    return sorted;
+    
   }, []);
 
   return (
     <section className="donor-leaderboard-page">
       <div className="container">
         <div className="donor-leaderboard-page__header">
-          <h1>🏆 Community Donor Leaderboard</h1>
+          <h1>Community Donor Leaderboard</h1>
           <p>
             Recognizing real citizens, volunteers, and donors supporting verified causes for Orphanages, Old Age Homes, NGOs, and education. Every donation earns community XP points!
           </p>

@@ -17,9 +17,9 @@ export const CAMPAIGN_BENEFICIARIES = [
 ];
 
 export const PAYMENT_METHODS = [
-  { id: "upi", label: "UPI", icon: "📱" },
-  { id: "card", label: "Credit / Debit Card", icon: "💳" },
-  { id: "netbanking", label: "Net Banking", icon: "🏦" },
+  { id: "upi", label: "UPI", icon: "" },
+  { id: "card", label: "Credit / Debit Card", icon: "" },
+  { id: "netbanking", label: "Net Banking", icon: "" },
 ];
 
 export const INDIAN_CITIES = [
@@ -49,7 +49,7 @@ export const ROLE_TAXONOMY = {
   donor: {
     category: "Philanthropy & Aid Support",
     label: "Donor / Philanthropist",
-    icon: "💖",
+    icon: "",
     specialties: [
       "Individual Philanthropist",
       "Corporate CSR Partner",
@@ -61,7 +61,7 @@ export const ROLE_TAXONOMY = {
   volunteer: {
     category: "Field Operations & Volunteering",
     label: "Volunteer / Community Worker",
-    icon: "🤝",
+    icon: "",
     specialties: [
       "Camp Logistics & Setup",
       "Registration & Vitals Triage",
@@ -75,7 +75,7 @@ export const ROLE_TAXONOMY = {
   doctor: {
     category: "Medical & Healthcare",
     label: "Doctor / Medical Specialist",
-    icon: "🩺",
+    icon: "",
     specialties: [
       "General Physician / MBBS",
       "Pediatrician (Child Specialist)",
@@ -92,7 +92,7 @@ export const ROLE_TAXONOMY = {
   teacher: {
     category: "Education & Literacy",
     label: "Teacher / Educational Lead",
-    icon: "📚",
+    icon: "",
     specialties: [
       "Elementary & Foundational Literacy",
       "STEM & Science Educator",
@@ -107,7 +107,7 @@ export const ROLE_TAXONOMY = {
   organizer: {
     category: "Organization & Leadership",
     label: "NGO / Institution Organizer",
-    icon: "🏛️",
+    icon: "",
     specialties: [
       "NGO Director / Trustee",
       "Orphanage Superintendent",
@@ -120,7 +120,7 @@ export const ROLE_TAXONOMY = {
   citizen: {
     category: "Community Member",
     label: "General Citizen / Supporter",
-    icon: "👥",
+    icon: "",
     specialties: [
       "Community Supporter",
       "Youth Volunteer",

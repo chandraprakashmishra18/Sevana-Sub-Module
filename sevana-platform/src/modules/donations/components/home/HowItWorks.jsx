@@ -3,21 +3,21 @@ import "./HowItWorks.css";
 const steps = [
   {
     number: "01",
-    title: "Browse a verified need",
+    title: "Browse a campaign",
     description:
-      "Choose from student sponsorships, family aid, or NGO in-kind requests — every listing is NGO-signed-off before it appears.",
+      "Choose from student sponsorships, family aid, or NGO in-kind requests — new campaigns appear after admin approval in this demo.",
   },
   {
     number: "02",
-    title: "Donate securely",
+    title: "Try the demo checkout",
     description:
-      "Give any amount from ₹100 upward via UPI or card. Get an instant 80G tax-exemption receipt by email.",
+      "Pick an amount and complete a demo checkout. You get an on-screen receipt; no real payment is made.",
   },
   {
     number: "03",
-    title: "Track the real outcome",
+    title: "Track campaign progress",
     description:
-      "Receive photo proof and a disbursement update once your donation is used — see the actual difference it made.",
+      "Watch a campaign's raised amount and donor count grow, and see sample disbursement records.",
   },
 ];
 

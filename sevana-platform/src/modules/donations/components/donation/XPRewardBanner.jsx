@@ -21,7 +21,7 @@ function XPRewardBanner({ amount, currentTotalXP = 0 }) {
 
   return (
     <div className="xp-reward-banner">
-      <div className="xp-reward-banner__celebration">🎉</div>
+      
       <p className="xp-reward-banner__earned">
         You earned <span>+{earnedXP} XP!</span>
       </p>
@@ -46,7 +46,7 @@ function XPRewardBanner({ amount, currentTotalXP = 0 }) {
         {nextTier ? (
           <span>{xpNeeded} XP to {nextTier}</span>
         ) : (
-          <span>🏆 Max tier reached!</span>
+          <span>Max tier reached!</span>
         )}
       </div>
 

@@ -68,7 +68,7 @@ function PaymentMethodStep() {
       {error && <p className="payment-error">{error}</p>}
 
       <p className="payment-note">
-        🔒 This is a demo checkout for academic evaluation — no real payment
+        This is a demo checkout for academic evaluation — no real payment
         gateway is connected yet. In production this step hands off to Razorpay.
       </p>
 

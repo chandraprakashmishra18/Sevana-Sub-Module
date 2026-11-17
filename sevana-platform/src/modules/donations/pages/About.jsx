@@ -7,7 +7,7 @@ function About() {
     <section className="about-page">
       <div className="container">
         <div className="about-page__hero">
-          <span className="about-page__eyebrow">सेवना — Devoted Service</span>
+          <span className="about-page__eyebrow">सेवाना — Devoted Service</span>
           <h1>For the ones who cannot ask.</h1>
           <p>
             Sevana's Donations & Aid module exists because millions of people
@@ -23,15 +23,15 @@ function About() {
             <div className="about-card">
               <h3>Verified, not anonymous</h3>
               <p>
-                Every beneficiary and NGO passes identity verification before
-                a campaign goes live. No unverifiable sob stories.
+                In this demo, every campaign goes through an admin review step before
+                it goes live. Real verification is planned for a full release.
               </p>
             </div>
             <div className="about-card">
               <h3>Traceable, not vague</h3>
               <p>
-                Every rupee is tracked to an actual disbursement — with
-                geotagged, timestamped photo proof — not a generic "thank you."
+                Campaign progress is shown openly, with sample disbursement
+                records to show how updates could look.
               </p>
             </div>
             <div className="about-card">
@@ -50,10 +50,10 @@ function About() {
             This platform is part of the Sevana Civic & Compassion Super-App
             proposal — specifically its Donations & Aid module — built as a
             community-service technical project. It's designed to solve a
-            real, present-day problem: <strong>67% of urban potential donors
-            cite lack of trust as their primary barrier to giving.</strong>{" "}
-            Sevana's multi-layer trust architecture — DigiLocker ID checks,
-            NGO sign-off, and full disbursement trails — is our answer to that.
+            real, present-day problem: <strong>donors often hesitate because
+            they cannot see where their money goes.</strong>{" "}
+            Sevana's planned trust layers — organization review,
+            campaign approval, and visible progress — are our answer to that.
           </p>
         </div>
 

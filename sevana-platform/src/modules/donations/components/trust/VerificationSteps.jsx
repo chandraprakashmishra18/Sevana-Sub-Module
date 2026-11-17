@@ -1,10 +1,10 @@
 import "./VerificationSteps.css";
 
 const steps = [
-  { label: "Identity Verified", detail: "DigiLocker ID check on beneficiary & NGO" },
-  { label: "NGO Signed Off", detail: "Verified partner NGO approves the need" },
+  { label: "Details Reviewed", detail: "Organization details reviewed (demo)" },
+  { label: "Admin Approved", detail: "Admin approves the campaign (simulated)" },
   { label: "Campaign Live", detail: "Published for donors, fully public" },
-  { label: "Funds Disbursed", detail: "Photo & geotag proof uploaded" },
+  { label: "Funds Disbursed", detail: "Sample update records shown" },
 ];
 
 function VerificationSteps() {

@@ -2,17 +2,24 @@ import { Link } from "react-router-dom";
 import { useDonation } from "../../context/useDonation";
 import ReceiptPreview from "./ReceiptPreview";
 import XPRewardBanner from "./XPRewardBanner";
-import Button from "../common/Button";
-import mockCampaigns from "../../data/mockCampaigns";
+import { findCampaignSync } from "../../services/campaignService";
+import { getUsers } from "../../services/authService";
 import "./ThankYouScreen.css";
 
 function ThankYouScreen() {
   const { donation } = useDonation();
-  const campaign = mockCampaigns.find((c) => c.id === donation.campaignId);
+  const campaign = findCampaignSync(donation.campaignId);
+
+  // XP is only saved when the donor's email matches a registered account.
+  const email = String(donation.donorEmail || "").toLowerCase().trim();
+  const account = getUsers().find((u) => String(u.email || "").toLowerCase() === email);
+  const earnedXP = donation.xpEarned || 0;
+  // The account's XP already includes this donation, so subtract it to get the "before" value.
+  const previousXP = account ? Math.max(0, (account.totalXP || 0) - earnedXP) : 0;
 
   return (
     <div className="thank-you-screen">
-      <div className="thank-you-screen__icon">🎉</div>
+      
       <h2>Thank you, {donation.anonymous ? "Friend" : donation.donorName.split(" ")[0]}!</h2>
       <p>
         Your demo contribution of <strong>₹{donation.amount.toLocaleString("en-IN")}</strong> was recorded in this browser. This checkout does not transfer money or provide disbursement proof.
@@ -20,17 +27,23 @@ function ThankYouScreen() {
 
       <ReceiptPreview donation={donation} campaign={campaign} />
 
-      <XPRewardBanner amount={donation.amount} />
-      {donation.receiptId && <p className="thank-you-screen__receipt-id">Receipt {donation.receiptId} · {donation.xpEarned || 0} XP recorded in this browser</p>}
+      {account ? (
+        <XPRewardBanner amount={donation.amount} currentTotalXP={previousXP} />
+      ) : (
+        earnedXP > 0 && <p>Sign up with this email to collect XP on donations like this.</p>
+      )}
+
+      {donation.receiptId && (
+        <p className="thank-you-screen__receipt-id">
+          Receipt {donation.receiptId}
+          {account ? ` · ${earnedXP} XP added to your account` : ""}
+        </p>
+      )}
 
       <div className="thank-you-screen__actions">
-        <Link to="/campaigns">
-          <Button variant="outline">Browse More Campaigns</Button>
-        </Link>
+        <Link to="/campaigns" className="btn btn--outline btn--md">Browse More Campaigns</Link>
         {campaign && (
-          <Link to={`/campaigns/${campaign.id}`}>
-            <Button variant="primary">Track This Campaign</Button>
-          </Link>
+          <Link to={`/campaigns/${campaign.id}`} className="btn btn--primary btn--md">Track This Campaign</Link>
         )}
       </div>
     </div>

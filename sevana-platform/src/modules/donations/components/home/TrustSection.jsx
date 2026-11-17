@@ -2,28 +2,28 @@ import "./TrustSection.css";
 
 const trustLayers = [
   {
-    icon: "🪪",
-    title: "Identity Verification",
+    icon: "01",
+    title: "Organization Review",
     description:
-      "Every beneficiary and NGO on Sevana is verified through DigiLocker ID checks before a campaign goes live — no anonymous requests.",
+      "In this demo, NGO details are submitted through a registration form and reviewed in an admin console. Real document verification is planned for a full release.",
   },
   {
-    icon: "✅",
-    title: "NGO Sign-Off",
+    icon: "02",
+    title: "Campaign Approval",
     description:
-      "A partnered, verified NGO reviews and signs off on every campaign before it's published, confirming the need is genuine.",
+      "New campaigns start as drafts and only appear to donors after an admin approves them. Paused or rejected campaigns are hidden from the campaign list.",
   },
   {
-    icon: "📸",
-    title: "Impact Photo Proof",
+    icon: "03",
+    title: "Visible Progress",
     description:
-      "Once funds are used, geotagged and timestamped photos of the actual purchase or aid delivery are uploaded — visible to every donor.",
+      "Every campaign shows its goal, the amount raised and the number of donors, and updates when a demo donation is recorded.",
   },
   {
-    icon: "🧾",
-    title: "Full Disbursement Trail",
+    icon: "04",
+    title: "Sample Disbursement Updates",
     description:
-      "Track exactly how your donation was split and spent, down to the rupee, with a public timeline from payment to delivery.",
+      "Campaign pages show how fund-use updates could look. The records on this site are sample data, not real transactions.",
   },
 ];
 
@@ -32,11 +32,11 @@ function TrustSection() {
     <section className="trust-section">
       <div className="container">
         <div className="trust-section__header">
-          <h2>Why donors trust Sevana</h2>
+          <h2>How Sevana builds trust (demo)</h2>
           <p>
-            Most platforms ask you to trust blindly. Sevana replaces that
-            with a tamper-proof, verifiable trail — from your payment to the
-            beneficiary's hands.
+            Most platforms ask you to trust blindly. Sevana's approach is to
+            make each step visible. This project demonstrates the idea with
+            sample data.
           </p>
         </div>
 

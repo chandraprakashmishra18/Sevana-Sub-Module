@@ -45,11 +45,11 @@ function CampaignFilters({
                 onClick={() => onBeneficiaryChange(ben)}
               >
                 {ben === "Orphanage"
-                  ? "🏠 Orphanage"
+                  ? "Orphanage"
                   : ben === "Old Age Home"
-                  ? "👴 Old Age Home"
+                  ? "Old Age Home"
                   : ben === "NGO"
-                  ? "🤝 NGO"
+                  ? "NGO"
                   : ben}
               </button>
             ))}

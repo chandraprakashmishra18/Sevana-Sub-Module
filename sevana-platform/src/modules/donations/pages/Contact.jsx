@@ -30,7 +30,7 @@ function Contact() {
           </p>
 
           <div className="contact-info__item">
-            <span>📧</span>
+            
             <div>
               <p className="contact-info__label">Email</p>
               <p>support@sevana.org</p>
@@ -38,7 +38,7 @@ function Contact() {
           </div>
 
           <div className="contact-info__item">
-            <span>📞</span>
+            
             <div>
               <p className="contact-info__label">Phone</p>
               <p>+91 98765 43210</p>
@@ -46,9 +46,9 @@ function Contact() {
           </div>
 
           <div className="contact-info__item">
-            <span>📍</span>
+            
             <div>
-              <p className="contact-info__label">Office</p>
+              <p className="contact-info__label">📍 Office</p>
               <p>Gurugram, Haryana, India</p>
             </div>
           </div>
@@ -57,9 +57,9 @@ function Contact() {
         <div className="contact-page__form-wrap">
           {submitted ? (
             <div className="contact-page__success">
-              <span className="contact-page__success-icon">✔</span>
-              <h2>Message Sent!</h2>
-              <p>Thanks for reaching out — we'll get back to you shortly.</p>
+              
+              <h2>Message recorded (demo)</h2>
+              <p>This is a demo form. Your message was not sent anywhere.</p>
               <Button variant="outline" onClick={() => setSubmitted(false)}>
                 Send Another Message
               </Button>

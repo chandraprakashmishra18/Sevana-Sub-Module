@@ -7,7 +7,7 @@ function DisbursementTrail({ disbursements }) {
         <h2>Disbursement Trail</h2>
         <p className="disbursement-trail__empty">
           No funds have been disbursed yet — this campaign is still raising money.
-          Every disbursement will appear here with photo proof once it happens.
+          Disbursement updates will appear here once they are added.
         </p>
       </div>
     );
