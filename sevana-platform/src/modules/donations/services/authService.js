@@ -97,27 +97,37 @@ export const SEED_USERS = [
   },
 ];
 
+function withoutPassword(user) {
+  return Object.fromEntries(Object.entries(user).filter(([key]) => key !== "password"));
+}
+
 export function getUsers() {
   try {
     const raw = localStorage.getItem(USERS_STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(SEED_USERS));
-      return SEED_USERS;
+      const demoUsers = SEED_USERS.map(withoutPassword);
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(demoUsers));
+      return demoUsers;
     }
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed) || parsed.length === 0) {
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(SEED_USERS));
-      return SEED_USERS;
+      const demoUsers = SEED_USERS.map(withoutPassword);
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(demoUsers));
+      return demoUsers;
     }
-    return parsed;
+    const safeUsers = parsed.map(withoutPassword);
+    if (parsed.some((user) => user && Object.hasOwn(user, "password"))) {
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(safeUsers));
+    }
+    return safeUsers;
   } catch {
-    return SEED_USERS;
+    return SEED_USERS.map(withoutPassword);
   }
 }
 
 export function saveUsers(users) {
   try {
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users.map(withoutPassword)));
   } catch (err) {
     console.error("Failed to save users to localStorage", err);
   }
@@ -127,7 +137,13 @@ export function getCurrentUser() {
   try {
     const raw = localStorage.getItem(AUTH_USER_STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw);
+    const user = JSON.parse(raw);
+    if (!user || typeof user !== "object") return null;
+    const safeUser = withoutPassword(user);
+    if (Object.hasOwn(user, "password")) {
+      localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(safeUser));
+    }
+    return safeUser;
   } catch {
     return null;
   }
@@ -136,7 +152,7 @@ export function getCurrentUser() {
 export function setCurrentUser(user) {
   try {
     if (user) {
-      localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(user));
+      localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(withoutPassword(user)));
     } else {
       localStorage.removeItem(AUTH_USER_STORAGE_KEY);
     }
@@ -149,64 +165,18 @@ export function setCurrentUser(user) {
 }
 
 export function registerUser(userData) {
-  const users = getUsers();
-  const normalizedEmail = (userData.email || "").trim().toLowerCase();
-
-  if (!normalizedEmail || !userData.password || !userData.name) {
-    throw new Error("Full name, email, and password are required.");
-  }
-
-  if (userData.password.length < 6) {
-    throw new Error("Password must be at least 6 characters long.");
-  }
-
-  const existing = users.find((u) => u.email.toLowerCase() === normalizedEmail);
-  if (existing) {
-    throw new Error("An account with this email address already exists.");
-  }
-
-  const roleKey = (userData.roleType || "volunteer").toLowerCase();
-  const defaultAvatar = DEFAULT_AVATARS[roleKey] || DEFAULT_AVATARS.volunteer;
-
-  const newUser = {
-    id: `usr_${Date.now()}`,
-    name: userData.name.trim(),
-    email: normalizedEmail,
-    password: userData.password,
-    role: userData.role || "Community Volunteer",
-    roleType: userData.roleType || "volunteer",
-    phone: userData.phone?.trim() || "",
-    location: userData.location?.trim() || "India",
-    organization: userData.organization?.trim() || "",
-    avatar: userData.avatar || defaultAvatar,
-    totalXP: 50,
-    badges: ["New Member", "Community Volunteer"],
-    campsWorked: [],
-    campsOrganized: [],
-    donations: [],
-    createdAt: new Date().toISOString().split("T")[0],
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-  setCurrentUser(newUser);
-
-  return newUser;
+  void userData;
+  throw new Error("Registration is disabled in demo mode. Use a synthetic sample account from the sign-in page.");
 }
 
 export function loginUser(email, password) {
   const users = getUsers();
   const normalizedEmail = (email || "").trim().toLowerCase();
-
-  const user = users.find((u) => u.email.toLowerCase() === normalizedEmail);
-  if (!user) {
-    throw new Error("No account found with this email. Please check or register a new account.");
+  const sampleUser = SEED_USERS.find((u) => u.email.toLowerCase() === normalizedEmail);
+  if (!sampleUser || sampleUser.password !== password) {
+    throw new Error("Demo mode accepts only the synthetic sample accounts shown on this page.");
   }
-
-  if (user.password !== password) {
-    throw new Error("Incorrect password. Please try again.");
-  }
-
+  const user = users.find((u) => u.id === sampleUser.id) || withoutPassword(sampleUser);
   setCurrentUser(user);
   return user;
 }
