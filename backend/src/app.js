@@ -9,9 +9,14 @@ const authRoutes = require("./routes/auth.routes");
 const campRoutes = require("./routes/camp.routes");
 const adminRoutes = require("./routes/admin.routes");
 const communityRoutes = require("./routes/community.routes");
+const healthRoutes = require("./routes/healthRoutes");
 
 const allowedOrigin = process.env.CLIENT_URL || "http://localhost:5173";
 const app = express();
+
+// Render terminates public traffic at one trusted reverse-proxy hop. This
+// keeps IP-based rate limits keyed to the forwarded client address.
+app.set("trust proxy", 1);
 
 // -----------------------------------------------------
 // GLOBAL MIDDLEWARE
@@ -49,15 +54,10 @@ const apiLimiter = rateLimit({
 });
 
 // -----------------------------------------------------
-// HEALTH CHECK
+// Liveness and database-readiness health checks
 // -----------------------------------------------------
 
-app.get("/api/health", (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "Sevana Community API is running"
-  });
-});
+app.use("/api/health", healthRoutes);
 
 app.use("/api", apiLimiter);
 
