@@ -1,5 +1,49 @@
 
 const jwt = require("jsonwebtoken");
+const prisma = require("../config/prisma");
+
+async function authenticateToken(token, req, res, next) {
+  let decoded;
+
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"]
+    });
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired authentication token."
+    });
+  }
+
+  if (typeof decoded.sub !== "string") {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired authentication token."
+    });
+  }
+
+  try {
+    // Do not trust authorization claims from a token after the account is
+    // disabled or its role changes. The database remains the source of truth.
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.sub },
+      select: { id: true, platformRole: true, isActive: true }
+    });
+
+    if (!user || !user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: "User account is unavailable."
+      });
+    }
+
+    req.user = { id: user.id, platformRole: user.platformRole };
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+}
 
 // -----------------------------------------------------
 // REQUIRED AUTHENTICATION
@@ -16,23 +60,14 @@ function requireAuth(req, res, next) {
     });
   }
 
-  const token = authHeader.split(" ")[1];
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    req.user = {
-      id: decoded.sub,
-      platformRole: decoded.platformRole
-    };
-
-    return next();
-  } catch (error) {
+  const token = authHeader.slice("Bearer ".length).trim();
+  if (!token) {
     return res.status(401).json({
       success: false,
-      message: "Invalid or expired authentication token."
+      message: "Authentication token required."
     });
   }
+  return authenticateToken(token, req, res, next);
 }
 
 // -----------------------------------------------------
@@ -57,7 +92,7 @@ function optionalAuth(req, res, next) {
     });
   }
 
-  const token = authHeader.split(" ")[1];
+  const token = authHeader.slice("Bearer ".length).trim();
 
   if (!token) {
     return res.status(401).json({
@@ -66,21 +101,7 @@ function optionalAuth(req, res, next) {
     });
   }
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    req.user = {
-      id: decoded.sub,
-      platformRole: decoded.platformRole
-    };
-
-    return next();
-  } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid or expired authentication token."
-    });
-  }
+  return authenticateToken(token, req, res, next);
 }
 
 // -----------------------------------------------------
