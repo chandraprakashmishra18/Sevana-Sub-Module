@@ -24,7 +24,6 @@ function WorkerProfile() {
     let isMounted = true;
 
     if (!effectiveId) {
-      setLoading(false);
       return;
     }
 
@@ -41,14 +40,6 @@ function WorkerProfile() {
     };
   }, [effectiveId, authUser]);
 
-  if (loading) {
-    return (
-      <div className="container" style={{ padding: "60px 0", textAlign: "center" }}>
-        <p>Loading profile...</p>
-      </div>
-    );
-  }
-
   // Not logged in and no id specified
   if (!effectiveId) {
     return (
@@ -61,6 +52,14 @@ function WorkerProfile() {
           <Link to="/login"><Button variant="outline">Sign In</Button></Link>
           <Link to="/register"><Button variant="accent">Register Account (+50 XP)</Button></Link>
         </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="container" style={{ padding: "60px 0", textAlign: "center" }}>
+        <p>Loading profile...</p>
       </div>
     );
   }
