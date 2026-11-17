@@ -1,16 +1,18 @@
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { DonationProvider } from "../context/DonationContext";
 import { useDonation } from "../context/useDonation";
 import AmountSelector from "../components/donation/AmountSelector";
 import DonorDetailsForm from "../components/donation/DonorDetailsForm";
 import PaymentMethodStep from "../components/donation/PaymentMethodStep";
 import ThankYouScreen from "../components/donation/ThankYouScreen";
-import mockCampaigns from "../data/mockCampaigns";
+import { getCampaignById } from "../services/campaignService";
 import "./Donate.css";
 
 function DonateStepRenderer() {
   const { step, donation } = useDonation();
-  const campaign = mockCampaigns.find((c) => c.id === donation.campaignId);
+  const [campaign, setCampaign] = useState(null);
+  useEffect(() => { if (donation.campaignId) getCampaignById(donation.campaignId).then(setCampaign).catch(() => setCampaign(null)); }, [donation.campaignId]);
 
   return (
     <div className="donate-page__card">

@@ -27,13 +27,13 @@ function LeaderboardPage() {
       <div className="container">
         <div className="leaderboard-page__header">
           <h1>Volunteer Leaderboard</h1>
-          <p>Workers ranked by XP earned across every camp they've contributed to.</p>
+          <p>A volunteer leaderboard is not available because camp contribution points are not stored by the backend.</p>
         </div>
 
         {loading ? (
           <p className="leaderboard-page__loading">Loading leaderboard...</p>
         ) : (
-          <Leaderboard workers={workers} />
+          workers.length ? <Leaderboard workers={workers} /> : <p>There are no backend-verified volunteer rankings to display yet.</p>
         )}
       </div>
     </section>

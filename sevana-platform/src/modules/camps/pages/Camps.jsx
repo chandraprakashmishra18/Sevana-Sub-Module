@@ -11,6 +11,7 @@ function Camps() {
   const [activeStatus, setActiveStatus] = useState("Upcoming");
   const [activeBeneficiary, setActiveBeneficiary] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -20,7 +21,7 @@ function Camps() {
         setCamps(data);
         setLoading(false);
       }
-    });
+    }).catch((err) => { if (isMounted) { setError(err.message || "Could not load camps."); setLoading(false); } });
 
     return () => {
       isMounted = false;
@@ -62,6 +63,8 @@ function Camps() {
 
         {loading ? (
           <p className="camps-page__loading">Loading camps...</p>
+        ) : error ? (
+          <p role="alert">{error}</p>
         ) : (
           <CampGrid camps={filteredCamps} />
         )}

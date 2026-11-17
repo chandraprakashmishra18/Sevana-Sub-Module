@@ -9,9 +9,14 @@ const authRoutes = require("./routes/auth.routes");
 const campRoutes = require("./routes/camp.routes");
 const adminRoutes = require("./routes/admin.routes");
 const communityRoutes = require("./routes/community.routes");
+const healthRoutes = require("./routes/healthRoutes");
 
 const allowedOrigin = process.env.CLIENT_URL || "http://localhost:5173";
 const app = express();
+
+// Render terminates public traffic at one trusted reverse-proxy hop. This
+// keeps IP-based rate limits keyed to the forwarded client address.
+app.set("trust proxy", 1);
 
 // -----------------------------------------------------
 // GLOBAL MIDDLEWARE
@@ -28,25 +33,31 @@ app.use(express.urlencoded({ extended: true }));
 // General API rate limiter
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 100,
+  // Keep a finite general API ceiling, while leaving room for the app's
+  // multi-request dashboards and normal navigation. Auth routes have stricter
+  // route-specific limits in auth.routes.js.
+  limit: 300,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   message: {
     success: false,
     message: "Too many requests. Please try again later."
+  },
+  handler: (req, res) => {
+    const route = req.originalUrl.split("?")[0];
+    console.warn(`API rate limit exceeded: ${req.method} ${route}`);
+    res.status(429).json({
+      success: false,
+      message: "Too many requests. Please try again later."
+    });
   }
 });
 
 // -----------------------------------------------------
-// HEALTH CHECK
+// Liveness and database-readiness health checks
 // -----------------------------------------------------
 
-app.get("/api/health", (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "Sevana Community API is running"
-  });
-});
+app.use("/api/health", healthRoutes);
 
 app.use("/api", apiLimiter);
 
@@ -84,13 +95,24 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error("API Error:", err);
 
-  const statusCode = err.statusCode || err.status || 500;
+  const prismaCode = err.code;
+  const prismaValidationError = err.name === "PrismaClientValidationError";
+  const statusCode = err.statusCode || err.status || (
+    prismaValidationError || prismaCode === "P2003" ? 400 :
+    prismaCode === "P2002" ? 409 :
+    prismaCode === "P2025" ? 404 : 500
+  );
+  const message = statusCode === 500
+    ? (process.env.NODE_ENV === "production" ? "Internal server error." : err.message || "Internal server error.")
+    : prismaValidationError ? "Campaign or request data is invalid. Check the submitted fields." :
+      prismaCode === "P2003" ? "A referenced organization or user is invalid." :
+      prismaCode === "P2002" ? "A record with these details already exists." :
+      prismaCode === "P2025" ? "The requested record was not found." :
+      err.message || "Something went wrong.";
 
   res.status(statusCode).json({
     success: false,
-    message: statusCode === 500
-      ? "Internal server error."
-      : err.message || "Something went wrong."
+    message
   });
 });
 

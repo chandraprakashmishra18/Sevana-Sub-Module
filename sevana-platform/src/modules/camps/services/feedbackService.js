@@ -1,11 +1,5 @@
-import mockFeedback from "../data/mockFeedback";
+export async function getFeedbackByCamp() { return []; }
 
-export async function getFeedbackByCamp(campId) {
-  return Promise.resolve(mockFeedback[campId] || []);
-}
-
-// TEAMMATE: wire this to a real POST /camps/:id/feedback later.
-export async function submitFeedback(campId, feedbackData) {
-  console.log("Feedback submitted (mock) for", campId, feedbackData);
-  return Promise.resolve({ success: true });
+export async function submitFeedback() {
+  throw new Error("Camp feedback is not supported by the current backend API.");
 }

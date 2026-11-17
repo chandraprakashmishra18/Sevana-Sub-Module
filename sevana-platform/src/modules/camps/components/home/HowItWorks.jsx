@@ -15,9 +15,9 @@ const steps = [
   },
   {
     number: "03",
-    title: "Show up and earn XP",
+    title: "Attend or volunteer",
     description:
-      "Attend the camp, help out or get helped, and leave real-time feedback. Workers earn XP, badges, and climb the leaderboard.",
+      "Your registration is recorded by Sevana. Organization managers can view attendance for their camps.",
   },
 ];
 

@@ -1,4 +1,6 @@
 // Real User Authentication & Account Management Service
+import { apiRequest, TOKEN_STORAGE_KEY } from "../../../shared/apiClient";
+
 export const USERS_STORAGE_KEY = "sevana_users";
 export const AUTH_USER_STORAGE_KEY = "sevana_auth_user";
 
@@ -16,7 +18,6 @@ export const SEED_USERS = [
     id: "usr_rohit_01",
     name: "Rohit Sharma",
     email: "rohit@sevana.org",
-    password: "password123",
     role: "Volunteer Coordinator",
     roleType: "volunteer",
     phone: "+91 98765 43210",
@@ -38,7 +39,6 @@ export const SEED_USERS = [
     id: "usr_priya_02",
     name: "Dr. Priya Menon",
     email: "priya.doctor@sevana.org",
-    password: "password123",
     role: "Doctor & Geriatric Specialist",
     roleType: "doctor",
     phone: "+91 98111 22334",
@@ -60,7 +60,6 @@ export const SEED_USERS = [
     id: "usr_roshni_03",
     name: "Aarti Mehra",
     email: "contact@roshnifoundation.org",
-    password: "password123",
     role: "NGO Organizer",
     roleType: "organizer",
     phone: "+91 99998 88777",
@@ -78,7 +77,6 @@ export const SEED_USERS = [
     id: "usr_aditya_04",
     name: "Aditya Rao",
     email: "aditya.teacher@gmail.com",
-    password: "password123",
     role: "Teacher & Educator",
     roleType: "teacher",
     phone: "+91 98222 33445",
@@ -98,36 +96,65 @@ export const SEED_USERS = [
 ];
 
 export function getUsers() {
+  let users = SEED_USERS;
   try {
     const raw = localStorage.getItem(USERS_STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(SEED_USERS));
-      return SEED_USERS;
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) users = parsed;
     }
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(SEED_USERS));
-      return SEED_USERS;
-    }
-    return parsed;
   } catch {
-    return SEED_USERS;
+    users = SEED_USERS;
   }
+
+  const currentUser = getCurrentUser();
+  if (currentUser && !users.some((user) => user.id === currentUser.id)) {
+    users = [...users, currentUser];
+  }
+
+  const sanitized = users.map(sanitizeUser);
+  try {
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(sanitized));
+  } catch {
+    // User profiles remain available from the authenticated profile cache.
+  }
+  return sanitized;
 }
 
 export function saveUsers(users) {
   try {
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users.map(sanitizeUser)));
   } catch (err) {
     console.error("Failed to save users to localStorage", err);
   }
 }
 
+function sanitizeUser(user) {
+  if (!user || typeof user !== "object") return user;
+  const safeUser = { ...user };
+  delete safeUser.password;
+  return safeUser;
+}
+
+function normalizeUser(user) {
+  const memberships = Array.isArray(user.memberships) ? user.memberships : [];
+  const primaryOrganization = memberships[0]?.organization || null;
+  return {
+    ...sanitizeUser(user),
+    name: user.fullName || user.name || "Sevana user",
+    role: memberships[0]?.role || "Community member",
+    roleType: memberships.length ? "organizer" : "citizen",
+    organization: primaryOrganization?.name || "",
+    memberships
+  };
+}
+
 export function getCurrentUser() {
   try {
+    if (!localStorage.getItem(TOKEN_STORAGE_KEY)) return null;
     const raw = localStorage.getItem(AUTH_USER_STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw);
+    return normalizeUser(JSON.parse(raw));
   } catch {
     return null;
   }
@@ -136,7 +163,7 @@ export function getCurrentUser() {
 export function setCurrentUser(user) {
   try {
     if (user) {
-      localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(user));
+      localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(normalizeUser(user)));
     } else {
       localStorage.removeItem(AUTH_USER_STORAGE_KEY);
     }
@@ -148,70 +175,43 @@ export function setCurrentUser(user) {
   }
 }
 
-export function registerUser(userData) {
-  const users = getUsers();
-  const normalizedEmail = (userData.email || "").trim().toLowerCase();
-
-  if (!normalizedEmail || !userData.password || !userData.name) {
-    throw new Error("Full name, email, and password are required.");
-  }
-
-  if (userData.password.length < 6) {
-    throw new Error("Password must be at least 6 characters long.");
-  }
-
-  const existing = users.find((u) => u.email.toLowerCase() === normalizedEmail);
-  if (existing) {
-    throw new Error("An account with this email address already exists.");
-  }
-
-  const roleKey = (userData.roleType || "volunteer").toLowerCase();
-  const defaultAvatar = DEFAULT_AVATARS[roleKey] || DEFAULT_AVATARS.volunteer;
-
-  const newUser = {
-    id: `usr_${Date.now()}`,
-    name: userData.name.trim(),
-    email: normalizedEmail,
-    password: userData.password,
-    role: userData.role || "Community Volunteer",
-    roleType: userData.roleType || "volunteer",
-    phone: userData.phone?.trim() || "",
-    location: userData.location?.trim() || "India",
-    organization: userData.organization?.trim() || "",
-    avatar: userData.avatar || defaultAvatar,
-    totalXP: 50,
-    badges: ["New Member", "Community Volunteer"],
-    campsWorked: [],
-    campsOrganized: [],
-    donations: [],
-    createdAt: new Date().toISOString().split("T")[0],
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-  setCurrentUser(newUser);
-
-  return newUser;
-}
-
-export function loginUser(email, password) {
-  const users = getUsers();
-  const normalizedEmail = (email || "").trim().toLowerCase();
-
-  const user = users.find((u) => u.email.toLowerCase() === normalizedEmail);
-  if (!user) {
-    throw new Error("No account found with this email. Please check or register a new account.");
-  }
-
-  if (user.password !== password) {
-    throw new Error("Incorrect password. Please try again.");
-  }
-
+export async function fetchAuthenticatedUser() {
+  const result = await apiRequest("/auth/me");
+  const user = normalizeUser(result.data);
   setCurrentUser(user);
   return user;
 }
 
+async function saveAuthResponse(result) {
+  const accessToken = result?.data?.accessToken;
+  if (!accessToken) throw new Error("Authentication response did not include an access token.");
+  localStorage.setItem(TOKEN_STORAGE_KEY, accessToken);
+  try {
+    return await fetchAuthenticatedUser();
+  } catch (error) {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    throw error;
+  }
+}
+
+export async function registerUser(userData) {
+  const result = await apiRequest("/auth/register", {
+    method: "POST",
+    body: userData
+  });
+  return saveAuthResponse(result);
+}
+
+export async function loginUser(email, password) {
+  const result = await apiRequest("/auth/login", {
+    method: "POST",
+    body: { email, password }
+  });
+  return saveAuthResponse(result);
+}
+
 export function logoutUser() {
+  localStorage.removeItem(TOKEN_STORAGE_KEY);
   setCurrentUser(null);
 }
 

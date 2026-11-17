@@ -16,25 +16,23 @@ function InvitePanel({ campId, campTitle, targetBeneficiary }) {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
 
   const isValid = email.trim().length > 0 && email.includes("@");
 
   const handleSend = async () => {
     if (!isValid) return;
     setSending(true);
-    await sendInvitation({
-      campId,
-      campTitle,
-      targetBeneficiary,
-      toEmail: email.trim(),
-      role,
-      message,
-    });
-    setSending(false);
-    setSuccess(true);
-    setEmail("");
-    setMessage("");
-    setTimeout(() => setSuccess(false), 5000);
+    setError("");
+    try {
+      await sendInvitation({ campId, campTitle, targetBeneficiary, toEmail: email.trim(), role, message });
+      setSuccess(true);
+      setEmail("");
+      setMessage("");
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err) {
+      setError(err.message || "Camp invitations are unavailable.");
+    } finally { setSending(false); }
   };
 
   return (
@@ -98,8 +96,10 @@ function InvitePanel({ campId, campTitle, targetBeneficiary }) {
         </div>
       )}
 
+      {error && <p role="alert">{error}</p>}
+
       <p className="invite-panel__note">
-        Invitations show in their profile with role details and XP milestones.
+        Invitations cannot be sent until the backend supports this workflow.
       </p>
     </div>
   );

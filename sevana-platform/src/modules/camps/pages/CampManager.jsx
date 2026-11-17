@@ -1,7 +1,45 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllCamps, updateCamp } from "../services/campService";
-import { getCampRegistrations, updateCampRegistration } from "../services/joinService";
+import { useAuth } from "../../../shared/useAuth";
+import { cancelCamp, getAllCamps, publishCamp } from "../services/campService";
+import { getCampRegistrationsForCamp, markCampAttendance } from "../services/joinService";
 import "./Dashboard.css";
 import "./Workflow.css";
-export default function CampManager(){const [camps,setCamps]=useState([]),[registrations,setRegistrations]=useState(getCampRegistrations),[notice,setNotice]=useState("");const refresh=()=>{getAllCamps().then(setCamps);setRegistrations(getCampRegistrations())};useEffect(()=>{getAllCamps().then(setCamps)},[]);const setStatus=(join,status)=>{updateCampRegistration(join.id,{status});setNotice(`Registration marked ${status} in demo mode.`);setRegistrations(getCampRegistrations())};const attendance=(join)=>{updateCampRegistration(join.id,{attended:!join.attended});setNotice("Attendance updated in demo mode.");setRegistrations(getCampRegistrations())};return <section className="workspace-dashboard"><div className="container"><div className="workspace-dashboard__top"><div><span className="workspace-dashboard__eyebrow">ORGANIZER TOOLS · DEMO MODE</span><h1>Camp management</h1><p>Review registrations, record attendance, and update camp status.</p></div><Link className="workspace-dashboard__link" to="/dashboard">← Dashboard</Link></div><div className="workspace-dashboard__notice">Organizer changes are saved in this browser. Registration decisions are simulated and are not real access decisions.{notice&&<span role="status"> {notice}</span>}</div><section className="workspace-dashboard__panel"><h2>Registrations ({registrations.length})</h2>{registrations.length?registrations.map(r=><article className="manager-row" key={r.id}><div><strong>{r.name||r.fullName||r.email||"Participant"}</strong><small>{r.campTitle||camps.find(c=>c.id===r.campId)?.title||r.campId} · {r.role||"Attendee"} · {r.email}</small><small>Status: {r.status||"pending"}{r.attended?" · Attended":""}</small></div><div className="manager-row__actions"><button onClick={()=>setStatus(r,"approved")}>Approve</button><button onClick={()=>setStatus(r,"rejected")}>Reject</button><button onClick={()=>attendance(r)}>Mark {r.attended?"absent":"attended"}</button></div></article>):<p className="workspace-dashboard__muted">No registrations saved in this browser yet. Open a camp and register to see it here.</p>}</section><section className="workspace-dashboard__panel" style={{marginTop:18}}><h2>Camps ({camps.length})</h2>{camps.map(c=><article className="manager-row" key={c.id}><div><strong>{c.title}</strong><small>{c.organizer} · {c.date} · {c.location} · {c.status}</small></div><div className="manager-row__actions"><button onClick={()=>{updateCamp({...c,status:"upcoming"});setNotice("Camp marked upcoming.");refresh()}}>Upcoming</button><button onClick={()=>{updateCamp({...c,status:"ongoing"});setNotice("Camp marked ongoing.");refresh()}}>Ongoing</button><button onClick={()=>{updateCamp({...c,status:"past"});setNotice("Camp marked completed.");refresh()}}>Completed</button></div></article>)}</section></div></section>}
+
+export default function CampManager() {
+  const { activeOrganization } = useAuth();
+  const [camps, setCamps] = useState([]);
+  const [registrations, setRegistrations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  const refresh = useCallback(async () => {
+    if (!activeOrganization?.id) return;
+    setLoading(true); setError("");
+    try {
+      const ownCamps = await getAllCamps({ organizationId: activeOrganization.id });
+      setCamps(ownCamps);
+      const lists = await Promise.all(ownCamps.filter(c=>c.apiStatus === "PUBLISHED").map(async camp => {
+        try { return (await getCampRegistrationsForCamp(camp.id)).map(r=>({...r,campId:camp.id,campTitle:camp.title})); }
+        catch { return []; }
+      }));
+      setRegistrations(lists.flat());
+    } catch (err) { setError(err.message || "Could not load organization camps."); }
+    finally { setLoading(false); }
+  }, [activeOrganization?.id]);
+  useEffect(() => { refresh(); }, [refresh]);
+
+  const runAction = async (action, successMessage) => {
+    setError(""); setMessage("");
+    try { await action(); setMessage(successMessage); await refresh(); }
+    catch (err) { setError(err.message || "The camp update failed."); }
+  };
+
+  return <section className="workspace-dashboard"><div className="container">
+    <div className="workspace-dashboard__top"><div><span className="workspace-dashboard__eyebrow">ORGANIZATION CAMPS</span><h1>Camp management</h1><p>{activeOrganization?.name} · {activeOrganization?.verificationStatus}</p></div><Link className="workspace-dashboard__link" to="/organization">← Organization dashboard</Link></div>
+    {message && <p role="status">{message}</p>}{error && <p role="alert">{error}</p>}
+    <section className="workspace-dashboard__panel"><h2>Registrations ({registrations.length})</h2>{loading ? <p>Loading camp registrations…</p> : registrations.length ? registrations.map(r=><article className="manager-row" key={r.id}><div><strong>{r.fullName}</strong><small>{r.campTitle} · {r.role} · {r.email || r.phone}</small><small>Status: {r.status}{r.attendance ? ` · Attendance: ${r.attendance}` : ""}</small></div><div className="manager-row__actions">{r.status === "REGISTERED" && <><button type="button" onClick={()=>runAction(()=>markCampAttendance(r.campId,r.id,"PRESENT"),"Attendance marked present.")}>Present</button><button type="button" onClick={()=>runAction(()=>markCampAttendance(r.campId,r.id,"ABSENT"),"Attendance marked absent.")}>Absent</button></>}</div></article>) : <p>No registrations found for published camps.</p>}</section>
+    <section className="workspace-dashboard__panel" style={{marginTop:18}}><h2>Your camps ({camps.length})</h2>{activeOrganization?.verificationStatus !== "VERIFIED" && <p>Publishing is disabled until this organization is verified. You can still create and manage drafts.</p>}{loading ? <p>Loading camps…</p> : camps.length ? camps.map(c=><article className="manager-row" key={c.id}><div><strong>{c.title}</strong><small>{c.date} · {c.location} · {c.apiStatus}</small></div><div className="manager-row__actions">{c.apiStatus === "DRAFT" && <button type="button" disabled={activeOrganization?.verificationStatus !== "VERIFIED"} onClick={()=>runAction(()=>publishCamp(c.id),"Camp published.")}>Publish</button>}{["DRAFT","PUBLISHED"].includes(c.apiStatus) && <button type="button" onClick={()=>runAction(()=>cancelCamp(c.id),"Camp cancelled.")}>Cancel</button>}</div></article>) : <p>No camps created for this organization yet. <Link to="/organize">Create a camp</Link></p>}</section>
+  </div></section>;
+}

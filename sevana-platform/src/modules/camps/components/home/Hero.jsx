@@ -12,7 +12,7 @@ function Hero() {
             Medical care. <span>Real education.</span> For NGOs, Orphanages &amp; Seniors.
           </h1>
           <p className="hero__subtitle">
-            Organize or join medical and educational camps for orphanages, old age homes, and underprivileged communities. Invite doctors, educators, and volunteers, collaborate seamlessly, and earn community service XP!
+            Browse published medical and educational camps, register as a volunteer or beneficiary, or create a camp draft for your organization.
           </p>
 
           <div className="hero__actions">
@@ -20,14 +20,14 @@ function Hero() {
               <Button variant="accent" size="lg">Explore Camps</Button>
             </Link>
             <Link to="/organize">
-              <Button variant="outline" size="lg">Organize a Camp (+300 XP)</Button>
+              <Button variant="outline" size="lg">Organize a Camp</Button>
             </Link>
           </div>
 
           <div className="hero__trustrow">
             <span>✔ Medical &amp; Educational Camps</span>
             <span>✔ Orphanages &amp; Old Age Homes</span>
-            <span>✔ Earn Community XP</span>
+            <span>✔ Organization-managed camp drafts</span>
           </div>
         </div>
 

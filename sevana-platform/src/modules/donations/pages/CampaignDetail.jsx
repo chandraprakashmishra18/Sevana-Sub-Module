@@ -14,6 +14,7 @@ function CampaignDetail() {
   const [donors, setDonors] = useState([]);
   const [disbursements, setDisbursements] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -29,7 +30,7 @@ function CampaignDetail() {
         setDisbursements(disbursementsData);
         setLoading(false);
       }
-    });
+    }).catch((err) => { if (isMounted) { setError(err.message || "Could not load campaign details."); setLoading(false); } });
 
     return () => {
       isMounted = false;
@@ -48,6 +49,7 @@ function CampaignDetail() {
     return (
       <div className="container campaign-detail__not-found">
         <h2>Campaign not found</h2>
+        {error && <p role="alert">{error}</p>}
         <Link to="/campaigns">← Back to all campaigns</Link>
       </div>
     );

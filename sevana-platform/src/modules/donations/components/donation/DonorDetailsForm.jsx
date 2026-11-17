@@ -7,8 +7,7 @@ function DonorDetailsForm() {
 
   const isValid =
     donation.donorName.trim() !== "" &&
-    donation.donorEmail.trim() !== "" &&
-    donation.donorPhone.trim() !== "";
+    donation.donorEmail.trim() !== "";
 
   return (
     <div className="donation-step">
@@ -35,23 +34,12 @@ function DonorDetailsForm() {
       </label>
 
       <label className="donation-step__field">
-        <span>Phone Number *</span>
+        <span>Phone Number (optional)</span>
         <input
           type="tel"
           value={donation.donorPhone}
           onChange={(e) => updateDonation({ donorPhone: e.target.value })}
           placeholder="10-digit mobile number"
-        />
-      </label>
-
-      <label className="donation-step__field">
-        <span>PAN Number (optional, required for 80G receipt on amounts above ₹500)</span>
-        <input
-          type="text"
-          value={donation.panNumber}
-          onChange={(e) => updateDonation({ panNumber: e.target.value.toUpperCase() })}
-          placeholder="ABCDE1234F"
-          maxLength={10}
         />
       </label>
 

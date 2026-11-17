@@ -1,85 +1,12 @@
-import useCountUp from "../hooks/useCountUp";
-import VerificationSteps from "../components/trust/VerificationSteps";
-import mockCampaigns from "../data/mockCampaigns";
-import mockDisbursements from "../data/mockDisbursements";
-import mockNGOs from "../data/mockNGOs";
+import { useEffect, useState } from "react";
+import { getAllCampaigns } from "../services/campaignService";
+import { getAllCamps } from "../../camps/services/campService";
 import "./ImpactTransparency.css";
 
-function AnimatedStat({ value, label, prefix = "", suffix = "" }) {
-  const count = useCountUp(value, 1600, true);
-  const display = value >= 100000 ? (count / 100000).toFixed(1) + "L" : count.toLocaleString("en-IN");
-
-  return (
-    <div className="impact-page__stat">
-      <p className="impact-page__stat-value">
-        {prefix}{display}{suffix}
-      </p>
-      <p className="impact-page__stat-label">{label}</p>
-    </div>
-  );
-}
-
 function ImpactTransparency() {
-  const totalRaised = mockCampaigns.reduce((sum, c) => sum + c.raisedAmount, 0);
-  const totalDonors = mockCampaigns.reduce((sum, c) => sum + c.donorCount, 0);
-
-  const allDisbursements = Object.entries(mockDisbursements).flatMap(([campaignId, records]) =>
-    records.map((r) => ({ ...r, campaignId }))
-  );
-
-  return (
-    <section className="impact-page">
-      <div className="container">
-        <div className="impact-page__header">
-          <h1>Impact & Transparency</h1>
-          <p>
-            Every rupee on Sevana is tracked from donation to delivery. Here's
-            the platform-wide picture — no cherry-picked numbers.
-          </p>
-        </div>
-
-        <div className="impact-page__stats-grid">
-          <AnimatedStat value={totalRaised} prefix="₹" label="Total Raised" />
-          <AnimatedStat value={totalDonors} label="Total Donors" />
-          <AnimatedStat value={mockCampaigns.length} label="Campaigns Run" />
-          <AnimatedStat value={mockNGOs.length} label="Verified NGO Partners" />
-        </div>
-
-        <div className="impact-page__section">
-          <h2>How every donation is verified</h2>
-          <VerificationSteps />
-        </div>
-
-        <div className="impact-page__section">
-          <h2>Recent Disbursement Proof</h2>
-          <p className="impact-page__section-sub">
-            Real, photo-verified records of funds actually being spent.
-          </p>
-
-          <div className="impact-page__disbursement-grid">
-            {allDisbursements.map((item) => {
-              const campaign = mockCampaigns.find((c) => c.id === item.campaignId);
-              return (
-                <div className="impact-proof-card" key={item.id}>
-                  <img src={item.photo} alt={item.description} />
-                  <div className="impact-proof-card__body">
-                    <p className="impact-proof-card__campaign">
-                      {campaign ? campaign.title : "Campaign"}
-                    </p>
-                    <p className="impact-proof-card__desc">{item.description}</p>
-                    <div className="impact-proof-card__footer">
-                      <span>{new Date(item.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
-                      <strong>₹{item.amount.toLocaleString("en-IN")}</strong>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  const [campaigns,setCampaigns]=useState([]); const [camps,setCamps]=useState([]); const [error,setError]=useState("");
+  useEffect(()=>{Promise.all([getAllCampaigns(),getAllCamps()]).then(([a,b])=>{setCampaigns(a);setCamps(b)}).catch(e=>setError(e.message||"Could not load Sevana listings."))},[]);
+  return <section className="impact-page"><div className="container"><div className="impact-page__header"><h1>Impact & Transparency</h1><p>Sevana lists active campaigns and published camps from the backend. Payment totals and disbursement proofs will appear after verified payment and distribution reporting is available.</p></div>{error&&<p role="alert">{error}</p>}<div className="impact-page__stats-grid"><div className="impact-page__stat"><p className="impact-page__stat-value">{campaigns.length}</p><p className="impact-page__stat-label">Active campaigns</p></div><div className="impact-page__stat"><p className="impact-page__stat-value">{camps.length}</p><p className="impact-page__stat-label">Published camps</p></div><div className="impact-page__stat"><p className="impact-page__stat-value">—</p><p className="impact-page__stat-label">Verified funds raised</p></div><div className="impact-page__stat"><p className="impact-page__stat-value">—</p><p className="impact-page__stat-label">Verified disbursements</p></div></div><div className="impact-page__section"><h2>Payment verification</h2><p>Donation requests remain pending until a payment provider confirms them. The current MVP has no payment gateway or public disbursement-proof endpoint, so it does not report unverified payment or spending figures.</p></div></div></section>;
 }
 
 export default ImpactTransparency;

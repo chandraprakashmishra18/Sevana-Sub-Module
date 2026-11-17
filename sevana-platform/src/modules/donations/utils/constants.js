@@ -3,9 +3,13 @@ export const DONATION_PRESET_AMOUNTS = [100, 500, 1000, 2500, 5000];
 export const CAMPAIGN_CATEGORIES = [
   "All",
   "Student Sponsorship",
-  "Family Aid",
-  "In-Kind Giving",
   "Medical Aid",
+  "Food Support",
+  "Clothing Support",
+  "Emergency Relief",
+  "Education",
+  "Health",
+  "Other",
 ];
 
 export const CAMPAIGN_BENEFICIARIES = [
@@ -14,6 +18,10 @@ export const CAMPAIGN_BENEFICIARIES = [
   "Old Age Home",
   "NGO",
   "General",
+  "Women",
+  "Persons with disabilities",
+  "Students",
+  "Families",
 ];
 
 export const PAYMENT_METHODS = [
