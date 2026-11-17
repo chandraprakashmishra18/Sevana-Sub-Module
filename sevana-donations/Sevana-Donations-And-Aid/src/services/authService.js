@@ -237,7 +237,7 @@ export function updateUserProfile(userId, updates) {
   return updatedUser;
 }
 
-export function awardUserXP(userId, addedXP, reason = "") {
+export function awardUserXP(userId, addedXP) {
   const users = getUsers();
   let updatedUser = null;
 

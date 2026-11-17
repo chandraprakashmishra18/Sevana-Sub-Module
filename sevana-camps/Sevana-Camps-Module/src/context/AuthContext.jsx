@@ -1,4 +1,5 @@
-import { createContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { AuthContext } from "./auth-context";
 import {
   getCurrentUser,
   registerUser,
@@ -10,8 +11,6 @@ import {
   recordUserCampJoined,
   recordUserDonation,
 } from "../services/authService";
-
-export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => getCurrentUser());

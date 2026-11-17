@@ -250,7 +250,7 @@ export function updateUserProfile(userId, updates) {
 /**
  * Awards XP to user and recalculates milestones/badges
  */
-export function awardUserXP(userId, addedXP, reason = "") {
+export function awardUserXP(userId, addedXP) {
   const users = getUsers();
   let updatedUser = null;
 

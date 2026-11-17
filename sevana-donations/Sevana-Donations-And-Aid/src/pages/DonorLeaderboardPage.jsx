@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import mockDonorXPProfiles, { getTierForDonorXP } from "../data/mockDonorXP";
 import { getDonationHistory } from "../services/donationService";
@@ -7,11 +7,7 @@ import "./DonorLeaderboardPage.css";
 
 const rankIcons = { 1: "🥇", 2: "🥈", 3: "🥉" };
 
-function DonorLeaderboardPage() {
-  const [donors, setDonors] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
+function getRankedDonors() {
     // 1. Fetch donation history
     const history = getDonationHistory();
     const historyByEmail = history.reduce((groups, donation) => {
@@ -63,9 +59,11 @@ function DonorLeaderboardPage() {
       .sort((a, b) => b.totalXP - a.totalXP)
       .map((d, i) => ({ ...d, rank: i + 1 }));
 
-    setDonors(sorted);
-    setLoading(false);
-  }, []);
+    return sorted;
+}
+
+function DonorLeaderboardPage() {
+  const donors = useMemo(() => getRankedDonors(), []);
 
   return (
     <section className="donor-leaderboard-page">
@@ -77,11 +75,8 @@ function DonorLeaderboardPage() {
           </p>
         </div>
 
-        {loading ? (
-          <p className="donor-leaderboard-page__loading">Loading leaderboard...</p>
-        ) : (
-          <>
-            <div className="donor-leaderboard">
+        <>
+          <div className="donor-leaderboard">
               {donors.map((donor) => {
                 const tier = getTierForDonorXP(donor.totalXP);
                 const isTop3 = donor.rank <= 3;
@@ -117,13 +112,12 @@ function DonorLeaderboardPage() {
                   </div>
                 );
               })}
-            </div>
+          </div>
 
-            <div className="donor-leaderboard-page__link">
-              <Link to="/campaigns">Browse Campaigns to Support &amp; Earn XP</Link>
-            </div>
-          </>
-        )}
+          <div className="donor-leaderboard-page__link">
+            <Link to="/campaigns">Browse Campaigns to Support &amp; Earn XP</Link>
+          </div>
+        </>
       </div>
     </section>
   );
