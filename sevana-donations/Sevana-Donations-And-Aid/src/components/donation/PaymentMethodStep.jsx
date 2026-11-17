@@ -29,10 +29,10 @@ function PaymentMethodStep() {
         });
         nextStep();
       } else {
-        setError("Payment could not be processed. Please try again.");
+        setError("The demo contribution could not be saved locally. No payment was attempted.");
       }
     } catch {
-      setError("Something went wrong. Please check your connection and try again.");
+      setError("The demo record could not be saved. No payment was attempted.");
     } finally {
       setProcessing(false);
     }
@@ -40,14 +40,14 @@ function PaymentMethodStep() {
 
   return (
     <div className="donation-step">
-      <h2>Step 3 of 4 — Payment</h2>
+      <h2>Step 3 of 4 — Demo contribution</h2>
 
       <div className="payment-summary">
-        <span>Amount to pay</span>
+        <span>Demo amount</span>
         <strong>₹{donation.amount.toLocaleString("en-IN")}</strong>
       </div>
 
-      <p className="donation-step__label">Choose payment method</p>
+      <p className="donation-step__label">Choose a sample payment option</p>
 
       <div className="payment-methods">
         {PAYMENT_METHODS.map((method) => (
@@ -68,14 +68,14 @@ function PaymentMethodStep() {
       {error && <p className="payment-error">{error}</p>}
 
       <p className="payment-note">
-        🔒 This is a demo checkout for academic evaluation — no real payment
-        gateway is connected yet. In production this step hands off to Razorpay.
+        Demo only: no payment gateway is connected and no real payment will be
+        made. The next step creates a local demonstration receipt.
       </p>
 
       <div className="donation-step__actions">
         <Button variant="ghost" onClick={prevStep} disabled={processing}>← Back</Button>
         <Button variant="accent" size="lg" onClick={handlePayClick} disabled={processing}>
-          {processing ? "Processing..." : `Pay ₹${donation.amount}`}
+          {processing ? "Saving demo record..." : `Record demo contribution ₹${donation.amount}`}
         </Button>
       </div>
     </div>

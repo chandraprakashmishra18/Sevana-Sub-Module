@@ -1,6 +1,6 @@
-const baseUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const baseUrl = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
 
-/** Shared REST boundary. Empty VITE_API_URL keeps this prototype in mock mode. */
+/** Shared REST boundary. Unwired demo services continue using local mock data. */
 export async function apiRequest(path, { method = "GET", body, headers = {}, ...options } = {}) {
   if (!baseUrl) throw new Error("Backend is not configured. This action is available in demo mode only.");
   const response = await fetch(`${baseUrl}${path}`, {

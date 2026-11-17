@@ -31,7 +31,7 @@ function JoinConfirmation({ camp }) {
         <h2>You're in, {joinData.fullName.split(" ")[0]}!</h2>
         
         <div className="join-confirmation__xp-badge">
-          🌟 <strong>{alreadyJoined ? "Already registered" : `+${xpReward} Community XP`}</strong> {alreadyJoined ? "for this email and camp." : "awarded for registering to serve"}!
+          🌟 <strong>{alreadyJoined ? "Already registered" : `Demo +${xpReward} Community XP`}</strong> {alreadyJoined ? "for this email and camp." : "shown for this simulated registration"}.
         </div>
 
         <p>

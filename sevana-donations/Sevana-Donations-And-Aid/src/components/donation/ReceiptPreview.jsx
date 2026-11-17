@@ -13,7 +13,7 @@ function ReceiptPreview({ donation, campaign }) {
     <div className="receipt-preview">
       <div className="receipt-preview__header">
         <span className="receipt-preview__logo">Sevana</span>
-        <span className="receipt-preview__tag">80G Donation Receipt</span>
+        <span className="receipt-preview__tag">Demo Donation Receipt</span>
       </div>
 
       <div className="receipt-preview__row">
@@ -44,8 +44,8 @@ function ReceiptPreview({ donation, campaign }) {
       </div>
 
       <p className="receipt-preview__footer">
-        This donation is eligible for tax exemption under Section 80G of the
-        Income Tax Act. A copy has been sent to your registered email.
+        This is a demo receipt only. It is not a tax document, proof of payment,
+        or email confirmation.
       </p>
     </div>
   );

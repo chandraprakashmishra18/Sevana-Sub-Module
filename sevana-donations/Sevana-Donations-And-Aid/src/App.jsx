@@ -7,9 +7,13 @@ import "./App.css";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/donations">
       <AuthProvider>
         <Navbar />
+        <aside className="staging-demo-banner" role="note">
+          STAGING DEMO · Use synthetic data only. Contributions are not payments;
+          receipts are not tax documents; XP, rankings, and organization review are illustrative.
+        </aside>
         <main className="app-main">
           <AppRoutes />
         </main>

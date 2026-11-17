@@ -23,7 +23,7 @@ function XPRewardBanner({ amount, currentTotalXP = 0 }) {
     <div className="xp-reward-banner">
       <div className="xp-reward-banner__celebration">🎉</div>
       <p className="xp-reward-banner__earned">
-        You earned <span>+{earnedXP} XP!</span>
+        Demo XP recorded: <span>+{earnedXP} XP</span>
       </p>
       <span
         className="xp-reward-banner__tier"

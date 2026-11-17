@@ -123,7 +123,7 @@ function Login() {
             <p>
               New to Sevana?{" "}
               <Link to="/register" state={{ from }}>
-                Create a Free Account (+50 Welcome XP) →
+              Registration is disabled for this demo →
               </Link>
             </p>
           </div>

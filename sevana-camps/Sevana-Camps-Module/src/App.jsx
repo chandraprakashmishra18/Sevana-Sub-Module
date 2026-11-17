@@ -7,9 +7,13 @@ import "./App.css";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/camps">
       <AuthProvider>
         <Navbar />
+        <aside className="staging-demo-banner" role="note">
+          STAGING DEMO · Use synthetic data only. Camp registrations, XP, badges,
+          leaderboards, and organizer actions are sample/local records, not verified activity.
+        </aside>
         <main className="app-main">
           <AppRoutes />
         </main>

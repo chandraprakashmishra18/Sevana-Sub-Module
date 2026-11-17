@@ -1,0 +1,42 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "backend": {
+      "root": "backend",
+      "framework": "express",
+      "entrypoint": "src/app.js"
+    },
+    "sevana-platform": {
+      "root": "sevana-platform",
+      "framework": "vite",
+      "rewrites": [
+        { "source": "/(.*)", "destination": "/index.html" }
+      ]
+    },
+    "sevana-camps-module": {
+      "root": "sevana-camps/Sevana-Camps-Module",
+      "framework": "vite",
+      "rewrites": [
+        { "source": "/camps", "destination": "/index.html" },
+        { "source": "/camps/(.*)", "destination": "/index.html" }
+      ]
+    },
+    "sevana-donations-and-aid": {
+      "root": "sevana-donations/Sevana-Donations-And-Aid",
+      "framework": "vite",
+      "rewrites": [
+        { "source": "/donations", "destination": "/index.html" },
+        { "source": "/donations/(.*)", "destination": "/index.html" }
+      ]
+    }
+  },
+  "rewrites": [
+    { "source": "/api", "destination": { "service": "backend" } },
+    { "source": "/api/(.*)", "destination": { "service": "backend" } },
+    { "source": "/camps", "destination": { "service": "sevana-camps-module" } },
+    { "source": "/camps/(.*)", "destination": { "service": "sevana-camps-module" } },
+    { "source": "/donations", "destination": { "service": "sevana-donations-and-aid" } },
+    { "source": "/donations/(.*)", "destination": { "service": "sevana-donations-and-aid" } },
+    { "source": "/(.*)", "destination": { "service": "sevana-platform" } }
+  ]
+}

@@ -25,8 +25,8 @@ function NotFound() {
 
         <div className="not-found-crosslink">
           <p>Looking for Donations or Aid?</p>
-          <a href="http://localhost:5173/" className="not-found-external-btn">
-            💖 Open Donations & Aid Portal (Port 5173) ↗
+          <a href="/donations/" className="not-found-external-btn">
+            💖 Open Donations & Aid Portal ↗
           </a>
         </div>
       </div>

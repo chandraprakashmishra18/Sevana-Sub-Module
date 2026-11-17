@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import "./CrossModuleBridge.css";
 
-function CrossModuleBridge({ targetPort = 5174, targetTitle = "Sevana Camps & Community Service" }) {
+function CrossModuleBridge({ targetTitle = "Sevana Camps & Community Service" }) {
   const location = useLocation();
   const [countdown, setCountdown] = useState(3);
-  const targetUrl = `http://localhost:${targetPort}${location.pathname}${location.search}`;
+  const targetUrl = `/camps${location.pathname}${location.search}`;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -37,7 +37,7 @@ function CrossModuleBridge({ targetPort = 5174, targetTitle = "Sevana Camps & Co
 
         <div className="bridge-actions">
           <a href={targetUrl} className="bridge-primary-btn">
-            👉 Continue to Camps (Port {targetPort})
+            👉 Continue to Camps
           </a>
           <Link to="/" className="bridge-secondary-btn">
             Stay on Donations Home

@@ -4,6 +4,13 @@
   min-height: calc(100vh - 160px);
 }
 
+.register-demo-link {
+  display: inline-block;
+  color: var(--color-primary, #176b55);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
 .register-page__container {
   display: flex;
   justify-content: center;

@@ -46,7 +46,7 @@ function AmountSelector({ campaign }) {
 
       {estimatedXP > 0 && (
         <div className="amount-selector__xp-tag">
-          🌟 You will earn <strong>+{estimatedXP} Community XP</strong> with this donation!
+          🌟 Demo estimate: <strong>+{estimatedXP} Community XP</strong> for this local contribution record.
         </div>
       )}
 

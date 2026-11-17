@@ -1,3 +1,13 @@
 .app-main {
   min-height: 60vh;
 }
+.staging-demo-banner {
+  padding: 0.65rem 1rem;
+  background: #fff4d6;
+  border-bottom: 1px solid #e7c76b;
+  color: #573b00;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: center;
+}
