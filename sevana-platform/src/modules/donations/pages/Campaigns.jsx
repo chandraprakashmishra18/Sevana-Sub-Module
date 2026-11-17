@@ -104,7 +104,7 @@ function Campaigns() {
         <div className="campaigns-page__header">
           <h1>All Donation Campaigns</h1>
           <p>
-            Support community drives for Orphanages, Old Age Homes, NGOs, and student sponsorships. Every donation earns XP points!
+            Explore sample community drives. Contributions and XP shown in this demo are stored locally; no payment is processed.
           </p>
         </div>
 

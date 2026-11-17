@@ -50,7 +50,7 @@ function Login() {
           <div className="auth-card__header">
             
             <h1>Welcome Back to Sevana</h1>
-            <p>Log in to track your donations, earn donor karma XP, and view 80G tax receipts.</p>
+            <p>Sign in with a synthetic sample account to explore the local demo profile and activity.</p>
           </div>
 
           {error && <div className="auth-card__alert auth-card__alert--error">{error}</div>}
@@ -96,7 +96,7 @@ function Login() {
           </form>
 
           <div className="auth-card__divider">
-            <span>or test with sample accounts</span>
+            <span>Sample accounts (synthetic demo data)</span>
           </div>
 
           <div className="auth-card__quick-demo">
@@ -123,7 +123,7 @@ function Login() {
             <p>
               New to Sevana?{" "}
               <Link to="/register" state={{ from }}>
-                Create a Free Account (+50 Welcome XP) →
+                Registration is disabled for this demo →
               </Link>
             </p>
           </div>

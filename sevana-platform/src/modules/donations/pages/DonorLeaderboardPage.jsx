@@ -73,7 +73,7 @@ function DonorLeaderboardPage() {
         <div className="donor-leaderboard-page__header">
           <h1>Community Donor Leaderboard</h1>
           <p>
-            Recognizing real citizens, volunteers, and donors supporting verified causes for Orphanages, Old Age Homes, NGOs, and education. Every donation earns community XP points!
+            Demo leaderboard assembled from sample profiles and contribution records stored in this browser. XP and amounts are not verified or financial records.
           </p>
         </div>
 

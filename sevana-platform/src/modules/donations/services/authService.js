@@ -152,12 +152,13 @@ export function getCurrentUser() {
 export function setCurrentUser(user) {
   try {
     if (user) {
-      localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(withoutPassword(user)));
+      user = withoutPassword(user);
+      localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(user));
     } else {
       localStorage.removeItem(AUTH_USER_STORAGE_KEY);
     }
     if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("sevana_auth_changed", { detail: user }));
+      window.dispatchEvent(new CustomEvent("sevana_auth_changed", { detail: user ? withoutPassword(user) : null }));
     }
   } catch (err) {
     console.error("Failed to set current user in localStorage", err);
@@ -330,5 +331,11 @@ export function recordUserDonation(userId, donationAction) {
   }
 
   return updatedUser;
+}
+
+// Scrub password fields left by earlier demo builds as soon as this app loads.
+if (typeof window !== "undefined") {
+  getUsers();
+  getCurrentUser();
 }
 

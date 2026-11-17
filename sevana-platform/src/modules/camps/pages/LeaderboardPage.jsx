@@ -27,7 +27,7 @@ function LeaderboardPage() {
       <div className="container">
         <div className="leaderboard-page__header">
           <h1>Volunteer Leaderboard</h1>
-          <p>Workers ranked by XP earned across every camp they've contributed to.</p>
+          <p>Demo rankings combine sample profiles and camp activity saved in this browser. XP and participation are not independently verified.</p>
         </div>
 
         {loading ? (
