@@ -1,112 +1,254 @@
+
+/* ================================
+   NOT FOUND / 404 PAGE
+================================ */
+
 .not-found-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 65vh;
-  padding: 48px 16px;
+  width: 100%;
+  padding: 56px 20px;
+  background: var(--color-bg, #f8fafc);
+  box-sizing: border-box;
 }
 
 .not-found-card {
-  max-width: 580px;
   width: 100%;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 40px 32px;
+  max-width: 580px;
+  padding: 44px 36px;
   text-align: center;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 20px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.07);
+  box-sizing: border-box;
+  overflow-wrap: break-word;
 }
 
+/* Badge */
+
 .not-found-badge {
-  display: inline-block;
-  background: #fee2e2;
-  color: #dc2626;
-  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e6f4f3;
+  color: #0f766e;
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 9999px;
-  margin-bottom: 16px;
-  letter-spacing: 0.05em;
+  padding: 7px 15px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
+/* Heading */
+
 .not-found-title {
-  font-size: 2rem;
-  color: #0f172a;
-  margin-bottom: 12px;
+  color: var(--color-text, #0f172a);
+  font-size: clamp(1.7rem, 4vw, 2.25rem);
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  margin: 0 0 14px;
 }
 
 .not-found-subtitle {
-  color: #64748b;
+  max-width: 440px;
+  margin: 0 auto 30px;
+  color: var(--color-text-muted, #64748b);
   font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 28px;
+  line-height: 1.75;
 }
+
+/* Action Buttons */
 
 .not-found-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 32px;
+  gap: 12px;
+  margin-bottom: 34px;
 }
 
-.not-found-primary-btn {
-  background: #10b981;
-  color: #ffffff;
+.not-found-primary-btn,
+.not-found-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 0.94rem;
+  font-weight: 650;
   text-decoration: none;
-  font-weight: 600;
-  padding: 12px 20px;
-  border-radius: 8px;
-  transition: background 0.2s ease;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Primary Button */
+
+.not-found-primary-btn {
+  background: #0f766e;
+  color: #ffffff;
+  border: 1px solid #0f766e;
+  box-shadow: 0 4px 10px rgba(15, 118, 110, 0.16);
 }
 
 .not-found-primary-btn:hover {
-  background: #059669;
+  background: #115e59;
+  border-color: #115e59;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 16px rgba(15, 118, 110, 0.2);
 }
 
+/* Secondary Button */
+
 .not-found-secondary-btn {
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  color: #334155;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 12px 18px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  background: #ffffff;
+  border: 1px solid var(--color-border, #e2e8f0);
+  color: var(--color-text, #0f172a);
 }
 
 .not-found-secondary-btn:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: #e6f4f3;
+  border-color: #99d5ce;
+  color: #0f766e;
+  transform: translateY(-2px);
 }
 
+/* Crosslink Section */
+
 .not-found-crosslink {
-  border-top: 1px dashed #e2e8f0;
-  padding-top: 20px;
+  border-top: 1px dashed var(--color-border, #e2e8f0);
+  padding-top: 22px;
   margin-top: 8px;
 }
 
 .not-found-crosslink p {
-  color: #64748b;
+  color: var(--color-text-muted, #64748b);
   font-size: 0.9rem;
-  margin-bottom: 10px;
+  line-height: 1.6;
+  margin: 0 0 12px;
 }
 
+/* External Link */
+
 .not-found-external-btn {
-  display: inline-block;
-  color: #0284c7;
-  font-weight: 600;
-  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 17px;
+  background: #e6f4f3;
+  color: #0f766e;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 0.93rem;
+  font-weight: 650;
   text-decoration: none;
-  padding: 8px 16px;
-  background: #f0f9ff;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .not-found-external-btn:hover {
-  background: #e0f2fe;
-  color: #0369a1;
+  background: #d1eae7;
+  color: #115e59;
+  border-color: #99d5ce;
+  transform: translateY(-1px);
 }
 
+/* Keyboard Accessibility */
+
+.not-found-primary-btn:focus-visible,
+.not-found-secondary-btn:focus-visible,
+.not-found-external-btn:focus-visible {
+  outline: 3px solid rgba(15, 118, 110, 0.3);
+  outline-offset: 3px;
+}
+
+/* Tablet */
+
+@media (max-width: 768px) {
+  .not-found-container {
+    min-height: 60vh;
+    padding: 44px 18px;
+  }
+
+  .not-found-card {
+    max-width: 520px;
+    padding: 36px 28px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+  .not-found-container {
+    min-height: 55vh;
+    padding: 32px 14px;
+  }
+
+  .not-found-card {
+    padding: 32px 20px;
+    border-radius: 16px;
+  }
+
+  .not-found-badge {
+    font-size: 0.72rem;
+    margin-bottom: 16px;
+  }
+
+  .not-found-title {
+    font-size: 1.7rem;
+  }
+
+  .not-found-subtitle {
+    font-size: 0.93rem;
+    margin-bottom: 24px;
+  }
+
+  .not-found-actions {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .not-found-primary-btn,
+  .not-found-secondary-btn {
+    width: 100%;
+  }
+
+  .not-found-crosslink {
+    padding-top: 18px;
+  }
+}
+
+/* Reduced Motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found-primary-btn,
+  .not-found-secondary-btn,
+  .not-found-external-btn {
+    transition: none;
+  }
+
+  .not-found-primary-btn:hover,
+  .not-found-secondary-btn:hover,
+  .not-found-external-btn:hover {
+    transform: none;
+  }
+}
