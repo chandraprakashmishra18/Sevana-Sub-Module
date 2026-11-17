@@ -26,7 +26,9 @@ import PastCamps from "./modules/camps/pages/PastCamps";
 import WorkerProfile from "./modules/camps/pages/WorkerProfile";
 import VolunteerLeaderboard from "./modules/camps/pages/LeaderboardPage";
 import Invitations from "./modules/camps/pages/InvitationsPage";
-import CampManager from "./modules/camps/pages/CampManager";
+import NgoDashboard from "./modules/camps/pages/NgoDashboard";
+import NgoCampManage from "./modules/camps/pages/NgoCampManage";
+import MyRegistrations from "./modules/camps/pages/MyRegistrations";
 import Dashboard from "./shared/Dashboard";
 import OrganizationDashboard from "./shared/OrganizationDashboard";
 import AdminDashboard from "./shared/AdminDashboard";
@@ -44,7 +46,7 @@ export default function AppRoutes() {
     <Route path="/beneficiaries" element={<Beneficiaries />} /><Route path="/analytics" element={<Analytics />} /><Route path="/notifications" element={<Notifications />} />
     <Route path="/campaigns" element={<Campaigns />} /><Route path="/campaigns/:id" element={<CampaignDetail />} /><Route path="/donate" element={<Donate />} /><Route path="/manage-campaigns" element={<CampaignManager />} /><Route path="/register-organization" element={<OrganizationRegistration />} />
     <Route path="/ngo-partners" element={<NGOPartners />} /><Route path="/ngo-partners/:id" element={<NGOProfile />} /><Route path="/impact" element={<Impact />} /><Route path="/leaderboard" element={<DonorLeaderboard />} />
-    <Route path="/camps" element={<Camps />} /><Route path="/camps/:id" element={<CampDetail />} /><Route path="/camps/:id/join" element={<JoinCamp />} /><Route path="/organize" element={<OrganizeCamp />} /><Route path="/manage-camps" element={<CampManager />} />
+    <Route path="/camps" element={<Camps />} /><Route path="/camps/:id" element={<CampDetail />} /><Route path="/camps/:id/join" element={<JoinCamp />} /><Route path="/organize" element={<OrganizeCamp />} /><Route path="/manage-camps" element={<NgoDashboard />} /><Route path="/ngo" element={<NgoDashboard />} /><Route path="/ngo/camps/:id" element={<NgoCampManage />} /><Route path="/my-registrations" element={<MyRegistrations />} />
     <Route path="/organizers" element={<Organizers />} /><Route path="/organizers/:id" element={<OrganizerProfile />} /><Route path="/past-camps" element={<PastCamps />} /><Route path="/profile" element={<WorkerProfile />} /><Route path="/profile/:id" element={<WorkerProfile />} /><Route path="/invitations" element={<Invitations />} /><Route path="/volunteer-leaderboard" element={<VolunteerLeaderboard />} />
     <Route path="*" element={<NotFound />} />
   </Routes>;
