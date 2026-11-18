@@ -11,10 +11,10 @@ export default function App() {
       <AuthProvider>
         <Navbar />
         <aside className="demo-mode-banner" role="note">
-          STAGING DEMO · Use synthetic sample data only. Do not enter real
-          personal, donor, beneficiary, or organization information. Payments
-          are not processed; receipts, XP, leaderboards, camp activity, and
-          organization review are demonstrations only.
+          AUTHENTICATION CONNECTED · Account credentials are sent to the Sevana
+          backend. Camps, donations, payments, receipts, XP, leaderboards, and
+          organization review remain demonstrations. Do not enter real donor,
+          beneficiary, or payment information.
         </aside>
         <main className="app-main"><AppRoutes /></main>
         <Footer />

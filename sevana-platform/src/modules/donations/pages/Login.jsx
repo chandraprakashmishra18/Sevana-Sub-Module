@@ -6,7 +6,7 @@ import Button from "../components/common/Button";
 import "./Login.css";
 
 function Login() {
-  const { login } = useAuth();
+  const { login, loginDemo } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
@@ -38,9 +38,16 @@ function Login() {
   };
 
   const handleQuickDemo = (demoEmail, demoPassword) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
     setError("");
+    setSubmitting(true);
+    try {
+      loginDemo(demoEmail, demoPassword);
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(err.message || "Unable to start the synthetic demo session.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -50,7 +57,7 @@ function Login() {
           <div className="auth-card__header">
             
             <h1>Welcome Back to Sevana</h1>
-            <p>Sign in with a synthetic sample account to explore the local demo profile and activity.</p>
+            <p>Sign in with an account registered in Sevana. Sample accounts open a separate local demo session.</p>
           </div>
 
           {error && <div className="auth-card__alert auth-card__alert--error">{error}</div>}
@@ -91,16 +98,16 @@ function Login() {
             </label>
 
             <Button type="submit" variant="accent" size="lg" fullWidth disabled={submitting}>
-              {submitting ? "Signing in..." : "Sign In to Account"}
+              {submitting ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
           <div className="auth-card__divider">
-            <span>Sample accounts (synthetic demo data)</span>
+            <span>Or explore the synthetic demo</span>
           </div>
 
           <div className="auth-card__quick-demo">
-            <p className="auth-card__demo-title">1-Click Sample Accounts:</p>
+            <p className="auth-card__demo-title">Demo sessions (not backend accounts):</p>
             <div className="auth-card__demo-pills">
               {SEED_USERS.map((seed) => (
                 <button
@@ -108,6 +115,7 @@ function Login() {
                   type="button"
                   className="demo-pill"
                   onClick={() => handleQuickDemo(seed.email, seed.password)}
+                  disabled={submitting}
                 >
                   <img src={seed.avatar} alt={seed.name} className="demo-pill__avatar" />
                   <div className="demo-pill__text">
@@ -123,7 +131,7 @@ function Login() {
             <p>
               New to Sevana?{" "}
               <Link to="/register" state={{ from }}>
-                Registration is disabled for this demo →
+                Create an account →
               </Link>
             </p>
           </div>
