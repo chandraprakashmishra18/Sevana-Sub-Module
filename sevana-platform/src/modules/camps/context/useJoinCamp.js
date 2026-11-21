@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { JoinCampContext } from "./joinCampContextInstance";
+import { JoinCampContext } from "./JoinCampContextInstance";
 
 export function useJoinCamp() {
   const context = useContext(JoinCampContext);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { JoinCampContext } from "./joinCampContextInstance";
+import { JoinCampContext } from "./JoinCampContextInstance";
 import { getCurrentUser } from "../services/authService";
 
 export function JoinCampProvider({ children, initialRole, campId }) {
