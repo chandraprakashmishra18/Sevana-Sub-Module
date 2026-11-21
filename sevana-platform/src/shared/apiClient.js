@@ -1,7 +1,7 @@
 // In development, use Vite's same-origin /api proxy so LAN browser visits do
 // not try to reach localhost from the visitor's device or require CORS.
 const configuredApiUrl = import.meta.env.PROD
-  ? import.meta.env.VITE_API_URL?.trim().replace(/\/+$/, "")
+  ? (import.meta.env.VITE_API_URL?.trim() || "https://sevana.onrender.com").replace(/\/+$/, "")
   : "";
 const baseUrl = configuredApiUrl
   ? (configuredApiUrl.endsWith("/api") ? configuredApiUrl : `${configuredApiUrl}/api`)

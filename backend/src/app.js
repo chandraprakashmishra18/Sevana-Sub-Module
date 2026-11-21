@@ -45,7 +45,10 @@ function parseCorsOrigins(value) {
     });
 }
 
-const allowedOrigins = new Set(parseCorsOrigins(process.env.CORS_ALLOWED_ORIGINS));
+const allowedOrigins = new Set(parseCorsOrigins(
+  process.env.CORS_ALLOWED_ORIGINS ||
+  "https://sevana-sub-module.vercel.app"
+));
 if (process.env.NODE_ENV !== "production") {
   [
     "http://localhost:5173",

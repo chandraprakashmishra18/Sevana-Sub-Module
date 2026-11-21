@@ -15,7 +15,7 @@ function requireAuth(req, res, next) {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || process.env.JWT_ACCESS_SECRET);
 
     req.user = {
       id: decoded.sub,
@@ -39,7 +39,7 @@ function optionalAuth(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET);
+    const decoded = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET || process.env.JWT_ACCESS_SECRET);
     req.user = { id: decoded.sub, platformRole: decoded.platformRole };
     return next();
   } catch (error) {

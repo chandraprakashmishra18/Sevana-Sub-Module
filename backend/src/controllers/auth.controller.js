@@ -14,7 +14,7 @@ function generateToken(user) {
       sub: user.id,
       platformRole: user.platformRole,
     },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET || process.env.JWT_ACCESS_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRES_IN || "7d",
     }
