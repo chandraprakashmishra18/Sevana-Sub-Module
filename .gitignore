@@ -1,0 +1,7 @@
+# Local environment files are never committed; keep only explicit examples.
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
