@@ -1,0 +1,12 @@
+const express = require("express");
+const { requireAuth, optionalAuth } = require("../middleware/auth.middleware");
+const controller = require("../controllers/organization.controller");
+const router = express.Router();
+router.get("/", controller.list);
+router.get("/mine", requireAuth, (req, res) => { req.mine = true; return controller.list(req, res); });
+router.post("/", requireAuth, controller.create);
+router.get("/:id/campaigns", optionalAuth, controller.campaigns);
+router.get("/:id/donations", requireAuth, controller.donations);
+router.get("/:id", optionalAuth, controller.get);
+router.patch("/:id", requireAuth, controller.update);
+module.exports = router;

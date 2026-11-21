@@ -1,4 +1,5 @@
 import Badge from "../common/Badge";
+import SafeImage from "../../../../shared/SafeImage";
 import "./CampaignHeader.css";
 
 function CampaignHeader({ campaign }) {
@@ -19,7 +20,7 @@ function CampaignHeader({ campaign }) {
   return (
     <div className="campaign-header">
       <div className="campaign-header__image-wrap">
-        <img src={image} alt={title} className="campaign-header__image" />
+        <SafeImage src={image} alt={title} className="campaign-header__image" />
       </div>
 
       <div className="campaign-header__badges">

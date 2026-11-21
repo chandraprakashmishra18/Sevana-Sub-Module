@@ -10,9 +10,9 @@ export function JoinCampProvider({ children, initialRole, campId }) {
     role: initialRole || (currentUser?.roleType === "doctor" || currentUser?.roleType === "teacher" || currentUser?.roleType === "volunteer" ? "worker" : "attendee"),
     fullName: currentUser ? currentUser.name : "",
     email: currentUser ? currentUser.email : "",
-    phone: currentUser ? currentUser.phone : "",
+    phone: currentUser?.phone || "",
     // Worker-specific
-    skillOrProfession: currentUser ? currentUser.role : "",
+    skillOrProfession: currentUser?.role || "",
     availability: "Full Day",
     experience: currentUser?.organization ? `Associated with ${currentUser.organization}` : "",
     // Attendee-specific

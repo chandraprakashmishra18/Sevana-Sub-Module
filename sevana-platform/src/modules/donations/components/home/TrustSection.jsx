@@ -5,25 +5,25 @@ const trustLayers = [
     icon: "01",
     title: "Organization Review",
     description:
-      "In this demo, NGO details are submitted through a registration form and reviewed in an admin console. Real document verification is planned for a full release.",
+      "Organization profiles and verification status come from backend records. Admin verification controls are not available in this application.",
   },
   {
     icon: "02",
     title: "Campaign Approval",
     description:
-      "New campaigns start as drafts and only appear to donors after an admin approves them. Paused or rejected campaigns are hidden from the campaign list.",
+      "Campaigns start as drafts. Only managers of verified organizations can publish them; campaign moderation tools are not exposed.",
   },
   {
     icon: "03",
     title: "Visible Progress",
     description:
-      "Every campaign shows its goal, the amount raised and the number of donors, and updates when a demo donation is recorded.",
+      "Campaign totals include successful backend donation records. Pending intents do not increase the totals.",
   },
   {
     icon: "04",
-    title: "Sample Disbursement Updates",
+    title: "Published Disbursement Updates",
     description:
-      "Campaign pages show how fund-use updates could look. The records on this site are sample data, not real transactions.",
+      "Campaign pages show persisted aid distribution records when the backend has them.",
   },
 ];
 
@@ -32,11 +32,10 @@ function TrustSection() {
     <section className="trust-section">
       <div className="container">
         <div className="trust-section__header">
-          <h2>How Sevana builds trust (demo)</h2>
+          <h2>How Sevana builds trust</h2>
           <p>
             Most platforms ask you to trust blindly. Sevana's approach is to
-            make each step visible. This project demonstrates the idea with
-            sample data.
+            make each step visible. Payment settlement and organization moderation still require external operational setup.
           </p>
         </div>
 

@@ -7,19 +7,20 @@ function RoleSelector({ camp }) {
   const navigate = useNavigate();
   const { id, workerSlots, attendeeSlots, status } = camp;
 
-  const hasAttendeeOption = attendeeSlots && attendeeSlots.total > 0;
-  const isWorkerFull = workerSlots.filled >= workerSlots.total;
-  const isAttendeeFull = hasAttendeeOption && attendeeSlots.filled >= attendeeSlots.total;
+  const hasAttendeeOption = attendeeSlots && (attendeeSlots.total == null || attendeeSlots.total > 0);
+  const isWorkerFull = workerSlots.total != null && workerSlots.filled >= workerSlots.total;
+  const isAttendeeFull = hasAttendeeOption && attendeeSlots.total != null && attendeeSlots.filled >= attendeeSlots.total;
   const isPast = status === "past";
+  const isUnavailable = isPast || status === "cancelled";
 
   const handleJoin = (role) => {
     navigate(`/camps/${id}/join`, { state: { role } });
   };
 
-  if (isPast) {
+  if (isUnavailable) {
     return (
       <div className="role-selector role-selector--past">
-        <p>This camp has already taken place. Check the outcome summary below.</p>
+        <p>{isPast ? "This camp has already taken place." : "This camp is no longer accepting registrations."}</p>
       </div>
     );
   }

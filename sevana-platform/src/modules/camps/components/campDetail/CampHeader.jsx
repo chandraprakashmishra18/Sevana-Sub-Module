@@ -1,4 +1,5 @@
 import Badge from "../common/Badge";
+import SafeImage from "../../../../shared/SafeImage";
 import "./CampHeader.css";
 
 function CampHeader({ camp }) {
@@ -16,7 +17,7 @@ function CampHeader({ camp }) {
   return (
     <div className="camp-header">
       <div className="camp-header__image-wrap">
-        <img src={image} alt={title} className="camp-header__image" />
+        <SafeImage src={image} alt={title} className="camp-header__image" />
       </div>
 
       <div className="camp-header__badges">

@@ -18,7 +18,7 @@ function DonationWidget({ campaign }) {
   if (finalAmount < MIN_DONATION) {
     amountError = `Enter at least ₹${MIN_DONATION}.`;
   } else if (finalAmount > MAX_DONATION) {
-    amountError = `Maximum ₹${MAX_DONATION.toLocaleString("en-IN")} per demo donation.`;
+    amountError = `Maximum ₹${MAX_DONATION.toLocaleString("en-IN")} per donation intent.`;
   }
 
   const handlePresetClick = (amount) => {
@@ -97,9 +97,7 @@ function DonationWidget({ campaign }) {
         Donate ₹{finalAmount.toLocaleString("en-IN")}
       </Button>
 
-      <p className="donation-widget__note">
-        Demo checkout: you'll see an on-screen receipt. No real payment is made.
-      </p>
+      <p className="donation-widget__note">You can record a pending donation intent. Payment processing is not configured.</p>
     </div>
   );
 }

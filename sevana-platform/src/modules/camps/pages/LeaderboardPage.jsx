@@ -27,7 +27,7 @@ function LeaderboardPage() {
       <div className="container">
         <div className="leaderboard-page__header">
           <h1>Volunteer Leaderboard</h1>
-          <p>Workers ranked by XP earned across every camp they've contributed to.</p>
+          <p>Participants ranked by XP awarded for backend-verified camp attendance.</p>
         </div>
 
         {loading ? (

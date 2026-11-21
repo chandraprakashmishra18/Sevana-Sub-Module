@@ -28,6 +28,7 @@ function Register() {
     phone: "",
     location: "Gurugram, Haryana",
     organization: "",
+    organizationType: "NGO",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -47,13 +48,17 @@ function Register() {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long.");
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long.");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match.");
+      return;
+    }
+    if (formData.roleType === "organizer" && !formData.organization.trim()) {
+      setError("Enter your organization name to register an organization account.");
       return;
     }
 
@@ -66,6 +71,7 @@ function Register() {
         password: formData.password,
         role: selectedRoleObj ? selectedRoleObj.label : "Donor & Supporter",
         roleType: formData.roleType,
+        organizationType: formData.organizationType,
         phone: formData.phone,
         location: formData.location,
         organization: formData.organization,
@@ -87,10 +93,10 @@ function Register() {
             
             <h1>Join the Sevana Community</h1>
             <p>
-              Register your account to donate, track verified disbursement trails, and earn donor karma XP!
+              Create an account to manage your profile, register for camps, and record donation intents.
             </p>
             <div className="register-card__bonus">
-              <strong>+50 Welcome XP</strong> awarded instantly upon registration!
+              Your account is created with the Sevana backend. No XP is awarded until validated backend events are available.
             </div>
           </div>
 
@@ -123,7 +129,7 @@ function Register() {
 
             <div className="register-form__row">
               <label className="register-form__field">
-                <span>Password * (min 6 chars)</span>
+                <span>Password * (min 8 chars)</span>
                 <div className="register-form__password-wrap">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -204,9 +210,17 @@ function Register() {
                 />
               </label>
             )}
+            {formData.roleType === "organizer" && (
+              <label className="register-form__field">
+                <span>Organization type *</span>
+                <select value={formData.organizationType} onChange={(e) => updateField("organizationType", e.target.value)}>
+                  {[["NGO", "NGO"], ["SCHOOL", "School"], ["COLLEGE", "College"], ["NSS", "NSS"], ["NCC", "NCC"], ["COMPANY", "Company"], ["COMMUNITY_GROUP", "Community group"], ["OTHER", "Other"]].map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </label>
+            )}
 
             <Button type="submit" variant="accent" size="lg" fullWidth disabled={submitting}>
-              {submitting ? "Creating Account..." : "Create Account & Claim +50 XP"}
+              {submitting ? "Creating Account..." : "Create Account"}
             </Button>
           </form>
 

@@ -134,6 +134,19 @@ enum AttendanceStatus {
   EXCUSED
 }
 
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  REVOKED
+}
+
+enum ContactMessageStatus {
+  NEW
+  REVIEWED
+  CLOSED
+}
+
 // -----------------------------------------------------
 // USERS
 // -----------------------------------------------------
@@ -154,6 +167,13 @@ model User {
 
   createdCampaigns Campaign[] @relation("CampaignCreator")
   createdCamps     Camp[]     @relation("CampCreator")
+  notifications    Notification[]
+  campFeedback     CampFeedback[]
+  sentInvitations  CampInvitation[] @relation("InvitationSender")
+  receivedInvites  CampInvitation[] @relation("InvitationRecipient")
+  xpEntries        UserXP[]
+  reviewedContactMessages ContactMessage[] @relation("ContactMessageReviewer")
+  adminAuditEntries AdminAuditLog[] @relation("AdminAuditActor")
 
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
@@ -405,6 +425,8 @@ model Camp {
 
   registrations CampRegistration[]
   outcomes      CampOutcome[]
+  feedback      CampFeedback[]
+  invitations   CampInvitation[]
 
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
@@ -460,6 +482,97 @@ model CampOutcome {
   reportedAt DateTime @default(now()) @db.Timestamptz(6)
 
   @@index([campId])
+}
+
+model Notification {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  title     String   @db.VarChar(180)
+  message   String   @db.Text
+  type      String   @default("update") @db.VarChar(40)
+  href      String?  @db.VarChar(500)
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, isRead, createdAt])
+}
+
+model CampFeedback {
+  id        String   @id @default(uuid()) @db.Uuid
+  campId    String   @db.Uuid
+  userId    String   @db.Uuid
+  rating    Int
+  comment   String   @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  camp      Camp     @relation(fields: [campId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([campId, userId])
+  @@index([campId, createdAt])
+}
+
+model CampInvitation {
+  id           String           @id @default(uuid()) @db.Uuid
+  campId       String           @db.Uuid
+  inviterId    String           @db.Uuid
+  inviteeId    String?          @db.Uuid
+  inviteeEmail String           @db.VarChar(255)
+  role         String           @default("worker") @db.VarChar(50)
+  message      String?          @db.Text
+  status       InvitationStatus @default(PENDING)
+  createdAt    DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime         @updatedAt @db.Timestamptz(6)
+  camp         Camp             @relation(fields: [campId], references: [id], onDelete: Cascade)
+  inviter      User             @relation("InvitationSender", fields: [inviterId], references: [id], onDelete: Cascade)
+  invitee      User?            @relation("InvitationRecipient", fields: [inviteeId], references: [id], onDelete: SetNull)
+  @@unique([campId, inviterId, inviteeEmail])
+  @@index([inviteeEmail, status])
+  @@index([inviterId, createdAt])
+}
+
+model UserXP {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  eventType String   @db.VarChar(50)
+  eventId   String   @db.VarChar(120)
+  amount    Int
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, eventType, eventId])
+  @@index([userId, createdAt])
+}
+
+model ContactMessage {
+  id           String              @id @default(uuid()) @db.Uuid
+  name         String              @db.VarChar(120)
+  email        String              @db.VarChar(255)
+  subject      String              @db.VarChar(180)
+  message      String              @db.VarChar(5000)
+  status       ContactMessageStatus @default(NEW)
+  reviewedAt   DateTime?           @db.Timestamptz(6)
+  reviewedById String?             @db.Uuid
+  reviewer     User?               @relation("ContactMessageReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime            @updatedAt @db.Timestamptz(6)
+
+  @@index([status, createdAt])
+  @@index([email, createdAt])
+}
+
+model AdminAuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorUserId String?  @db.Uuid
+  actorLabel String   @db.VarChar(120)
+  action     String   @db.VarChar(80)
+  entityType String   @db.VarChar(80)
+  entityId   String   @db.VarChar(120)
+  before     Json?
+  after      Json?
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  actor      User?    @relation("AdminAuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([entityType, entityId, createdAt])
 }
 
 // -----------------------------------------------------

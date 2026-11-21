@@ -1,4 +1,12 @@
-const KEY = "sevana_organization_submissions";
-export const getOrganizationSubmissions = () => { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } };
-export function submitOrganization(data) { const record = { ...data, id: `org-${Date.now()}`, status: "pending", submittedAt: new Date().toISOString() }; localStorage.setItem(KEY, JSON.stringify([record, ...getOrganizationSubmissions()])); return record; }
-export function setOrganizationStatus(id, status) { const records = getOrganizationSubmissions().map((item) => item.id === id ? { ...item, status } : item); localStorage.setItem(KEY, JSON.stringify(records)); return records.find((item) => item.id === id); }
+// Browser-only organization submissions and moderation are disabled.
+export function getOrganizationSubmissions() {
+  throw new Error("Organization submissions are stored on the backend; use getMyOrganizations().");
+}
+
+export function submitOrganization() {
+  throw new Error("Use the authenticated organization registration API.");
+}
+
+export function setOrganizationStatus() {
+  throw new Error("Organization verification requires an authorized backend moderation operation.");
+}

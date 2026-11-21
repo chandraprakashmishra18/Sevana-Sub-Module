@@ -52,6 +52,7 @@ function sortCampaigns(list, sortBy) {
 function Campaigns() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeBeneficiary, setActiveBeneficiary] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -65,7 +66,7 @@ function Campaigns() {
         setCampaigns(data.filter(isCampaignPublic));
         setLoading(false);
       }
-    });
+    }).catch((requestError) => { if (isMounted) { setError(requestError.message || "Unable to load campaigns."); setLoading(false); } });
 
     return () => {
       isMounted = false;
@@ -104,7 +105,7 @@ function Campaigns() {
         <div className="campaigns-page__header">
           <h1>All Donation Campaigns</h1>
           <p>
-            Support community drives for Orphanages, Old Age Homes, NGOs, and student sponsorships. Every donation earns XP points!
+            Browse campaigns published by verified organizations. Donation records remain pending until payment is confirmed by a provider.
           </p>
         </div>
 
@@ -119,7 +120,7 @@ function Campaigns() {
 
         {loading ? (
           <p className="campaigns-page__loading">Loading campaigns...</p>
-        ) : (
+        ) : error ? <p role="alert" className="campaigns-page__loading">{error}</p> : (
           <>
             <div className="campaigns-page__toolbar">
               <p className="campaigns-page__count" aria-live="polite">

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
-import { SEED_USERS } from "../services/authService";
 import Button from "../components/common/Button";
 import "./Login.css";
 
@@ -37,12 +36,6 @@ function Login() {
     }
   };
 
-  const handleQuickDemo = (demoEmail, demoPassword) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
-    setError("");
-  };
-
   return (
     <section className="auth-page">
       <div className="container auth-page__container">
@@ -50,7 +43,7 @@ function Login() {
           <div className="auth-card__header">
             
             <h1>Welcome Back to Sevana</h1>
-            <p>Log in to track your donations, earn donor karma XP, and view 80G tax receipts.</p>
+            <p>Log in to manage your profile, camp registrations, notifications, and donation intents.</p>
           </div>
 
           {error && <div className="auth-card__alert auth-card__alert--error">{error}</div>}
@@ -95,35 +88,11 @@ function Login() {
             </Button>
           </form>
 
-          <div className="auth-card__divider">
-            <span>or test with sample accounts</span>
-          </div>
-
-          <div className="auth-card__quick-demo">
-            <p className="auth-card__demo-title">1-Click Sample Accounts:</p>
-            <div className="auth-card__demo-pills">
-              {SEED_USERS.map((seed) => (
-                <button
-                  key={seed.id}
-                  type="button"
-                  className="demo-pill"
-                  onClick={() => handleQuickDemo(seed.email, seed.password)}
-                >
-                  <img src={seed.avatar} alt={seed.name} className="demo-pill__avatar" />
-                  <div className="demo-pill__text">
-                    <strong>{seed.name.split(" ")[0]}</strong>
-                    <span>{seed.role.split("&")[0]}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div className="auth-card__footer">
             <p>
               New to Sevana?{" "}
               <Link to="/register" state={{ from }}>
-                Create a Free Account (+50 Welcome XP) →
+                Create an account →
               </Link>
             </p>
           </div>

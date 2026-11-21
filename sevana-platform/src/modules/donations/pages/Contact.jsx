@@ -1,23 +1,23 @@
 import { useState } from "react";
-import Button from "../components/common/Button";
+import { apiRequest } from "../../../shared/apiClient";
 import "./Contact.css";
 
 function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "", website: "" });
+  const [status, setStatus] = useState({ saving: false, error: "", success: "" });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const update = (event) => setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  const submit = async (event) => {
+    event.preventDefault();
+    setStatus({ saving: true, error: "", success: "" });
+    try {
+      const response = await apiRequest("/contact", { method: "POST", body: form });
+      setForm({ name: "", email: "", subject: "", message: "", website: "" });
+      setStatus({ saving: false, error: "", success: response.message || "Your message was stored for review." });
+    } catch (error) {
+      setStatus({ saving: false, error: error.message || "Unable to store your message.", success: "" });
+    }
   };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Frontend-only for now — no backend wired up yet.
-    // Your teammate can replace this with a real API call.
-    setSubmitted(true);
-  };
-
-  const isValid = form.name.trim() && form.email.trim() && form.message.trim();
 
   return (
     <section className="contact-page">
@@ -55,61 +55,20 @@ function Contact() {
         </div>
 
         <div className="contact-page__form-wrap">
-          {submitted ? (
-            <div className="contact-page__success">
-              
-              <h2>Message recorded (demo)</h2>
-              <p>This is a demo form. Your message was not sent anywhere.</p>
-              <Button variant="outline" onClick={() => setSubmitted(false)}>
-                Send Another Message
-              </Button>
-            </div>
-          ) : (
-            <form className="contact-form" onSubmit={handleSubmit}>
-              <label>
-                <span>Full Name *</span>
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Your name"
-                />
-              </label>
-
-              <label>
-                <span>Email *</span>
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="you@example.com"
-                />
-              </label>
-
-              <label>
-                <span>Message *</span>
-                <textarea
-                  name="message"
-                  rows="5"
-                  value={form.message}
-                  onChange={handleChange}
-                  placeholder="How can we help?"
-                />
-              </label>
-
-              <Button
-                type="submit"
-                variant="accent"
-                size="lg"
-                fullWidth
-                disabled={!isValid}
-              >
-                Send Message
-              </Button>
+          <h2>Contact support</h2>
+          {status.success ? <p className="contact-page__success" role="status">{status.success}</p> : (
+            <form className="contact-form" onSubmit={submit}>
+              <label><span>Your name</span><input name="name" autoComplete="name" required minLength={2} maxLength={120} value={form.name} onChange={update} /></label>
+              <label><span>Email address</span><input name="email" type="email" autoComplete="email" required maxLength={255} value={form.email} onChange={update} /></label>
+              <label><span>Subject</span><input name="subject" required minLength={3} maxLength={180} value={form.subject} onChange={update} /></label>
+              <label><span>Message</span><textarea name="message" required minLength={10} maxLength={5000} rows={6} value={form.message} onChange={update} /></label>
+              <label aria-hidden="true" style={{ position: "absolute", left: "-10000px" }}><span>Leave this field empty</span><input name="website" tabIndex={-1} autoComplete="off" value={form.website} onChange={update} /></label>
+              {status.error && <p role="alert">{status.error}</p>}
+              <button className="btn btn--accent btn--lg" type="submit" disabled={status.saving}>{status.saving ? "Storing message…" : "Send message"}</button>
+              <p role="note">Messages are stored for review. They are not emailed by this application.</p>
             </form>
           )}
+          <a className="btn btn--outline" href="mailto:support@sevana.org">Email support@sevana.org directly</a>
         </div>
       </div>
     </section>

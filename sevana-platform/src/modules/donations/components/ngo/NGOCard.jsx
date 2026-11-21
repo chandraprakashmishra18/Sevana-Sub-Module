@@ -6,9 +6,7 @@ import "./NGOCard.css";
 function NGOCard({ ngo }) {
   return (
     <div className="ngo-card">
-      <div className="ngo-card__logo-wrap">
-        <img src={ngo.logo} alt={ngo.name} className="ngo-card__logo" />
-      </div>
+      <div className="ngo-card__logo-wrap" aria-hidden="true"><span className="ngo-card__logo">{ngo.name.slice(0, 1).toUpperCase()}</span></div>
 
       <div className="ngo-card__body">
         <div className="ngo-card__title-row">
@@ -16,7 +14,7 @@ function NGOCard({ ngo }) {
           {ngo.verified && <Badge tone="verified">Verified</Badge>}
         </div>
 
-        <p className="ngo-card__focus">{ngo.focusArea}</p>
+        <p className="ngo-card__focus">{ngo.type}</p>
         <p className="ngo-card__location">📍 {ngo.location}</p>
 
         <div className="ngo-card__stats">
@@ -25,12 +23,8 @@ function NGOCard({ ngo }) {
             <span>Campaigns</span>
           </div>
           <div>
-            <strong>₹{(ngo.totalDisbursed / 100000).toFixed(1)}L</strong>
-            <span>Disbursed</span>
-          </div>
-          <div>
-            <strong>{ngo.yearsActive}</strong>
-            <span>Years Active</span>
+            <strong>{ngo.verificationStatus === "VERIFIED" ? "Verified" : "Pending"}</strong>
+            <span>Platform status</span>
           </div>
         </div>
 

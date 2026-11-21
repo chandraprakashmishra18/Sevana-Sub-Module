@@ -5,34 +5,35 @@ import CampScheduleInfo from "../components/campDetail/CampScheduleInfo";
 import RoleSelector from "../components/campDetail/RoleSelector";
 import OrganizerCard from "../components/campDetail/OrganizerCard";
 import FeedbackList from "../components/campDetail/FeedbackList";
+import FeedbackForm from "../components/feedback/FeedbackForm";
 import InvitePanel from "../components/campDetail/InvitePanel";
 import { getCampById } from "../services/campService";
-import { getAllOrganizers } from "../services/organizerService";
 import { getFeedbackByCamp } from "../services/feedbackService";
+import { useAuth } from "../../../shared/useAuth";
 import "./CampDetail.css";
 
 function CampDetail() {
   const { id } = useParams();
+  const { isAuthenticated } = useAuth();
   const [camp, setCamp] = useState(null);
   const [organizer, setOrganizer] = useState(null);
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
 
-    Promise.all([getCampById(id), getAllOrganizers(), getFeedbackByCamp(id)]).then(
-      ([campData, allOrganizers, feedbackData]) => {
+    Promise.all([getCampById(id), getFeedbackByCamp(id)]).then(
+      ([campData, feedbackData]) => {
         if (isMounted) {
           setCamp(campData);
-          setOrganizer(
-            campData ? allOrganizers.find((o) => o.name === campData.organizer) : null
-          );
+          setOrganizer(campData ? { id: campData.organizationId, name: campData.organizer, type: campData.organizationStatus || "Organization" } : null);
           setFeedback(feedbackData);
           setLoading(false);
         }
       }
-    );
+    ).catch((requestError) => { if (isMounted) { setError(requestError.message || "Unable to load camp details."); setLoading(false); } });
 
     return () => {
       isMounted = false;
@@ -50,7 +51,8 @@ function CampDetail() {
   if (!camp) {
     return (
       <div className="container camp-detail__not-found">
-        <h2>Camp not found</h2>
+        <h2>{error ? "Camp details unavailable" : "Camp not found"}</h2>
+        {error && <p role="alert">{error}</p>}
         <Link to="/camps">← Back to all camps</Link>
       </div>
     );
@@ -71,6 +73,7 @@ function CampDetail() {
           )}
 
           <FeedbackList feedback={feedback} />
+          {camp.publicationStatus === "COMPLETED" && isAuthenticated && <FeedbackForm campId={camp.id} onSubmitted={() => getFeedbackByCamp(camp.id).then(setFeedback)} />}
         </div>
 
         <div className="camp-detail__sidebar">

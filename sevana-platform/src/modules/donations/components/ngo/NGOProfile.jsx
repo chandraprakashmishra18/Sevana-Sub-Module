@@ -5,36 +5,24 @@ import "./NGOProfile.css";
 function NGOProfile({ ngo, ngoCampaigns }) {
   return (
     <div className="ngo-profile">
-      <div className="ngo-profile__cover">
-        <img src={ngo.coverImage} alt={`${ngo.name} cover`} />
-      </div>
-
       <div className="ngo-profile__header">
-        <img src={ngo.logo} alt={ngo.name} className="ngo-profile__logo" />
+        <div className="ngo-profile__logo" aria-hidden="true">{ngo.name.slice(0, 1).toUpperCase()}</div>
         <div>
           <h1>{ngo.name}</h1>
           <p className="ngo-profile__meta">
-            {ngo.focusArea} &nbsp;•&nbsp; 📍 {ngo.location}
+            {ngo.type} &nbsp;•&nbsp; 📍 {ngo.location || "Location not provided"}
           </p>
         </div>
       </div>
 
-      <NGOVerificationBadge registrationNumber={ngo.registrationNumber} />
+      <NGOVerificationBadge verificationStatus={ngo.verificationStatus} />
 
       <p className="ngo-profile__description">{ngo.description}</p>
 
       <div className="ngo-profile__stats">
         <div className="ngo-profile__stat">
-          <strong>{ngo.campaignsRun}</strong>
-          <span>Campaigns Run</span>
-        </div>
-        <div className="ngo-profile__stat">
-          <strong>₹{(ngo.totalDisbursed / 100000).toFixed(1)}L</strong>
-          <span>Total Disbursed</span>
-        </div>
-        <div className="ngo-profile__stat">
-          <strong>{ngo.yearsActive}</strong>
-          <span>Years Active</span>
+          <strong>{ngoCampaigns.length}</strong>
+          <span>Published campaigns</span>
         </div>
       </div>
 

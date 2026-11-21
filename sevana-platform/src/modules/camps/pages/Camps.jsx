@@ -7,6 +7,7 @@ import "./Camps.css";
 function Camps() {
   const [camps, setCamps] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [activeType, setActiveType] = useState("All");
   const [activeStatus, setActiveStatus] = useState("Upcoming");
   const [activeBeneficiary, setActiveBeneficiary] = useState("All");
@@ -20,7 +21,7 @@ function Camps() {
         setCamps(data);
         setLoading(false);
       }
-    });
+    }).catch((requestError) => { if (isMounted) { setError(requestError.message || "Unable to load camps."); setLoading(false); } });
 
     return () => {
       isMounted = false;
@@ -62,6 +63,8 @@ function Camps() {
 
         {loading ? (
           <p className="camps-page__loading">Loading camps...</p>
+        ) : error ? (
+          <p className="camps-page__loading" role="alert">{error}</p>
         ) : (
           <CampGrid camps={filteredCamps} />
         )}

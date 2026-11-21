@@ -1,0 +1,5 @@
+const { z } = require("zod");
+const types = ["NGO", "SCHOOL", "COLLEGE", "NSS", "NCC", "COMPANY", "COMMUNITY_GROUP", "OTHER"];
+const createOrganizationSchema = z.object({ name: z.string().trim().min(2).max(180), type: z.enum(types), description: z.string().max(10000).optional(), email: z.string().email().max(255).optional().or(z.literal("")), phone: z.string().max(20).optional(), website: z.string().url().optional().or(z.literal("")), address: z.string().max(3000).optional(), city: z.string().max(100).optional(), state: z.string().max(100).optional() });
+const updateOrganizationSchema = z.object({ name: z.string().trim().min(2).max(180).optional(), description: z.string().max(10000).optional(), email: z.string().email().max(255).optional().or(z.literal("")), phone: z.string().max(20).optional(), website: z.string().url().optional().or(z.literal("")), address: z.string().max(3000).optional(), city: z.string().max(100).optional(), state: z.string().max(100).optional() });
+module.exports = { createOrganizationSchema, updateOrganizationSchema };

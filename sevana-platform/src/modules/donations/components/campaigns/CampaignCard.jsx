@@ -2,10 +2,8 @@ import { Link } from "react-router-dom";
 import Badge from "../common/Badge";
 import ProgressBar from "../common/ProgressBar";
 import { isGoalReached, getDaysLeft } from "../../utils/campaignRules";
+import SafeImage from "../../../../shared/SafeImage";
 import "./CampaignCard.css";
-
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&auto=format&fit=crop";
 
 function CampaignCard({ campaign }) {
   const {
@@ -28,14 +26,10 @@ const daysLeft = getDaysLeft(campaign.deadline);
   return (
     <div className="campaign-card">
       <div className="campaign-card__image-wrap">
-        <img
+        <SafeImage
           src={image}
           alt={title}
           className="campaign-card__image"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = FALLBACK_IMAGE;
-          }}
         />
         <div className="campaign-card__badges">
           {urgent && !goalReached && <Badge tone="urgent">Urgent</Badge>}

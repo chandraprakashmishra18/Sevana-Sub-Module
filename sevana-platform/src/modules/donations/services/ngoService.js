@@ -1,10 +1,12 @@
-import mockNGOs from "../data/mockNGOs";
+import { apiRequest } from "../api/client";
 
 export async function getAllNGOs() {
-  return Promise.resolve(mockNGOs);
+  const response = await apiRequest("/organizations");
+  return (response.data || []).map((item) => ({ ...item, verified: item.verificationStatus === "VERIFIED", mission: item.description || "", location: [item.city, item.state].filter(Boolean).join(", "), campaignsRun: item._count?.campaigns || 0 }));
 }
 
 export async function getNGOById(id) {
-  const found = mockNGOs.find((n) => n.id === id);
-  return Promise.resolve(found || null);
+  const response = await apiRequest(`/organizations/${encodeURIComponent(id)}`);
+  const item = response.data;
+  return item ? { ...item, verified: item.verificationStatus === "VERIFIED", mission: item.description || "", location: [item.city, item.state].filter(Boolean).join(", "), campaignsRun: item._count?.campaigns || 0 } : null;
 }

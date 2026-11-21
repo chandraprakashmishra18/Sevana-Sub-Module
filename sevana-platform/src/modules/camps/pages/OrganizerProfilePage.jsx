@@ -18,7 +18,7 @@ function OrganizerProfilePage() {
         if (isMounted) {
           setOrganizer(organizerData);
           setOrganizerCamps(
-            organizerData ? allCamps.filter((c) => c.organizer === organizerData.name) : []
+            organizerData ? allCamps.filter((c) => c.organizationId === organizerData.id) : []
           );
           setLoading(false);
         }

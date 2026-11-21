@@ -1,7 +1,21 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllCampaigns } from "../modules/donations/services/campaignService";
-import { getDonationHistory } from "../modules/donations/services/donationService";
-import { getAllCamps } from "../modules/camps/services/campService";
-import { useEffect,useState } from "react";
-export default function OrganizationDashboard(){const [campaigns,setCampaigns]=useState([]),[camps,setCamps]=useState([]);useEffect(()=>{getAllCampaigns().then(setCampaigns);getAllCamps().then(setCamps)},[]);const donations=getDonationHistory();const stats=[["Campaigns",campaigns.length,"Local listings and drafts"],["Camps",camps.length,"Local camp records"],["Demo contributions",`₹${donations.reduce((s,d)=>s+Number(d.amount||0),0).toLocaleString("en-IN")}`,"Recorded, not paid"],["Registrations",localStorageCampCount(),"Pending decisions appear in Camp management"]];return <section className="unified-workspace"><div className="container"><header className="unified-workspace__header"><div><span className="unified-workspace__eyebrow">ORGANIZATION WORKSPACE</span><h1>Coordinate community work</h1><p>Manage both modules from one organization view.</p></div><Link className="unified-workspace__primary" to="/register-organization">Organization verification</Link></header><div className="unified-workspace__notice">This prototype stores activity locally. Organization verification and admin review are simulated.</div><div className="unified-workspace__grid">{stats.map(([label,value,note])=><article className="unified-workspace__card" key={label}><span>{label}</span><strong>{value}</strong><small>{note}</small></article>)}</div><div className="unified-workspace__columns"><section className="unified-workspace__panel"><h2>Donations & Aid</h2><div className="unified-workspace__actions"><Link to="/manage-campaigns">Create and manage campaigns</Link><Link to="/admin/moderation">Campaign review console</Link><Link to="/impact">Open impact reporting</Link></div></section><section className="unified-workspace__panel"><h2>Educational & Medical Camps</h2><div className="unified-workspace__actions"><Link to="/organize">Create a camp</Link><Link to="/manage-camps">Manage registrations and attendance</Link><Link to="/organizers">Organization profile</Link></div></section></div></div></section>}
-function localStorageCampCount(){try{return JSON.parse(localStorage.getItem("sevana_camp_joins")||"[]").length}catch{return 0}}
+import { getMyOrganizations } from "../modules/donations/services/organizationService";
+import { getOrganizationCampaigns } from "../modules/donations/services/campaignService";
+import { getOrganizationCamps } from "../modules/camps/services/campService";
+
+export default function OrganizationDashboard() {
+  const [items, setItems] = useState({ organizations: [], campaigns: [], camps: [] });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let active = true;
+    Promise.all([getMyOrganizations(), getOrganizationCampaigns(), getOrganizationCamps()])
+      .then(([organizations, campaigns, camps]) => { if (active) setItems({ organizations, campaigns, camps }); })
+      .catch((e) => { if (active) setError(e.message || "Unable to load organization data."); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
+  return <section className="unified-workspace"><div className="container"><header className="unified-workspace__header"><div><span className="unified-workspace__eyebrow">ORGANIZATION WORKSPACE</span><h1>Coordinate community work</h1><p>Organization, campaign and camp records loaded from Sevana.</p></div><Link className="unified-workspace__primary" to="/register-organization">Register organization</Link></header>
+    {error && <p role="alert" className="unified-workspace__notice">{error}</p>}{loading ? <p role="status">Loading organization data…</p> : items.organizations.length === 0 ? <section className="unified-workspace__panel"><h2>No organization access yet</h2><p>Register an organization to create campaigns and manage camps. Verification is handled by the platform.</p><Link to="/register-organization">Start organization registration</Link></section> : <><div className="unified-workspace__grid">{items.organizations.map((org) => <article className="unified-workspace__card" key={org.id}><span>{org.name}</span><strong>{String(org.verificationStatus || "PENDING").toLowerCase()}</strong><small>{org.type}</small></article>)}<article className="unified-workspace__card"><span>Campaigns</span><strong>{items.campaigns.length}</strong><small>Organization campaigns</small></article><article className="unified-workspace__card"><span>Camps</span><strong>{items.camps.length}</strong><small>Organization camps</small></article></div><div className="unified-workspace__columns"><section className="unified-workspace__panel"><h2>Donations & Aid</h2><div className="unified-workspace__actions"><Link to="/manage-campaigns">Create and manage campaigns</Link><Link to="/impact">Impact reporting</Link></div></section><section className="unified-workspace__panel"><h2>Educational & Medical Camps</h2><div className="unified-workspace__actions"><Link to="/organize">Create a camp</Link><Link to="/manage-camps">Manage registrations and attendance</Link></div></section></div></>}</div></section>;
+}

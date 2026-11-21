@@ -1,4 +1,4 @@
-import { getTierForXP } from "../../data/mockWorkers";
+import { getTierForXP } from "../../services/tierService";
 import "./TierBadge.css";
 
 function TierBadge({ totalXP, size = "md" }) {

@@ -1,109 +1,33 @@
 import { useEffect, useState } from "react";
 import useCountUp from "../hooks/useCountUp";
-import VerificationSteps from "../components/trust/VerificationSteps";
 import { getAllCampaigns } from "../services/campaignService";
+import { getDisbursementsByCampaign } from "../services/donationService";
 import { isCampaignPublic } from "../utils/campaignRules";
-import mockDisbursements from "../data/mockDisbursements";
-import mockNGOs from "../data/mockNGOs";
 import "./ImpactTransparency.css";
 
-function AnimatedStat({ value, label, prefix = "", suffix = "" }) {
+function AnimatedStat({ value, label, prefix = "" }) {
   const count = useCountUp(value, 1600, true);
-  const display = value >= 100000 ? (count / 100000).toFixed(1) + "L" : count.toLocaleString("en-IN");
-
-  return (
-    <div className="impact-page__stat">
-      <p className="impact-page__stat-value">
-        {prefix}{display}{suffix}
-      </p>
-      <p className="impact-page__stat-label">{label}</p>
-    </div>
-  );
+  return <div className="impact-page__stat"><p className="impact-page__stat-value">{prefix}{count.toLocaleString("en-IN")}</p><p className="impact-page__stat-label">{label}</p></div>;
 }
 
-function ImpactTransparency() {
-  const [campaigns, setCampaigns] = useState(null);
-
+export default function ImpactTransparency() {
+  const [state, setState] = useState({ loading: true, campaigns: [], disbursements: [], error: "" });
   useEffect(() => {
-    let isMounted = true;
-    getAllCampaigns().then((all) => {
-      if (isMounted) setCampaigns(all.filter(isCampaignPublic));
-    });
-    return () => {
-      isMounted = false;
-    };
+    let active = true;
+    getAllCampaigns().then(async (rows) => {
+      const campaigns = rows.filter(isCampaignPublic);
+      const groups = await Promise.all(campaigns.map(async (campaign) => (await getDisbursementsByCampaign(campaign.id)).map((entry) => ({ ...entry, campaignId: campaign.id }))));
+      if (active) setState({ loading: false, campaigns, disbursements: groups.flat(), error: "" });
+    }).catch((error) => { if (active) setState({ loading: false, campaigns: [], disbursements: [], error: error.message || "Unable to load impact records." }); });
+    return () => { active = false; };
   }, []);
-
-  if (!campaigns) {
-    return (
-      <section className="impact-page">
-        <div className="container">
-          <p>Loading...</p>
-        </div>
-      </section>
-    );
-  }
-
-  const totalRaised = campaigns.reduce((sum, c) => sum + (Number(c.raisedAmount) || 0), 0);
-  const totalDonors = campaigns.reduce((sum, c) => sum + (Number(c.donorCount) || 0), 0);
-
-  const allDisbursements = Object.entries(mockDisbursements)
-    .flatMap(([campaignId, records]) => records.map((r) => ({ ...r, campaignId })))
-    .filter((r) => campaigns.some((c) => c.id === r.campaignId));
-
-  return (
-    <section className="impact-page">
-      <div className="container">
-        <div className="impact-page__header">
-          <h1>Impact and Transparency</h1>
-          <p>
-            Totals across the demo campaigns stored in this browser. Here's
-            the platform-wide picture. All data is sample or locally saved.
-          </p>
-        </div>
-
-        <div className="impact-page__stats-grid">
-          <AnimatedStat value={totalRaised} prefix="₹" label="Total Raised" />
-          <AnimatedStat value={totalDonors} label="Total Donors" />
-          <AnimatedStat value={campaigns.length} label="Campaigns Run" />
-          <AnimatedStat value={mockNGOs.length} label="Sample NGO Partners" />
-        </div>
-
-        <div className="impact-page__section">
-          <h2>How a campaign goes live (demo)</h2>
-          <VerificationSteps />
-        </div>
-
-        <div className="impact-page__section">
-          <h2>Sample Disbursement Records</h2>
-          <p className="impact-page__section-sub">
-            Sample disbursement records for demonstration.
-          </p>
-
-          <div className="impact-page__disbursement-grid">
-            {allDisbursements.map((item) => {
-              const campaign = campaigns.find((c) => c.id === item.campaignId);
-              return (
-                <div className="impact-proof-card" key={item.id}>
-                  <img src={item.photo} alt={item.description} />
-                  <div className="impact-proof-card__body">
-                    <p className="impact-proof-card__campaign">
-                      {campaign ? campaign.title : "Campaign"}
-                    </p>
-                    <p className="impact-proof-card__desc">{item.description}</p>
-                    <div className="impact-proof-card__footer">
-                      <span>{new Date(item.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
-                      <strong>₹{item.amount.toLocaleString("en-IN")}</strong>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  if (state.loading) return <section className="impact-page"><div className="container"><p role="status">Loading verified impact records…</p></div></section>;
+  const raised = state.campaigns.reduce((sum, campaign) => sum + Number(campaign.raisedAmount || 0), 0);
+  const donors = state.campaigns.reduce((sum, campaign) => sum + Number(campaign.donorCount || 0), 0);
+  const organizationCount = new Set(state.campaigns.map((campaign) => campaign.organizationId).filter(Boolean)).size;
+  return <section className="impact-page"><div className="container"><div className="impact-page__header"><h1>Impact and Transparency</h1><p>Confirmed donation totals and published disbursement records supplied by the backend.</p></div>
+    {state.error && <p role="alert">{state.error}</p>}
+    {!state.error && <><div className="impact-page__stats-grid"><AnimatedStat value={raised} prefix="₹" label="Confirmed funds raised"/><AnimatedStat value={donors} label="Successful donations recorded"/><AnimatedStat value={state.campaigns.length} label="Active campaigns"/><AnimatedStat value={organizationCount} label="Organizations represented"/></div>
+    <div className="impact-page__section"><h2>Published disbursement records</h2>{state.disbursements.length ? <div className="impact-page__disbursement-grid">{state.disbursements.map((item) => { const campaign = state.campaigns.find((entry) => entry.id === item.campaignId); return <article className="impact-proof-card" key={item.id}><div className="impact-proof-card__body"><p className="impact-proof-card__campaign">{campaign?.title || "Campaign"}</p><p className="impact-proof-card__desc">{item.description}</p><div className="impact-proof-card__footer"><span>{new Date(item.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span><strong>{item.amount == null ? "Amount not disclosed" : `₹${Number(item.amount).toLocaleString("en-IN")}`}</strong></div></div></article>; })}</div> : <p>No public disbursement records are available.</p>}</div><p className="impact-page__section-sub">Only successful donations contribute to confirmed totals. Donation intents remain pending until a configured payment provider confirms settlement.</p></>}
+  </div></section>;
 }
-
-export default ImpactTransparency;

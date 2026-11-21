@@ -1,10 +1,10 @@
 import "./VerificationSteps.css";
 
 const steps = [
-  { label: "Details Reviewed", detail: "Organization details reviewed (demo)" },
-  { label: "Admin Approved", detail: "Admin approves the campaign (simulated)" },
-  { label: "Campaign Live", detail: "Published for donors, fully public" },
-  { label: "Funds Disbursed", detail: "Sample update records shown" },
+  { label: "Organization status", detail: "Verification state is stored on the organization record." },
+  { label: "Campaign publication", detail: "Verified organization managers may publish campaigns." },
+  { label: "Donation intents", detail: "New donation requests stay pending until payment settlement exists." },
+  { label: "Disbursement records", detail: "Published aid distribution records are retrieved from the backend." },
 ];
 
 function VerificationSteps() {

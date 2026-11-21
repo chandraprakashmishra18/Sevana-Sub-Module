@@ -5,16 +5,12 @@ import "./OrganizerProfile.css";
 function OrganizerProfile({ organizer, organizerCamps }) {
   return (
     <div className="organizer-profile">
-      <div className="organizer-profile__cover">
-        <img src={organizer.coverImage} alt={`${organizer.name} cover`} />
-      </div>
-
       <div className="organizer-profile__header">
-        <img src={organizer.logo} alt={organizer.name} className="organizer-profile__logo" />
+        <div className="organizer-profile__logo" aria-hidden="true">{organizer.name.slice(0, 1).toUpperCase()}</div>
         <div>
           <h1>{organizer.name}</h1>
           <p className="organizer-profile__meta">
-            {organizer.focusArea} &nbsp;•&nbsp; 📍 {organizer.location}
+            {organizer.type} &nbsp;•&nbsp; 📍 {organizer.location || "Location not provided"}
           </p>
         </div>
       </div>
@@ -23,9 +19,9 @@ function OrganizerProfile({ organizer, organizerCamps }) {
         <span className="organizer-profile__verification-icon">🛡️</span>
         <div>
           <p className="organizer-profile__verification-title">
-            Verified Organizer <Badge tone="neutral">{organizer.type}</Badge>
+            {organizer.verified ? "Verified Organization" : "Organization"} <Badge tone="neutral">{organizer.type}</Badge>
           </p>
-          <p className="organizer-profile__verification-reg">Reg. No: {organizer.registrationNumber}</p>
+          <p className="organizer-profile__verification-reg">Status supplied by Sevana</p>
         </div>
       </div>
 
@@ -33,12 +29,8 @@ function OrganizerProfile({ organizer, organizerCamps }) {
 
       <div className="organizer-profile__stats">
         <div className="organizer-profile__stat">
-          <strong>{organizer.campsOrganized}</strong>
-          <span>Camps Organized</span>
-        </div>
-        <div className="organizer-profile__stat">
-          <strong>{organizer.totalAttendeesServed.toLocaleString("en-IN")}</strong>
-          <span>People Served</span>
+          <strong>{organizerCamps.length}</strong>
+          <span>Published camps</span>
         </div>
       </div>
 

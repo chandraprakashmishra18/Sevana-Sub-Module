@@ -14,7 +14,7 @@ function Hero() {
           <p className="hero__subtitle">
             Browse local needs, pick a campaign, and see how your
             contribution moves a goal forward — sponsor a student,
-            support a family, or back an NGO drive. (Demo project: no real payments.)
+            support a family, or back an organization drive. Donation intents are recorded, but payment processing is not configured.
           </p>
 
           <div className="hero__actions">
@@ -27,9 +27,9 @@ function Hero() {
           </div>
 
           <div className="hero__trustrow">
-            <span>Demo Project</span>
-            <span>Sample NGO Partners</span>
-            <span>Live Campaign Progress</span>
+            <span>Backend campaign records</span>
+            <span>Verified organizations</span>
+            <span>Confirmed payment progress</span>
           </div>
         </div>
 

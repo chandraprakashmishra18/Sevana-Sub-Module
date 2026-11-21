@@ -1,4 +1,4 @@
-import { getNextTierProgress } from "../../data/mockWorkers";
+import { getNextTierProgress } from "../../services/tierService";
 import "./XPBar.css";
 
 function XPBar({ totalXP }) {

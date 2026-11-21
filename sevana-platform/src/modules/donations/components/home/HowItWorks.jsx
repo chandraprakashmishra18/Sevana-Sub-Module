@@ -5,19 +5,19 @@ const steps = [
     number: "01",
     title: "Browse a campaign",
     description:
-      "Choose from student sponsorships, family aid, or NGO in-kind requests — new campaigns appear after admin approval in this demo.",
+      "Browse campaigns published by verified organizations. Draft and paused campaigns are not shown publicly.",
   },
   {
     number: "02",
-    title: "Try the demo checkout",
+    title: "Record a donation intent",
     description:
-      "Pick an amount and complete a demo checkout. You get an on-screen receipt; no real payment is made.",
+      "Choose an amount to create a pending record. No payment is taken until a payment provider is configured.",
   },
   {
     number: "03",
     title: "Track campaign progress",
     description:
-      "Watch a campaign's raised amount and donor count grow, and see sample disbursement records.",
+      "Campaign progress includes successful donation records and persisted public disbursement updates.",
   },
 ];
 

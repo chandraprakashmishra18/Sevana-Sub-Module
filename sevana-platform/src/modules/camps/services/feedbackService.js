@@ -1,11 +1,3 @@
-import mockFeedback from "../data/mockFeedback";
-
-export async function getFeedbackByCamp(campId) {
-  return Promise.resolve(mockFeedback[campId] || []);
-}
-
-// TEAMMATE: wire this to a real POST /camps/:id/feedback later.
-export async function submitFeedback(campId, feedbackData) {
-  console.log("Feedback submitted (mock) for", campId, feedbackData);
-  return Promise.resolve({ success: true });
-}
+import { apiRequest } from "../api/client";
+export async function getFeedbackByCamp(campId) { const response = await apiRequest(`/camps/${encodeURIComponent(campId)}/feedback`); return response.data || []; }
+export async function submitFeedback(campId, data) { const response = await apiRequest(`/camps/${encodeURIComponent(campId)}/feedback`, { method: "POST", body: data }); return response.data; }

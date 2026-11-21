@@ -17,7 +17,7 @@ const ACCOUNT_LINKS = [
   ["Dashboard", "/dashboard"],
   ["Organization", "/organization"],
   ["Notifications", "/notifications"],
-  ["Admin demo", "/admin"],
+  ["Administration", "/admin"],
 ];
 
 const linkClass = ({ isActive }) =>

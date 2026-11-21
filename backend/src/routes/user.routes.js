@@ -1,0 +1,10 @@
+const express = require("express");
+const { requireAuth } = require("../middleware/auth.middleware");
+const controller = require("../controllers/user.controller");
+const router = express.Router();
+router.get("/leaderboard", controller.leaderboard);
+router.get("/me", requireAuth, controller.profile);
+router.patch("/me", requireAuth, controller.updateProfile);
+router.get("/me/activity", requireAuth, controller.communityActivity);
+router.get("/:id", controller.publicProfile);
+module.exports = router;

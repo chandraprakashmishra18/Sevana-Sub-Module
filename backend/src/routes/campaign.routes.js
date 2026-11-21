@@ -1,0 +1,12 @@
+const express = require("express");
+const { requireAuth, optionalAuth } = require("../middleware/auth.middleware");
+const controller = require("../controllers/campaign.controller");
+const router = express.Router();
+router.get("/", controller.listCampaigns);
+router.get("/mine", requireAuth, (req, res) => { req.mine = true; return controller.listCampaigns(req, res); });
+router.post("/", requireAuth, controller.createCampaign);
+router.get("/:id/donations", optionalAuth, controller.campaignDonations);
+router.get("/:id/disbursements", optionalAuth, controller.campaignDisbursements);
+router.get("/:id", optionalAuth, controller.getCampaign);
+router.patch("/:id", requireAuth, controller.updateCampaign);
+module.exports = router;

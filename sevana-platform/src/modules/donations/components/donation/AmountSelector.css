@@ -13,7 +13,8 @@
   margin-bottom: var(--space-5);
 }
 
-.donation-step__campaign-summary img {
+.donation-step__campaign-summary img,
+.donation-step__campaign-image {
   width: 60px;
   height: 60px;
   border-radius: var(--radius-sm);

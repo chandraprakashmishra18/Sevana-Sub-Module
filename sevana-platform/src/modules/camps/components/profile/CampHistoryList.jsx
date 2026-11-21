@@ -22,11 +22,8 @@ function CampHistoryList({ campsWorked, allCamps }) {
               <Link to={`/camps/${entry.campId}`} className="camp-history-item__title">
                 {camp ? camp.title : "Unknown camp"}
               </Link>
-              <p className="camp-history-item__role">
-                {entry.role} &nbsp;•&nbsp; {new Date(entry.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-              </p>
+              <p className="camp-history-item__role">{entry.role} &nbsp;•&nbsp; {new Date(entry.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} &nbsp;•&nbsp; {entry.attendance === "PRESENT" ? "Verified attendance" : entry.status || "Registered"}</p>
             </div>
-            <span className="camp-history-item__xp">+{entry.xpEarned} XP</span>
           </div>
         );
       })}

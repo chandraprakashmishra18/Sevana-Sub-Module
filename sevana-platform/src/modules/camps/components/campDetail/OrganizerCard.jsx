@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SafeImage from "../../../../shared/SafeImage";
 import "./OrganizerCard.css";
 
 function OrganizerCard({ organizer }) {
@@ -6,7 +7,7 @@ function OrganizerCard({ organizer }) {
 
   return (
     <Link to={`/organizers/${organizer.id}`} className="organizer-card">
-      <img src={organizer.logo} alt={organizer.name} className="organizer-card__logo" />
+      <SafeImage src={organizer.logo} alt={organizer.name} className="organizer-card__logo" />
       <div>
         <p className="organizer-card__label">Organized by</p>
         <p className="organizer-card__name">{organizer.name}</p>

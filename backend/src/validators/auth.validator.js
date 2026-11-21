@@ -23,7 +23,7 @@ const registerSchema = z.object({
   organizationName: z.string().trim().max(180).optional(),
   organizationType: z.enum(organizationTypes).optional(),
   organizationDescription: z.string().optional(),
-}).superRefine((data, ctx) => {
+}).strict().superRefine((data, ctx) => {
   if (data.accountType === "ORGANIZATION") {
     if (!data.organizationName) {
       ctx.addIssue({

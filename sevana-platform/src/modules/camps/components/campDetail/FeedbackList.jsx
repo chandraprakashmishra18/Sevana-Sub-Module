@@ -5,7 +5,7 @@ function FeedbackList({ feedback }) {
     return (
       <div className="feedback-list">
         <h2>Feedback</h2>
-        <p className="feedback-list__empty">No feedback yet — be the first to share your experience.</p>
+        <p className="feedback-list__empty">No feedback has been submitted for this camp.</p>
       </div>
     );
   }

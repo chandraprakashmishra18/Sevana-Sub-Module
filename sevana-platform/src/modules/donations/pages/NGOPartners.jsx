@@ -6,6 +6,7 @@ import "./NGOPartners.css";
 function NGOPartners() {
   const [ngos, setNgos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -15,7 +16,7 @@ function NGOPartners() {
         setNgos(data);
         setLoading(false);
       }
-    });
+    }).catch((requestError) => { if (isMounted) { setError(requestError.message || "Unable to load organizations."); setLoading(false); } });
 
     return () => {
       isMounted = false;
@@ -28,18 +29,18 @@ function NGOPartners() {
         <div className="ngo-partners-page__header">
           <h1>Our NGO Partners</h1>
           <p>
-            In this demo, campaigns are listed under these sample NGO
-            partners. Details are sample data.
+            Browse organizations verified and published by the backend.
           </p>
         </div>
 
         {loading ? (
           <p className="ngo-partners-page__loading">Loading NGO partners...</p>
-        ) : (
+        ) : error ? <p role="alert">{error}</p> : (
           <div className="ngo-partners-page__grid">
             {ngos.map((ngo) => (
               <NGOCard key={ngo.id} ngo={ngo} />
             ))}
+            {!ngos.length && <p>No verified organizations are listed yet.</p>}
           </div>
         )}
       </div>

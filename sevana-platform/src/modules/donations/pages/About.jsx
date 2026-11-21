@@ -21,17 +21,15 @@ function About() {
           <h2>What we do differently</h2>
           <div className="about-page__grid">
             <div className="about-card">
-              <h3>Verified, not anonymous</h3>
+              <h3>Organization status</h3>
               <p>
-                In this demo, every campaign goes through an admin review step before
-                it goes live. Real verification is planned for a full release.
+                Organization verification status is stored by the backend. Administrative review controls still need a trusted platform-admin workflow.
               </p>
             </div>
             <div className="about-card">
               <h3>Traceable, not vague</h3>
               <p>
-                Campaign progress is shown openly, with sample disbursement
-                records to show how updates could look.
+                Campaign totals include successful donation records, and published disbursement updates are read from backend records.
               </p>
             </div>
             <div className="about-card">

@@ -7,25 +7,26 @@ import {
 import "./Dashboard.css";
 import "./Workflow.css";
 
-import { getAllCampaigns, saveCampaign } from "../services/campaignService";
+import { getOrganizationCampaigns, saveCampaign } from "../services/campaignService";
 
 const blank = {
   title: "",
   category: "Family Aid",
   targetBeneficiary: "General",
-  ngo: "Sevana Demo Organization",
+  ngo: "",
   location: "",
   description: "",
   goalAmount: "",
   deadline: "",
-  resources: "",
+  status: "draft",
 };
 export default function CampaignManager() {
   const [campaigns, setCampaigns] = useState([]);
   const [form, setForm] = useState(blank);
   const [editing, setEditing] = useState("");
   const [message, setMessage] = useState("");
-  const refresh = () => getAllCampaigns().then(setCampaigns);
+  const [saving, setSaving] = useState(false);
+  const refresh = () => getOrganizationCampaigns().then(setCampaigns).catch((error) => setMessage(error.message));
   useEffect(() => {
     refresh();
   }, []);
@@ -35,34 +36,22 @@ export default function CampaignManager() {
       ...blank,
       ...campaign,
       goalAmount: campaign.goalAmount || "",
-      resources: campaign.resources || "",
+      status: campaign.status || "draft",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault();
-    const id = editing || `demo-${Date.now()}`;
-    const current = campaigns.find((c) => c.id === id);
-    saveCampaign({
-      ...current,
-      ...form,
-      id,
-      goalAmount: Number(form.goalAmount),
-      raisedAmount: Number(current?.raisedAmount || 0),
-      donorCount: Number(current?.donorCount || 0),
-      ngoVerified: false,
-      image:
-        current?.image ||
-        "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=900&auto=format&fit=crop",
-      isNew: current?.isNew ?? true,
-      status: current?.status || "draft",
-    });
+    setSaving(true);
+    try { const saved = await saveCampaign({ ...form, ...(editing ? { id: editing } : {}), goalAmount: Number(form.goalAmount) });
     setForm(blank);
     setEditing("");
     setMessage(
-      "Campaign saved in this browser as a draft. No funds were collected.",
+      saved.status === "active" ? "Campaign published. No funds were collected." : "Campaign saved to the backend as a draft. No funds were collected.",
     );
-    refresh();
+    await refresh();
+    } catch (error) { setMessage(error.message || "Unable to save campaign."); }
+    finally { setSaving(false); }
   };
   return (
     <section className="workspace-dashboard">
@@ -70,11 +59,11 @@ export default function CampaignManager() {
         <div className="workspace-dashboard__top">
           <div>
             <span className="workspace-dashboard__eyebrow">
-              ORGANIZATION TOOLS · DEMO MODE
+              ORGANIZATION TOOLS
             </span>
             <h1>Campaign management</h1>
             <p>
-              Create a campaign draft, or edit one of your listed campaigns.
+              Create or update a campaign record. Publishing requires a verified organization.
             </p>
           </div>
           <Link className="workspace-dashboard__link" to="/dashboard">
@@ -82,8 +71,7 @@ export default function CampaignManager() {
           </Link>
         </div>
         <div className="workspace-dashboard__notice">
-          Campaigns created here are saved locally and remain drafts until a
-          backend moderation workflow exists. Payment processing is not enabled.
+          Campaigns are stored by the backend. Platform moderation controls are not available; publishing is restricted to verified organizations. Payment processing is not enabled.
         </div>
         {message && <p role="status">{message}</p>}
         <form className="workspace-dashboard__panel" onSubmit={submit}>
@@ -124,11 +112,7 @@ export default function CampaignManager() {
             </label>
             <label>
               Organization
-              <input
-                required
-                value={form.ngo}
-                onChange={(e) => setForm({ ...form, ngo: e.target.value })}
-              />
+              <input value={form.ngo || "From your organization account"} readOnly />
             </label>
             <label>
               Location
@@ -158,15 +142,11 @@ export default function CampaignManager() {
                 onChange={(e) => setForm({ ...form, deadline: e.target.value })}
               />
             </label>
-            <label className="campaign-manager__wide">
-              Physical resources needed
-              <input
-                placeholder="e.g. 40 blankets, 25 ration kits"
-                value={form.resources}
-                onChange={(e) =>
-                  setForm({ ...form, resources: e.target.value })
-                }
-              />
+            <label>
+              Campaign status (new campaigns start as drafts)
+              <select value={form.status} disabled={!editing} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+                {["draft", "active", "paused", "completed", "cancelled"].map((status) => <option key={status} value={status}>{status[0].toUpperCase() + status.slice(1)}</option>)}
+              </select>
             </label>
             <label className="campaign-manager__wide">
               Description
@@ -181,8 +161,8 @@ export default function CampaignManager() {
               />
             </label>
           </div>
-          <button className="workspace-dashboard__primary" type="submit">
-            {editing ? "Save changes" : "Save draft"}
+          <button className="workspace-dashboard__primary" type="submit" disabled={saving}>
+            {saving ? "Saving…" : editing ? "Save changes" : "Save campaign"}
           </button>
           {editing && (
             <button

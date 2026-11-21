@@ -39,9 +39,6 @@ function ReceivedCard({ invitation, onAccept, onDecline }) {
           <div className="invitation-card__meta">
             <span>From: <strong>{invitation.fromName}</strong></span>
             <span className="invitation-card__role-badge">{invitation.role}</span>
-            <span className="invitation-card__xp-badge">
-              🌟 +{invitation.xpReward || 150} XP
-            </span>
             <span className="invitation-card__date">📅 {invitation.createdAt}</span>
           </div>
         </div>
@@ -60,7 +57,7 @@ function ReceivedCard({ invitation, onAccept, onDecline }) {
             className="invitation-card__btn invitation-card__btn--accept"
             onClick={() => onAccept(invitation)}
           >
-            ✓ Accept Invitation (+{invitation.xpReward || 150} XP)
+            ✓ Accept Invitation
           </button>
           <button
             className="invitation-card__btn invitation-card__btn--decline"
@@ -76,7 +73,7 @@ function ReceivedCard({ invitation, onAccept, onDecline }) {
         </div>
       ) : invitation.status === "accepted" ? (
         <div className="invitation-card__accepted-info">
-          <span>✅ Invitation accepted. Your Community Service XP has been recorded.</span>
+          <span>✅ Invitation accepted.</span>
           {invitation.campId && (
             <Link to={`/camps/${invitation.campId}`}>
               <Button variant="outline" size="sm">Go to Camp</Button>
@@ -106,9 +103,6 @@ function SentCard({ invitation }) {
           <div className="invitation-card__meta">
             <span>Sent to: <strong>{invitation.toEmail}</strong></span>
             <span className="invitation-card__role-badge">{invitation.role}</span>
-            <span className="invitation-card__xp-badge">
-              🌟 +{invitation.xpReward || 150} XP reward
-            </span>
             <span className="invitation-card__date">📅 {invitation.createdAt}</span>
           </div>
         </div>
@@ -131,12 +125,12 @@ function SentCard({ invitation }) {
 }
 
 function InvitationsPage() {
-  const { user, addXP } = useAuth();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("received");
   const [received, setReceived] = useState([]);
   const [sent, setSent] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [xpNotice, setXpNotice] = useState(null);
+  const [error, setError] = useState("");
 
   // Email to check invitations for
   const currentEmail = user ? user.email : "volunteer@example.com";
@@ -149,30 +143,18 @@ function InvitationsPage() {
         setSent(s);
         setLoading(false);
       }
-    });
+    }).catch((requestError) => { if (isMounted) { setError(requestError.message || "Unable to load invitations."); setLoading(false); } });
     return () => { isMounted = false; };
   }, [user, currentEmail]);
 
   const handleAccept = async (invitation) => {
-    await updateInvitationStatus(invitation.id, "accepted");
-    const xp = invitation.xpReward || 150;
-    if (addXP) {
-      addXP(xp, `Accepted invitation for ${invitation.campTitle}`);
-    }
-    setReceived((prev) =>
-      prev.map((inv) => (inv.id === invitation.id ? { ...inv, status: "accepted" } : inv))
-    );
-    setXpNotice(
-      `🎉 Invitation accepted for "${invitation.campTitle}"! +${xp} Community Service XP has been added to your profile.`
-    );
-    setTimeout(() => setXpNotice(null), 6000);
+    try { await updateInvitationStatus(invitation.id, "accepted"); setReceived((prev) => prev.map((inv) => (inv.id === invitation.id ? { ...inv, status: "accepted" } : inv))); }
+    catch (requestError) { setError(requestError.message || "Unable to accept invitation."); }
   };
 
   const handleDecline = async (id) => {
-    await updateInvitationStatus(id, "declined");
-    setReceived((prev) =>
-      prev.map((inv) => (inv.id === id ? { ...inv, status: "declined" } : inv))
-    );
+    try { await updateInvitationStatus(id, "declined"); setReceived((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: "declined" } : inv))); }
+    catch (requestError) { setError(requestError.message || "Unable to decline invitation."); }
   };
 
   const pendingCount = received.filter((i) => i.status === "pending").length;
@@ -185,11 +167,11 @@ function InvitationsPage() {
             <div>
               <h1>Camp Invitations &amp; Community Service</h1>
               <p>
-                Collaborate with others to arrange and organize medical and educational camps for NGOs, Orphanages, and Old Age Homes. Earn XP points for every community contribution!
+                Coordinate invitations and participation for medical and educational camps.
               </p>
               {user ? (
                 <div style={{ marginTop: "8px", fontSize: "13.5px", color: "var(--color-primary-dark)", fontWeight: "600" }}>
-                  👤 Viewing inbox for <strong>{user.name}</strong> ({user.email}) &bull; Current XP: <strong>{user.totalXP || 0} XP</strong>
+                  👤 Viewing inbox for <strong>{user.name}</strong> ({user.email})
                 </div>
               ) : (
                 <div style={{ marginTop: "8px", fontSize: "13px", color: "var(--color-text-muted)" }}>
@@ -208,11 +190,7 @@ function InvitationsPage() {
           </div>
         </div>
 
-        {xpNotice && (
-          <div className="invitations-page__xp-alert">
-            {xpNotice}
-          </div>
-        )}
+        {error && <p role="alert" className="invitations-page__loading">{error}</p>}
 
         <div className="invitations-page__tabs">
           <button
@@ -234,6 +212,8 @@ function InvitationsPage() {
 
         {loading ? (
           <p className="invitations-page__loading">Loading invitations...</p>
+        ) : error ? (
+          <p role="alert" className="invitations-page__loading">{error}</p>
         ) : activeTab === "received" ? (
           received.length === 0 ? (
             <div className="invitations-page__empty">

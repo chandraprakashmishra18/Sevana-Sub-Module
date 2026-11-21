@@ -15,6 +15,7 @@ function CampaignDetail() {
   const [donors, setDonors] = useState([]);
   const [disbursements, setDisbursements] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -30,7 +31,7 @@ function CampaignDetail() {
         setDisbursements(disbursementsData);
         setLoading(false);
       }
-    });
+    }).catch((requestError) => { if (isMounted) { setError(requestError.message || "Unable to load campaign details."); setLoading(false); } });
 
     return () => {
       isMounted = false;
@@ -48,7 +49,8 @@ function CampaignDetail() {
   if (!campaign || !isCampaignPublic(campaign)) {
     return (
       <div className="container campaign-detail__not-found">
-        <h2>Campaign not found</h2>
+        <h2>{error ? "Campaign details unavailable" : "Campaign not found"}</h2>
+        {error && <p role="alert">{error}</p>}
         <Link to="/campaigns">← Back to all campaigns</Link>
       </div>
     );

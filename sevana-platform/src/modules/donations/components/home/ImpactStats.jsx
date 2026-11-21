@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import useCountUp from "../../hooks/useCountUp";
 import { getAllCampaigns } from "../../services/campaignService";
-import mockNGOs from "../../data/mockNGOs";
 import "./ImpactStats.css";
 
 const HIDDEN_STATUSES = ["draft", "rejected", "paused"];
@@ -26,6 +25,7 @@ function StatCard({ stat }) {
 
 function ImpactStats() {
   const [stats, setStats] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -33,16 +33,17 @@ function ImpactStats() {
       if (!isMounted) return;
       const live = all.filter((c) => !HIDDEN_STATUSES.includes(c.status));
       setStats([
-        { label: "Raised across demo campaigns", value: live.reduce((s, c) => s + (Number(c.raisedAmount) || 0), 0), prefix: "₹" },
-        { label: "Donors across campaigns", value: live.reduce((s, c) => s + (Number(c.donorCount) || 0), 0) },
+        { label: "Confirmed funds raised", value: live.reduce((s, c) => s + (Number(c.raisedAmount) || 0), 0), prefix: "₹" },
+        { label: "Successful donations recorded", value: live.reduce((s, c) => s + (Number(c.donorCount) || 0), 0) },
         { label: "Active campaigns", value: live.length },
-        { label: "Sample NGO partners", value: mockNGOs.length },
+        { label: "Verified organizations", value: new Set(live.map((c) => c.organizationId).filter(Boolean)).size },
       ]);
-    });
+    }).catch((e) => { if (isMounted) setError(e.message || "Campaign totals are unavailable."); });
     return () => { isMounted = false; };
   }, []);
 
-  if (!stats) return null;
+  if (error) return <section className="impact-stats"><div className="container" role="alert">{error}</div></section>;
+  if (!stats) return <section className="impact-stats"><div className="container" role="status">Loading confirmed campaign totals…</div></section>;
 
   return (
     <section className="impact-stats">

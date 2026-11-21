@@ -27,20 +27,16 @@ function DisbursementTrail({ disbursements }) {
       <div className="disbursement-trail__timeline">
         {disbursements.map((item) => (
           <div className="disbursement-item" key={item.id}>
-            <img src={item.photo} alt={item.description} className="disbursement-item__photo" />
             <div className="disbursement-item__body">
               <p className="disbursement-item__date">
-                {new Date(item.date).toLocaleDateString("en-IN", {
+                {item.date ? new Date(item.date).toLocaleDateString("en-IN", {
                   day: "numeric",
                   month: "short",
                   year: "numeric",
-                })}{" "}
-                &nbsp;•&nbsp; 📍 {item.location}
+                }) : "Date not provided"}
               </p>
               <p className="disbursement-item__desc">{item.description}</p>
-              <p className="disbursement-item__amount">
-                ₹{item.amount.toLocaleString("en-IN")}
-              </p>
+              {item.amount != null && <p className="disbursement-item__amount">{item.currency === "INR" ? "₹" : `${item.currency} `}{Number(item.amount).toLocaleString("en-IN")}</p>}
             </div>
           </div>
         ))}

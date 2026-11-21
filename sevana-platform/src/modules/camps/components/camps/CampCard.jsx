@@ -2,9 +2,8 @@ import { Link } from "react-router-dom";
 import Badge from "../common/Badge";
 import ProgressBar from "../common/ProgressBar";
 import Button from "../common/Button";
+import SafeImage from "../../../../shared/SafeImage";
 import "./CampCard.css";
-
-const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop";
 
 function CampCard({ camp }) {
   const {
@@ -28,19 +27,15 @@ function CampCard({ camp }) {
     year: "numeric",
   });
 
-  const hasAttendeeSlots = attendeeSlots && attendeeSlots.total > 0;
+  const hasAttendeeSlots = Boolean(attendeeSlots);
 
   return (
     <div className="camp-card">
       <div className="camp-card__image-wrap">
-        <img
+        <SafeImage
           src={image}
           alt={title}
           className="camp-card__image"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = FALLBACK_IMAGE;
-          }}
         />
         <div className="camp-card__badges">
           {status === "past" && <Badge tone="neutral">Completed</Badge>}

@@ -55,6 +55,16 @@
     text-align: center;
   }
 
+  .worker-profile__identity {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .worker-profile__identity h1 {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
   .worker-profile__grid {
     grid-template-columns: 1fr;
   }
